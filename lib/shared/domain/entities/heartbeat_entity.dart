@@ -16,9 +16,9 @@ class HeartbeatEntity {
   final int systemId;
   final int type;
   final int autopilot;
-  final int baseMode; // MAV_MODE_FLAG bitmap (Always 0)
-  final int customMode; /// Indicates Main Mode (Mode A, Mode B)
-  final int systemStatus; // MAV_STATE (Always 4)
+  final int baseMode;
+  final int customMode;
+  final int systemStatus;
   final DateTime receivedAt;
 
   bool get isStale =>
