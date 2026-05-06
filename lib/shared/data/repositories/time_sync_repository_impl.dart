@@ -7,7 +7,7 @@ import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/logger/logger.dart';
 import 'package:scout_obd/shared/data/models/system_time_model.dart';
 import 'package:scout_obd/shared/data/models/time_sync_model.dart';
-import 'package:scout_obd/shared/data/models/timesync_request_model.dart';
+import 'package:scout_obd/shared/data/models/time_sync_request_model.dart';
 import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
 import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
 import 'package:scout_obd/shared/domain/repositories/time_sync_repository.dart';
@@ -92,7 +92,7 @@ class TimeSyncRepositoryImpl implements TimeSyncRepository {
   void _sendRequest() {
     final nowUs = DateTime.now().microsecondsSinceEpoch;
 
-    final payload = TimesyncRequestModel(ts1: nowUs);
+    final payload = TimeSyncRequestModel(ts1: nowUs);
     _lastSentTs1 = payload.ts1;
 
     _commManager
