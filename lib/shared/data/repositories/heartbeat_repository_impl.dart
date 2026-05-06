@@ -103,6 +103,12 @@ class HeartbeatRepositoryImpl implements HeartbeatRepository {
       mavlinkVersion: msg.mavlinkVersion,
     ).toEntity(AppConstants.primaryLinkId, frame.systemId);
 
+    _logger.info('Received', context: {
+      'systemId': frame.systemId,
+      'type': msg.type,
+      'systemStatus': msg.systemStatus,
+    });
+
     _lastReceivedAt = DateTime.now();
 
     _heartbeatCtrl.add(entity);
