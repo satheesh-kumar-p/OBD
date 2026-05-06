@@ -53,12 +53,12 @@ class CommManager {
     _subs[config.id] = service.frameStream.listen(
       (frame) {
         _logger.debug(
-          'CommManager: frame received',
+          'Frame received',
           context: {
             'linkId': config.id,
             'msgId': frame.message.mavlinkMessageId,
             'sysId': frame.systemId,
-            'frame': frame.toString(),
+            'message': frame.message,
           },
         );
         _allFramesCtrl.add(TaggedFrame(linkId: config.id, frame: frame));
@@ -70,7 +70,7 @@ class CommManager {
       ),
     );
 
-    _logger.info('CommManager: link registered', context: {'id': config.id});
+    _logger.info('Link registered', context: {'id': config.id});
   }
 
   MavlinkService _buildRealService(CommLinkConfig config) {
@@ -93,27 +93,27 @@ class CommManager {
 
   Future<void> connectAll() async {
     _logger.info(
-      'CommManager: connectAll starting',
+      'connectAll starting',
       context: {'links': _links.keys.toList()},
     );
     try {
       await Future.wait(_links.values.map((s) => s.connect()));
-      _logger.info('CommManager: all links connected');
+      _logger.info('All links connected');
     } catch (e, st) {
-      _logger.error('CommManager: connectAll failed', error: e, stack: st);
+      _logger.error('connectAll failed', error: e, stack: st);
       rethrow;
     }
   }
 
   Future<void> disconnectAll() async {
-    _logger.info('CommManager: disconnecting all links');
+    _logger.info('Disconnecting all links');
     await Future.wait(_links.values.map((s) => s.disconnect()));
     for (final s in _subs.values) {
       await s.cancel();
     }
     _subs.clear();
     _links.clear();
-    _logger.info('CommManager: all links disconnected');
+    _logger.info('All links disconnected');
   }
 
   // ── Streams ───────────────────────────────────────────────────────────────
@@ -148,7 +148,7 @@ class CommManager {
       return;
     }
     _logger.debug(
-      'CommManager: sending message',
+      'Sending message',
       context: {'linkId': linkId, 'msgId': message.mavlinkMessageId},
     );
     await service.send(message);
