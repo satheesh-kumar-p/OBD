@@ -8,6 +8,8 @@ import 'package:mavlink_nrt/mavlink_message.dart';
 import 'package:mavlink_nrt/mavlink_parser.dart';
 import 'package:scout_obd/core/comm/comm_link_config.dart';
 import 'package:scout_obd/core/comm/mavlink_service_impl.dart';
+import 'package:scout_obd/core/comm/mock_mavlink_service.dart';
+import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/enums/transport_type.dart';
 import 'package:scout_obd/core/logger/logger.dart';
 import 'package:scout_obd/core/comm/mavlink_service.dart';
@@ -21,11 +23,9 @@ class TaggedFrame {
 }
 
 class CommManager {
-  CommManager({
-    required MavlinkDialect dialect,
-    required Logger logger,
-  })  : _dialect = dialect,
-        _logger = logger;
+  CommManager({required MavlinkDialect dialect, required Logger logger})
+    : _dialect = dialect,
+      _logger = logger;
 
   final MavlinkDialect _dialect;
   final Logger _logger;
@@ -34,31 +34,40 @@ class CommManager {
   final Map<String, StreamSubscription<MavlinkFrame>> _subs = {};
   final _allFramesCtrl = StreamController<TaggedFrame>.broadcast();
 
-
   void addLink(CommLinkConfig config) {
     if (_links.containsKey(config.id)) {
-      _logger.warn('CommManager: duplicate link ignored',
-          context: {'id': config.id});
+      _logger.warn(
+        'CommManager: duplicate link ignored',
+        context: {'id': config.id},
+      );
       return;
     }
 
-    final service = _buildRealService(config);
+    final service = AppConstants.useMockBackends
+        ? MockMavlinkService(Logger('MOCK_LOGGER')) as MavlinkService
+        : _buildRealService(config);
 
     _links[config.id] = service;
 
     // Tag every frame that arrives on this link and forward to merged stream.
     _subs[config.id] = service.frameStream.listen(
-          (frame) {
-        _logger.debug('CommManager: frame received', context: {
-          'linkId': config.id,
-          'msgId': frame.message.mavlinkMessageId,
-          'sysId': frame.systemId,
-          'frame': frame.toString()
-        });
+      (frame) {
+        _logger.debug(
+          'CommManager: frame received',
+          context: {
+            'linkId': config.id,
+            'msgId': frame.message.mavlinkMessageId,
+            'sysId': frame.systemId,
+            'frame': frame.toString(),
+          },
+        );
         _allFramesCtrl.add(TaggedFrame(linkId: config.id, frame: frame));
       },
-      onError: (Object e) => _logger.error('Frame stream error',
-          error: e, context: {'linkId': config.id}),
+      onError: (Object e) => _logger.error(
+        'Frame stream error',
+        error: e,
+        context: {'linkId': config.id},
+      ),
     );
 
     _logger.info('CommManager: link registered', context: {'id': config.id});
@@ -83,8 +92,10 @@ class CommManager {
   }
 
   Future<void> connectAll() async {
-    _logger.info('CommManager: connectAll starting',
-        context: {'links': _links.keys.toList()});
+    _logger.info(
+      'CommManager: connectAll starting',
+      context: {'links': _links.keys.toList()},
+    );
     try {
       await Future.wait(_links.values.map((s) => s.connect()));
       _logger.info('CommManager: all links connected');
@@ -130,14 +141,16 @@ class CommManager {
   }) async {
     final service = _links[linkId];
     if (service == null) {
-      _logger.warn('CommManager.send: unknown link',
-          context: {'linkId': linkId, 'msgId': message.mavlinkMessageId});
+      _logger.warn(
+        'CommManager.send: unknown link',
+        context: {'linkId': linkId, 'msgId': message.mavlinkMessageId},
+      );
       return;
     }
-    _logger.debug('CommManager: sending message', context: {
-      'linkId': linkId,
-      'msgId': message.mavlinkMessageId,
-    });
+    _logger.debug(
+      'CommManager: sending message',
+      context: {'linkId': linkId, 'msgId': message.mavlinkMessageId},
+    );
     await service.send(message);
   }
 
