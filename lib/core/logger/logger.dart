@@ -35,13 +35,10 @@ class Logger {
     final prefix = level.prefix;
     final loggerName = '$now [$prefix] $name';
 
-    developer.log(
-      '$msg$ctxStr',
-      level: level.value * 200,
-      name: loggerName,
-      error: error,
-      stackTrace: stack,
-      zone: Zone.current,
-    );
+    print('$loggerName: $msg$ctxStr');
+
+    if (error != null) print('  ERROR: $error');
+    if (stack != null) print(stack);
+
   }
 }
