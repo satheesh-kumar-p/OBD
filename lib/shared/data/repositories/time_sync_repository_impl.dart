@@ -136,7 +136,7 @@ class TimeSyncRepositoryImpl implements TimeSyncRepository {
 
     final model = TimeSyncModel(
       tc1: msg.tc1,
-      ts1: msg.tc1,
+      ts1: msg.ts1,
       targetSystem: msg.targetSystem,
       targetComponent: msg.targetComponent,
     );
