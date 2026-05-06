@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/di/injection_container.dart';
 import 'features/common_page/presentation/screens/common_page.dart';
 import 'features/common_page/presentation/widgets/app_background.dart';
 
@@ -16,11 +17,12 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(commConnectionProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Scout Display',
