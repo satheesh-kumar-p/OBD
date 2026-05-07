@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:comm_module/comm_module.dart';
-import 'package:mavlink_nrt/mavlink_dialect.dart';
-import 'package:mavlink_nrt/mavlink_frame.dart';
-import 'package:mavlink_nrt/mavlink_message.dart';
-import 'package:mavlink_nrt/mavlink_parser.dart';
+import 'package:mavlink_module/mavlink_dialect.dart';
+import 'package:mavlink_module/mavlink_frame.dart';
+import 'package:mavlink_module/mavlink_message.dart';
+import 'package:mavlink_module/mavlink_parser.dart';
 import 'package:scout_obd/core/comm/comm_link_config.dart';
 import 'package:scout_obd/core/comm/mavlink_service_impl.dart';
 import 'package:scout_obd/core/comm/mock_mavlink_service.dart';

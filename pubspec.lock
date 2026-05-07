@@ -260,15 +260,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
-  mavlink_nrt:
+  mavlink_module:
     dependency: "direct main"
     description:
       path: "."
       ref: HEAD
-      resolved-ref: fe94084c61591567309936c26435db159df51d6b
+      resolved-ref: "8b679f0ae177713a4863fcb1ce828a5858b81714"
       url: "https://github.com/karthikeya-tummala-nrt/mavlink_module"
     source: git
-    version: "1.0.0"
+    version: "0.1.0"
   meta:
     dependency: transitive
     description:
@@ -309,14 +309,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
-  petitparser:
-    dependency: transitive
-    description:
-      name: petitparser
-      sha256: "91bd59303e9f769f108f8df05e371341b15d59e995e6806aefab827b58336675"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.2"
   pool:
     dependency: transitive
     description:
@@ -530,14 +522,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
-  xml:
-    dependency: transitive
-    description:
-      name: xml
-      sha256: "971043b3a0d3da28727e40ed3e0b5d18b742fa5a68665cca88e74b7876d5e025"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.6.1"
   yaml:
     dependency: transitive
     description:

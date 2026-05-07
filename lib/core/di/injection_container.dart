@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mavlink_nrt/dialects/ardupilotmega.dart';
+import 'package:mavlink_module/dialects/ugvcustom.dart';
 import 'package:scout_obd/core/comm/comm_link_config.dart';
 import 'package:scout_obd/core/comm/comm_manager.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
@@ -10,7 +10,7 @@ final commManagerProvider = Provider<CommManager>((ref) {
   final logger = Logger("COMM_MANAGER");
 
   final manager = CommManager(
-      dialect: MavlinkDialectArdupilotmega(), logger: logger);
+      dialect: MavlinkDialectUgvcustom(), logger: logger);
 
   manager.addLink(const CommLinkConfig(
       id: AppConstants.primaryLinkId,

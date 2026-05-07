@@ -1,4 +1,4 @@
-import 'package:mavlink_nrt/mavlink.dart';
+import 'package:mavlink_module/mavlink.dart';
 
 /// Contract for one mavlink connection (One transport + one parser)
 /// Each physical link gets its own implementation

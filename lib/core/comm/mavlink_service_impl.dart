@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:comm_module/comm_module.dart';
-import 'package:mavlink_nrt/mavlink.dart';
+import 'package:mavlink_module/mavlink.dart';
 import 'package:scout_obd/core/comm/mavlink_service.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/logger/logger.dart';
