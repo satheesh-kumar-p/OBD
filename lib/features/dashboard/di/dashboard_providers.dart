@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
-import 'package:scout_obd/features/common_page/state/common_page_state.dart';
+import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/shared/di/heartbeat_providers.dart';
 import 'package:scout_obd/shared/di/link_status_providers.dart';
 import 'package:scout_obd/shared/di/timesync_providers.dart';
@@ -35,6 +35,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
   final linkStatusValue = ref.watch(linkStatusProvider(AppConstants.primaryLinkId)).asData?.value;
   final heartbeatValue = ref.watch(heartbeatProvider(AppConstants.primaryLinkId)).asData?.value;
   final timeSyncValue = ref.watch(timeSyncProvider(AppConstants.primaryLinkId)).asData?.value;
+  final systemTimeValue = ref.watch(systemTimeProvider(AppConstants.primaryLinkId)).asData?.value;
   final selectedIndex = ref.watch(dashboardIndexProvider);
 
   // If linkStatusValue is null, but connectionAsync has data, we assume connected initially.
@@ -44,6 +45,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
     linkStatus: linkStatusValue?.copyWith(isConnected: isConnected),
     heartbeat: heartbeatValue,
     timeSync: timeSyncValue,
+    systemTime: systemTimeValue,
     selectedIndex: selectedIndex,
   );
 });

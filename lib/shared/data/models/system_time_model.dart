@@ -12,11 +12,13 @@ class SystemTimeModel {
   final int timeBootMs;
 
   SystemTimeEntity toEntity(String linkId) {
+    final nowUs = DateTime.now().microsecondsSinceEpoch;
+    final offsetUs = timeUnixUsec - nowUs;
+
     return SystemTimeEntity(
       linkId: linkId,
-      upTimeMs: timeBootMs,
-      unixTimeUs: DateTime.fromMicrosecondsSinceEpoch(timeUnixUsec),
-      receivedAt: DateTime.now(),
+      upTimeSeconds: timeBootMs ~/ 1000,
+      measuredAt: DateTime.now(),
     );
   }
 }

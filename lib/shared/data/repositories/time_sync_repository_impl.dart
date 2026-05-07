@@ -80,7 +80,7 @@ class TimeSyncRepositoryImpl implements TimeSyncRepository {
             timeBootMs: msg.timeBootMs,
           ).toEntity(AppConstants.primaryLinkId);
 
-          _logger.debug('SYSTEM_TIME rx', context: {'upTimeMs': entity.upTimeMs});
+          _logger.debug('SYSTEM_TIME rx', context: {'upTimeSeconds': entity.upTimeSeconds});
 
           return entity;
         });

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/features/common_page/di/common_page_providers.dart';
-import 'package:scout_obd/features/common_page/presentation/widgets/hud_frame_overlay.dart';
-import 'package:scout_obd/features/common_page/presentation/widgets/hud_sidebar.dart';
-import 'package:scout_obd/features/common_page/state/common_page_state.dart';
+import 'package:scout_obd/features/dashboard/di/dashboard_providers.dart';
+import 'package:scout_obd/features/dashboard/presentation/widgets/hud_frame_overlay.dart';
+import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.dart';
+import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 
-class CommonPage extends ConsumerWidget {
-  const CommonPage({super.key});
+class Dashboard extends ConsumerWidget {
+  const Dashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

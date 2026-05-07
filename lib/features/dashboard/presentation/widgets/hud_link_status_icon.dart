@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scout_obd/features/common_page/state/common_page_state.dart';
+import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 
 class HudLinkStatusIcon extends StatelessWidget {
   const HudLinkStatusIcon({super.key, required this.size, this.healthLevel});

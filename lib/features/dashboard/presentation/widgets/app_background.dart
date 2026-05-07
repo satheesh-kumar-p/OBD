@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/features/common_page/di/common_page_providers.dart';
+import 'package:scout_obd/features/dashboard/di/dashboard_providers.dart';
 
 import 'hud_frame_overlay.dart';
 

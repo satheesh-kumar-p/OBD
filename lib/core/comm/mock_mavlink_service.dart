@@ -1,5 +1,5 @@
-
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:mavlink_module/dialects/ugvcustom.dart';
 import 'package:mavlink_module/mavlink.dart';
@@ -56,7 +56,7 @@ class MockMavlinkService implements MavlinkService {
 
     _systemTimeTimer = Timer.periodic(
       const Duration(seconds: 5),
-          (_) => _emitSystemTime(),
+      (_) => _emitSystemTime(),
     );
 
     // Emit one of each immediately so downstream repos are not “stuck”.
@@ -80,42 +80,75 @@ class MockMavlinkService implements MavlinkService {
     }
   }
 
-  // ── Send: intercept and echo TIMESYNC ─────────────────────────────────────
-
   @override
   Future<void> send(MavlinkMessage message) async {
-    if (message.mavlinkMessageId != 111) return;
+    // ── Send: intercept and echo TIMESYNC ─────────────────────────────────────
+    if (message.mavlinkMessageId == 111) {
+      final req = message as Timesync;
 
-    final req = message as Timesync;
+      // Only handle TIMESYNC requests (tc1 == 0)
+      if (req.tc1 != 0) return;
 
-    // Only handle TIMESYNC requests (tc1 == 0)
-    if (req.tc1 != 0) return;
+      // Simulate ~20 ms one‑way delay, then emit UGV echo.
+      await Future<void>.delayed(const Duration(milliseconds: 20), () {
+        if (!_connected) return;
 
-    // Simulate ~20 ms one‑way delay, then emit UGV echo.
-    await Future<void>.delayed(const Duration(milliseconds: 20), () {
-      if (!_connected) return;
+        final ugvNowUs = DateTime.now()
+            .add(const Duration(hours: 1))
+            .microsecondsSinceEpoch;
+        _emitRaw(
+          Timesync(
+            tc1: ugvNowUs,
+            ts1: req.ts1,
+            targetSystem: AppConstants.ugvSystemId,
+            targetComponent: AppConstants.ugvComponentId,
+          ),
+        );
+      });
+    }
 
-      final ugvNowUs = DateTime.now().add(const Duration(hours: 1)).microsecondsSinceEpoch;
-      _emitRaw(
-        Timesync(
-          tc1: ugvNowUs,
-          ts1: req.ts1,
-          targetSystem: AppConstants.ugvSystemId,
-          targetComponent: AppConstants.ugvComponentId,
-        ),
-      );
-    });
+    // Handle software version and checksum (UGV_Component_Version Message)
+    if (message.mavlinkMessageId == 50002) {
+
+      final payload = message.serialize();  // Get ByteData
+
+      // Use THEIR parsing methods exactly!
+      final softwareVersion = payload.getUint32(0, Endian.little);
+      final checksum = MavlinkMessage.asUint8List(payload, 4, 32);  // 32 bytes
+      final targetSystem = payload.getUint8(36);
+      final targetComponent = payload.getUint8(37);
+
+      // Unpack 1.2.3
+      final major = (softwareVersion >> 24) & 0xFF;
+      final minor = (softwareVersion >> 16) & 0xFF;
+      final patch = (softwareVersion >> 8) & 0xFF;
+
+      final checksumHex = checksum
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+
+      _logger.info('Software Version Received', context: {
+        'version': '$major.$minor.$patch',
+        'checksum': checksumHex,
+        'targetSys': targetSystem,
+        'targetComp': targetComponent,
+      });
+    }
   }
 
   // ── Frame emitters ────────────────────────────────────────────────────────
 
   void _emitHeartbeat() => _emitRaw(
     Heartbeat(
-      type: 10, // MAV_TYPE_GROUND_ROVER
-      autopilot: 3, // MAV_AUTOPILOT_ARDUPILOTMEGA
-      baseMode: 64, // MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
+      type: 10,
+      // MAV_TYPE_GROUND_ROVER
+      autopilot: 3,
+      // MAV_AUTOPILOT_ARDUPILOTMEGA
+      baseMode: 64,
+      // MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
       customMode: 0,
-      systemStatus: 3, // MAV_STATE_STANDBY → SafeHold
+      systemStatus: 3,
+      // MAV_STATE_STANDBY → SafeHold
       mavlinkVersion: 3,
     ),
   );

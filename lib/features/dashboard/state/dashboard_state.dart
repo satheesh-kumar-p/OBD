@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:scout_obd/shared/domain/entities/heartbeat_entity.dart';
 import 'package:scout_obd/shared/domain/entities/link_status_entity.dart';
+import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
 import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
@@ -10,24 +11,28 @@ class DashboardState {
     this.linkStatus,
     this.heartbeat,
     this.timeSync,
+    this.systemTime,
     this.selectedIndex = 0,
   });
 
   final LinkStatusEntity? linkStatus;
   final HeartbeatEntity? heartbeat;
   final TimeSyncEntity? timeSync;
+  final SystemTimeEntity? systemTime;
   final int selectedIndex;
 
   DashboardState copyWith({
     LinkStatusEntity? linkStatus,
     HeartbeatEntity? heartbeat,
     TimeSyncEntity? timeSync,
+    SystemTimeEntity? systemTime,
     int? selectedIndex,
   }) {
     return DashboardState(
       linkStatus: linkStatus ?? this.linkStatus,
       heartbeat: heartbeat ?? this.heartbeat,
       timeSync: timeSync ?? this.timeSync,
+      systemTime: systemTime ?? this.systemTime,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -35,7 +40,7 @@ class DashboardState {
   /// Pure transport connection status.
   bool get isSocketConnected => linkStatus?.isConnected ?? false;
   
-  /// Pure application heartheat status.
+  /// Pure application heartbeat status.
   bool get isVehicleAlive => heartbeat != null && !heartbeat!.isStale;
 
   /// Combined health logic.
@@ -83,7 +88,14 @@ class DashboardState {
   }
 
   String get uptimeFormatted {
-    return '00:00:00';
+    final bootSeconds = systemTime?.currentUpTimeSeconds;
+    if (bootSeconds == null) return 'AWAITING';
+    final hours = bootSeconds ~/ 3600;
+    final minutes = (bootSeconds % 3600) ~/ 60;
+    final seconds = bootSeconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:'
+        '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}';
   }
 
   double get batteryLevel => 1.0;
