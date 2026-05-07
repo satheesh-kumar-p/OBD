@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:mavlink_module/dialects/ardupilotmega.dart';
+import 'package:mavlink_module/dialects/ugvcustom.dart';
 import 'package:mavlink_module/mavlink.dart';
 import 'package:scout_obd/core/comm/comm_manager.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
