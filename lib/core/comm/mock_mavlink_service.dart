@@ -24,6 +24,7 @@ class MockMavlinkService implements MavlinkService {
 
   Timer? _heartbeatTimer;
   Timer? _systemTimeTimer;
+  Timer? _ugvSystemInfoTimer;
   bool _connected = false;
   int _bootMs = 0;
   int _sequence = 0;
@@ -59,9 +60,14 @@ class MockMavlinkService implements MavlinkService {
       (_) => _emitSystemTime(),
     );
 
+    _ugvSystemInfoTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _emitUgvSystemInfo();
+    });
+
     // Emit one of each immediately so downstream repos are not “stuck”.
     _emitHeartbeat();
     _emitSystemTime();
+    _emitUgvSystemInfo();
   }
 
   @override
@@ -159,6 +165,34 @@ class MockMavlinkService implements MavlinkService {
       timeBootMs: _bootMs,
     ),
   );
+
+  void _emitUgvSystemInfo() {
+    if (_frameCtrl.isClosed) return;
+
+    final now = DateTime.now();
+
+    final msg = UgvSystemInfo(
+      ugvSubsystemPresent: 0x03ff, // all 10 subs present
+      ugvSubsystemEnabled: 0x03ff, // all enabled
+      ugvSubsystemHealth: 0x03ff,  // all healthy
+      computeLoad: 500,            // 50.0%
+      mainVoltage: 24000,          // 24 V
+      mainCurrent: 1200,           // 12 A
+      vcuFaultErrors: 0,
+      dropRateComm: 0,
+      leftMotorErrors: 0,
+      rightMotorErrors: 0,
+      sensorBusErrors: 0,
+      batteryRemaining: 85,
+      mainMode: 1,                 // MODE_B
+      subMode: 10,                 // HOLD
+      intendedMainMode: 1,
+      intendedSubMode: 10,
+      modeChangeReason: 0,         // GCS_COMMAND
+    );
+
+    _emitRaw(msg);
+  }
 
   void _emitRaw(MavlinkMessage message) {
     if (_frameCtrl.isClosed) return;

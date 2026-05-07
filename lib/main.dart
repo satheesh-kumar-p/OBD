@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/features/compute/di/compute_providers.dart';
+import 'package:scout_obd/features/system/di/ugv_health_providers.dart';
 import 'package:scout_obd/shared/di/heartbeat_providers.dart';
 import 'package:scout_obd/shared/di/timesync_providers.dart';
 
 import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
+import 'shared/di/ugv_mode_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +53,8 @@ class MyApp extends ConsumerWidget {
           ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
           ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
           ref.watch(ugvVersionProvider);
+          ref.watch(ugvModeProvider(AppConstants.primaryLinkId));
+          ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
           return const Dashboard();
         },
         loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),
