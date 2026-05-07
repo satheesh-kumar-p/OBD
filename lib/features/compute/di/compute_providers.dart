@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
 import 'package:scout_obd/core/logger/logger.dart';
-import 'package:scout_obd/features/system/application/usecases/send_software_version_usecase.dart';
-import 'package:scout_obd/features/system/data/models/ugv_component_version_model.dart';
-import 'package:scout_obd/features/system/data/repositories/ugv_component_version_repository_impl.dart';
-import 'package:scout_obd/features/system/domain/repositories/ugv_component_version_repository.dart';
+import 'package:scout_obd/features/compute/application/use_cases/send_software_version_usecase.dart';
+import 'package:scout_obd/features/compute/data/models/ugv_component_version_model.dart';
+import 'package:scout_obd/features/compute/data/repositories/ugv_component_version_repository_impl.dart';
+import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
 final ugvVersionRepoProvider = Provider<UgvVersionRepository>((ref) {
   final commManager = ref.watch(commManagerProvider);

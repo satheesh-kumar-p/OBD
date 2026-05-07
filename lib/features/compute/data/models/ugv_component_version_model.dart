@@ -1,4 +1,4 @@
-import 'package:scout_obd/features/system/domain/entities/ugv_component_version_entity.dart';
+import 'package:scout_obd/features/compute/domain/entities/ugv_component_version_entity.dart';
 
 class UgvComponentVersionModel {
   final int softwareVersion;

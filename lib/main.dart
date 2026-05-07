@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/features/system/di/system_providers.dart';
+import 'package:scout_obd/features/compute/di/compute_providers.dart';
 import 'package:scout_obd/shared/di/heartbeat_providers.dart';
 import 'package:scout_obd/shared/di/timesync_providers.dart';
 

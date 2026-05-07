@@ -1,4 +1,4 @@
-import 'package:scout_obd/features/system/domain/repositories/ugv_component_version_repository.dart';
+import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
 class SendUgvVersionOnHeartbeatUseCase {
   final UgvVersionRepository repository;

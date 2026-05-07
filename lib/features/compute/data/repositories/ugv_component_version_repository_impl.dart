@@ -4,7 +4,7 @@ import 'package:mavlink_module/mavlink.dart';
 import 'package:scout_obd/core/comm/comm_manager.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/logger/logger.dart';
-import 'package:scout_obd/features/system/domain/repositories/ugv_component_version_repository.dart';
+import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
 class UgvVersionRepositoryImpl implements UgvVersionRepository {
   final CommManager _commManager;
