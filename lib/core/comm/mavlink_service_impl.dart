@@ -12,7 +12,7 @@ class MavlinkServiceImpl implements MavlinkService {
   final Logger _logger;
   final MavlinkParser _mavlinkParser;
 
-  final StreamController<bool> _connectionCtrl = StreamController<bool>.broadcast();
+  final StreamController<bool> _connectionCtrl = StreamController<bool>();
   StreamSubscription<Uint8List>? _transportSub;
   
   int _sequence = 0;

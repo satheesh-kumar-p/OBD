@@ -20,7 +20,7 @@ class MockMavlinkService implements MavlinkService {
   final Logger _logger;
 
   final _frameCtrl = StreamController<MavlinkFrame>.broadcast();
-  final _connectionCtrl = StreamController<bool>.broadcast();
+  final _connectionCtrl = StreamController<bool>();
 
   Timer? _heartbeatTimer;
   Timer? _systemTimeTimer;
@@ -95,7 +95,7 @@ class MockMavlinkService implements MavlinkService {
     await Future<void>.delayed(const Duration(milliseconds: 20), () {
       if (!_connected) return;
 
-      final ugvNowUs = DateTime.now().microsecondsSinceEpoch;
+      final ugvNowUs = DateTime.now().add(const Duration(hours: 1)).microsecondsSinceEpoch;
       _emitRaw(
         Timesync(
           tc1: ugvNowUs,

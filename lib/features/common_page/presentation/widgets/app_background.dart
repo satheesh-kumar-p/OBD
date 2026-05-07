@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scout_obd/features/common_page/di/common_page_providers.dart';
 
 import 'hud_frame_overlay.dart';
 
-class AppBackground extends StatelessWidget {
+class AppBackground extends ConsumerWidget {
   const AppBackground({super.key, required this.child});
-
-  static const String assetPath = 'assets/backgrounds/Background.png';
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(dashboardStateProvider);
+    
     return Stack(
       children: [
-        Positioned.fill(
-          child: IgnorePointer(
-            child: Image.asset(
-              assetPath,
-              fit: BoxFit.fill,
-              filterQuality: FilterQuality.high,
+        // Solid black background for the HUD
+        const Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.black,
             ),
           ),
         ),
-        const Positioned.fill(child: HudFrameOverlay(drawLeftSlots: false)),
+        
+        // HUD frame overlay
+        Positioned.fill(
+          child: HudFrameOverlay(
+            state: state,
+            drawLeftSlots: false,
+          ),
+        ),
         child,
       ],
     );

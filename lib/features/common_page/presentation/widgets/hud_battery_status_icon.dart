@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class HudBatteryStatusIcon extends StatelessWidget {
-  const HudBatteryStatusIcon({super.key, required this.size, this.level = 1.0});
+  const HudBatteryStatusIcon({
+    super.key,
+    required this.size,
+    double? percentage,
+  }) : level = percentage ?? 1.0;
 
   final double size;
   final double level;
@@ -10,7 +14,8 @@ class HudBatteryStatusIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final h = size;
     final unit = h / 20.0;
-    final w = 40.0 * unit;
+    // Slimmer battery icon for 5" screen
+    final w = 34.0 * unit; 
     final clampedLevel = level.clamp(0.0, 1.0);
 
     var batteryColor = Colors.green;
@@ -20,17 +25,17 @@ class HudBatteryStatusIcon extends StatelessWidget {
       batteryColor = Colors.orange;
     }
 
-    final borderW = 2.0 * unit;
-    final borderRadius = 3.0 * unit;
+    final borderW = 1.5 * unit;
+    final borderRadius = 2.0 * unit;
     final inset = 1.0 * unit;
     final fillRadius = 1.0 * unit;
 
-    final terminalW = 3.0 * unit;
-    final terminalH = 8.0 * unit;
-    final terminalTop = 6.0 * unit;
-    final terminalRadius = 2.0 * unit;
+    final terminalW = 2.5 * unit;
+    final terminalH = 7.0 * unit;
+    final terminalTop = 6.5 * unit;
+    final terminalRadius = 1.5 * unit;
 
-    final fillMaxW = 36.0 * unit;
+    final fillMaxW = w - 2 * inset - borderW;
     final fillW = (fillMaxW * clampedLevel).clamp(0.0, fillMaxW);
 
     return SizedBox(
@@ -64,7 +69,7 @@ class HudBatteryStatusIcon extends StatelessWidget {
             ),
           ),
           Positioned(
-            right: -terminalW,
+            right: -terminalW + 0.5 * unit,
             top: terminalTop,
             child: Container(
               width: terminalW,

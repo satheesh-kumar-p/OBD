@@ -1,54 +1,29 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:scout_obd/core/utils/duration_format.dart';
 
-class HudUptimeLabel extends StatefulWidget {
-  const HudUptimeLabel({super.key, required this.height});
+class HudUptimeLabel extends StatelessWidget {
+  const HudUptimeLabel({
+    super.key,
+    required this.height,
+    this.uptime = '00:00:00',
+  });
 
   final double height;
-
-  @override
-  State<HudUptimeLabel> createState() => _HudUptimeLabelState();
-}
-
-class _HudUptimeLabelState extends State<HudUptimeLabel> {
-  late final Stopwatch _stopwatch;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _stopwatch = Stopwatch()..start();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _timer = null;
-    _stopwatch.stop();
-    super.dispose();
-  }
+  final String uptime;
 
   @override
   Widget build(BuildContext context) {
-    final h = widget.height;
+    final h = height;
     final fontSize = (h * 0.44).clamp(10.0, 18.0);
 
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
       child: Text(
-        'UP TIME : ${formatHms(_stopwatch.elapsed)}',
+        'UP TIME : $uptime',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: Colors.white,
-          fontFamily: 'Poppins',
           fontSize: fontSize,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.6,
@@ -59,5 +34,6 @@ class _HudUptimeLabelState extends State<HudUptimeLabel> {
           ],
         ),
       ),
-    );  }
+    );
+  }
 }

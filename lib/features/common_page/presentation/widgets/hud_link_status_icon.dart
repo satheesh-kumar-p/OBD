@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:scout_obd/features/common_page/state/common_page_state.dart';
 
 class HudLinkStatusIcon extends StatelessWidget {
-  const HudLinkStatusIcon({super.key, required this.size, this.connected});
+  const HudLinkStatusIcon({super.key, required this.size, this.healthLevel});
 
   final double size;
-  final bool? connected;
+  final HealthLevel? healthLevel;
 
   @override
   Widget build(BuildContext context) {
-    final (IconData icon, Color base, Color glow) = switch (connected) {
-      null => (
+    final (IconData icon, Color base, Color glow) = switch (healthLevel) {
+      HealthLevel.connected => (
         Icons.link_rounded,
-        const Color(0xFF2FD0FF),
-        const Color(0xFF8BE9FF),
-      ),
-      true => (
-        Icons.link_rounded,
-        const Color(0xFF36FF7A),
+        const Color(0xFF36FF7A), // Healthy Green
         const Color(0xFF00FF66),
       ),
-      false => (
+      HealthLevel.noHeartbeat => (
+        Icons.link_rounded,
+        const Color(0xFFFFB347), // Warning Orange
+        const Color(0xFFFF9900),
+      ),
+      HealthLevel.disconnected || null => (
         Icons.link_off_rounded,
-        const Color(0xFFFF3B3B),
+        const Color(0xFFFF3B3B), // Error Red
         const Color(0xFFFF2A2A),
       ),
     };

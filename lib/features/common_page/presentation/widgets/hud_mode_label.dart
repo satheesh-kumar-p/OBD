@@ -27,10 +27,10 @@ class HudModeLabel extends StatelessWidget {
           painter: _HudModeLabelPainter(),
           child: Padding(
             padding: EdgeInsets.only(
-              left: height * 0.50,
-              right: height * 1.05,
-              top: height * 0.17,
-              bottom: height * 0.17,
+              left: height * 0.35,
+              right: height * 0.85,
+              top: height * 0.15,
+              bottom: height * 0.15,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -40,10 +40,9 @@ class HudModeLabel extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Poppins',
-                  fontSize: (height * 0.44).clamp(10.0, 18.0),
+                  fontSize: (height * 0.45).clamp(9.0, 16.0),
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.6,
+                  letterSpacing: 0.4,
                   height: 1,
                   decoration: TextDecoration.none,
                 ),
@@ -70,7 +69,7 @@ class _HudModeLabelPainter extends CustomPainter {
     final h = size.height;
     if (w <= 0 || h <= 0) return;
 
-    final cut = math.min(w * 0.11, h * 0.85);
+    final cut = math.min(w * 0.1, h * 0.8);
 
     final p = Path()
       ..moveTo(0, 0)
@@ -91,14 +90,14 @@ class _HudModeLabelPainter extends CustomPainter {
 
     canvas.drawPath(p, fill);
 
-    final strokeWidth = math.max(1.2, h * 0.06);
-    final glowWidth = (h * 0.45).clamp(5.0, 16.0);
+    final strokeWidth = math.max(1.0, h * 0.05);
+    final glowWidth = (h * 0.35).clamp(3.0, 12.0);
 
     final shader = LinearGradient(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
-      colors: [_a(_cyan, 0.95), _a(_cyanSoft, 0.60), _a(_cyan, 0.10)],
-      stops: const [0.0, 0.55, 1.0],
+      colors: [_a(_cyan, 0.9), _a(_cyanSoft, 0.5), _a(_cyan, 0.1)],
+      stops: const [0.0, 0.6, 1.0],
     ).createShader(Rect.fromLTWH(0, 0, w, h));
 
     final glowPaint = Paint()
