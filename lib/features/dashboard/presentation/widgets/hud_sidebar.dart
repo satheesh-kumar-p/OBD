@@ -171,9 +171,9 @@ class _HudSidebarItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: enabled ? textColor : _a(_steel, 0.35),
-                    fontSize: (h * 0.35).clamp(8.0, 14.0),
+                    fontSize: (h * 0.45).clamp(9.0, 18.0),
                     letterSpacing: 0.5,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),

@@ -76,7 +76,8 @@ class HudFrameOverlay extends StatelessWidget {
                   child: Row(
                     children: [
                       HudModeLabel(
-                        text: state.modeName,
+                        mainText: state.modeName,
+                        subText: state.subModeName,
                         height: labelH,
                         maxWidth: maxWidth,
                       ),

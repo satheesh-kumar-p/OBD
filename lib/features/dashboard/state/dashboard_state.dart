@@ -3,6 +3,9 @@ import 'package:scout_obd/shared/domain/entities/heartbeat_entity.dart';
 import 'package:scout_obd/shared/domain/entities/link_status_entity.dart';
 import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
 import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
+import 'package:scout_obd/shared/domain/entities/ugv_mode_entity.dart';
+
+import '../../../shared/enums/ugv_mode.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 
@@ -12,6 +15,7 @@ class DashboardState {
     this.heartbeat,
     this.timeSync,
     this.systemTime,
+    this.mode,
     this.selectedIndex = 0,
   });
 
@@ -19,6 +23,7 @@ class DashboardState {
   final HeartbeatEntity? heartbeat;
   final TimeSyncEntity? timeSync;
   final SystemTimeEntity? systemTime;
+  final UgvModeEntity? mode;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -26,6 +31,7 @@ class DashboardState {
     HeartbeatEntity? heartbeat,
     TimeSyncEntity? timeSync,
     SystemTimeEntity? systemTime,
+    UgvModeEntity? mode,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -33,6 +39,7 @@ class DashboardState {
       heartbeat: heartbeat ?? this.heartbeat,
       timeSync: timeSync ?? this.timeSync,
       systemTime: systemTime ?? this.systemTime,
+      mode: mode ?? this.mode,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -76,15 +83,17 @@ class DashboardState {
       : '${timeSync!.roundTripMs} ms';
 
   String get modeName {
-    if (heartbeat == null) return 'UNKNOWN';
-    switch (heartbeat!.customMode) {
-      case 0:
-        return 'MODE A';
-      case 1:
-        return "MODE B";
-      default:
-        return "UNKNOWN";
-    }
+    final m = mode;
+    if (m == null) return "NULL";
+    return m.mainMode == UgvMainMode.modeA ? 'MODE A' : 'MODE B';
+  }
+
+  String get subModeName {
+    final m = mode;
+    if (m == null) return 'N/A';
+    if (m.subMode == UgvSubMode.none) return 'NONE';
+    if (m.subMode == UgvSubMode.hold) return 'HOLD';
+    return 'UNKNOWN';
   }
 
   String get uptimeFormatted {

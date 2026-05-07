@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 class HudModeLabel extends StatelessWidget {
   const HudModeLabel({
     super.key,
-    required this.text,
+    required this.mainText,
+    required this.subText,
     required this.height,
     required this.maxWidth,
   });
 
-  final String text;
+  final String mainText;
+  final String subText;
   final double height;
   final double maxWidth;
 
@@ -32,21 +34,39 @@ class HudModeLabel extends StatelessWidget {
               top: height * 0.15,
               bottom: height * 0.15,
             ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: (height * 0.45).clamp(9.0, 16.0),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.4,
-                  height: 1,
-                  decoration: TextDecoration.none,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    mainText,
+                    // maxLines: 1,
+                    // overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: (height * 0.5).clamp(12.0, 18.0),
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      height: 1.1,
+                    ),
+                  ),
                 ),
-              ),
+                Flexible(
+                  child: Text(
+                    subText,
+                    // maxLines: 1,
+                    // overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.75),
+                      fontSize: (height * 0.5).clamp(11.0, 16.0),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                      height: 1.1,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
