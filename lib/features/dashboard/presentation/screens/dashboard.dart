@@ -6,6 +6,8 @@ import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.da
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 
 import 'package:scout_obd/features/system/presentation/screens/ugv_system_screen.dart';
+import 'package:scout_obd/features/compute/presentation/screens/ugv_compute_screen.dart';
+import 'package:scout_obd/features/compute/di/ugv_subsystem_providers.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -31,6 +33,10 @@ class Dashboard extends ConsumerWidget {
             selectedIndex: dashboardState.selectedIndex,
             onSelect: (index) {
               ref.read(dashboardIndexProvider.notifier).state = index;
+              if (index == 3) {
+                // Force a fresh request when COMPUTE is clicked
+                ref.invalidate(ugvVersionsProvider);
+              }
             },
           ),
 
@@ -55,7 +61,7 @@ class _DashboardContent extends StatelessWidget {
         UgvSystemScreen(),
         _PlaceholderPage(title: 'DRIVE'),
         _PlaceholderPage(title: 'POWER'),
-        _PlaceholderPage(title: 'COMPUTE'),
+        UgvComputeScreen(),
         _PlaceholderPage(title: 'SENSOR'),
         _PlaceholderPage(title: 'COM'),
         _PlaceholderPage(title: 'ALERTS'),

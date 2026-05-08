@@ -39,8 +39,7 @@ final requestUgvVersionsUseCaseProvider = Provider<RequestUgvVersionsUseCase>(
 );
 
 // One‑shot FutureProvider for the version page
-final ugvVersionsProvider = FutureProvider.family<UgvSubsystemVersionModel, void>(
-      (ref, _) {
+final ugvVersionsProvider = FutureProvider<List<UgvSubsystemVersionModel>>((ref) {
     final useCase = ref.watch(requestUgvVersionsUseCaseProvider);
     return useCase();
   },

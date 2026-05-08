@@ -22,11 +22,12 @@ class UgvSubsystemVersionRepositoryImpl
         _logger = logger;
 
   @override
-  Future<UgvSubsystemVersionModel> requestSubsystemVersion({
+  Future<List<UgvSubsystemVersionModel>> requestSubsystemVersions({
     Duration timeout = const Duration(seconds: 5),
   }) async {
-    // 1. Set up the one‑time listener for UGV_SUBSYSTEM_VERSION (50003)
-    final completer = Completer<UgvSubsystemVersionModel>();
+    final List<UgvSubsystemVersionModel> results = [];
+    final completer = Completer<List<UgvSubsystemVersionModel>>();
+    final Set<int> receivedTypes = {};
 
     final sub = _commManager
         .watchMessage(
@@ -52,13 +53,29 @@ class UgvSubsystemVersionRepositoryImpl
           component5Checksum: msg.component5Checksum.toList(),
         );
 
-        if (!completer.isCompleted) {
-          completer.complete(model);
+        _logger.info(
+          'UGV_SUBSYSTEM_VERSION: decoded model',
+          context: {
+            'type': model.type,
+            'component1Sw': model.component1Sw,
+            'component1Checksum.count': model.component1Checksum.length,
+            'receivedTypes': receivedTypes.toList(),
+          },
+        );
+
+        if (!receivedTypes.contains(msg.type)) {
+          receivedTypes.add(msg.type);
+          results.add(model);
         }
-      } on Exception catch (err) {
-        if (!completer.isCompleted) {
-          completer.completeError(err);
+
+        // We expect type 2 (SW) and type 3 (HW)
+        if (receivedTypes.contains(2) && receivedTypes.contains(3)) {
+          if (!completer.isCompleted) {
+            completer.complete(results);
+          }
         }
+      } catch (err) {
+        _logger.error('Error parsing UgvSubsystemVersion', error: err);
       }
     }, onError: (err) {
       if (!completer.isCompleted) {
@@ -66,62 +83,52 @@ class UgvSubsystemVersionRepositoryImpl
       }
     });
 
-    // 2. Send both COMMAND_LONGs (type 2 and 3) — you can tweak if you want only one
-    final cmdSw = CommandLong(
-      targetSystem: AppConstants.ugvSystemId,
-      targetComponent: AppConstants.ugvComponentId,
-      command: _kUgvSubsystemVersionMessageId,
-      param1: 0,
-      param2: 2,
-      param3: 0,
-      param4: 0,
-      param5: 0,
-      param6: 0,
-      param7: 0,
-      confirmation: 1,
-    );
+    // Send requests for both Software (2) and Hardware (3)
+    for (final type in [2, 3]) {
+      final cmd = CommandLong(
+        targetSystem: AppConstants.ugvSystemId,
+        targetComponent: AppConstants.ugvComponentId,
+        command: 512, // MAV_CMD_REQUEST_MESSAGE
+        param1: _kUgvSubsystemVersionMessageId.toDouble(),
+        param2: type.toDouble(),
+        param3: 0,
+        param4: 0,
+        param5: 0,
+        param6: 0,
+        param7: 0,
+        confirmation: 1,
+      );
 
-    final cmdHw = CommandLong(
-      targetSystem: AppConstants.ugvSystemId,
-      targetComponent: AppConstants.ugvComponentId,
-      command: _kUgvSubsystemVersionMessageId,
-      param1: 0,
-      param2: 3,
-      param3: 0,
-      param4: 0,
-      param5: 0,
-      param6: 0,
-      param7: 0,
-      confirmation: 1,
-    );
-
-    Future<void> sendCmd(CommandLong cmd) async {
       try {
         await _commManager.send(
           linkId: AppConstants.primaryLinkId,
           message: cmd,
         );
+        _logger.info('Sent version request', context: {'type': type});
       } catch (err) {
-        _logger.error('UgvSubsystemVersionRepository: sendCommandLong failed', error: err);
+        _logger.error('Failed to send version request', context: {'type': type}, error: err);
       }
     }
 
-    await Future.wait([sendCmd(cmdSw), sendCmd(cmdHw)]);
-
-    // 3. Wait for the response (or timeout)
     final timer = Timer(timeout, () {
       if (!completer.isCompleted) {
-        completer.completeError(
-          TimeoutException('UgvSubsystemVersion response timeout after ${timeout.inSeconds}s'),
-        );
+        if (results.isNotEmpty) {
+          // If we got at least one, return what we have
+          completer.complete(results);
+        } else {
+          completer.completeError(
+            TimeoutException('UgvSubsystemVersion response timeout after ${timeout.inSeconds}s'),
+          );
+        }
       }
     });
 
-    final model = await completer.future;
-
-    timer.cancel();
-    await sub.cancel();
-
-    return model;
+    try {
+      final finalResults = await completer.future;
+      return finalResults;
+    } finally {
+      timer.cancel();
+      await sub.cancel();
+    }
   }
 }

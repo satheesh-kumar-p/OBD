@@ -6,7 +6,7 @@ class RequestUgvVersionsUseCase {
 
   RequestUgvVersionsUseCase(this._repository);
 
-  Future<UgvSubsystemVersionModel> call() {
-    return _repository.requestSubsystemVersion();
+  Future<List<UgvSubsystemVersionModel>> call() {
+    return _repository.requestSubsystemVersions();
   }
 }

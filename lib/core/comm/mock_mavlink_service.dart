@@ -50,24 +50,24 @@ class MockMavlinkService implements MavlinkService {
     _connectionCtrl.add(true);
     _logger.info('MockMavlinkService connected');
 
-    _heartbeatTimer = Timer.periodic(AppConstants.heartbeatSendInterval, (_) {
-      _bootMs += AppConstants.heartbeatSendInterval.inMilliseconds;
-      _emitHeartbeat();
-    });
-
-    _systemTimeTimer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) => _emitSystemTime(),
-    );
-
-    _ugvSystemInfoTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _emitUgvSystemInfo();
-    });
+    // _heartbeatTimer = Timer.periodic(AppConstants.heartbeatSendInterval, (_) {
+    //   _bootMs += AppConstants.heartbeatSendInterval.inMilliseconds;
+    //   _emitHeartbeat();
+    // });
+    //
+    // _systemTimeTimer = Timer.periodic(
+    //   const Duration(seconds: 5),
+    //   (_) => _emitSystemTime(),
+    // );
+    //
+    // _ugvSystemInfoTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    //   _emitUgvSystemInfo();
+    // });
 
     // Emit one of each immediately so downstream repos are not “stuck”.
-    _emitHeartbeat();
-    _emitSystemTime();
-    _emitUgvSystemInfo();
+    // _emitHeartbeat();
+    // _emitSystemTime();
+    // _emitUgvSystemInfo();
   }
 
   @override
@@ -140,6 +140,60 @@ class MockMavlinkService implements MavlinkService {
         'targetComp': targetComponent,
       });
     }
+
+    if (message is CommandLong &&
+        message.command == 512 &&
+        message.param1 == 50003.0
+    ) {
+      final cmd = message;
+      final param2 = cmd.param2.toInt(); // 2 = software, 3 = hardware
+
+      // If your app sends both at once, you can respond with both types quickly
+      Future<void> sendMockResponse(int type) {
+        // Pretend this is FIRMWARE_VERSION_TYPE_BETA (128) in TYPE byte
+        final rawType = type == 2
+            ? 0x00000000 // dev / official if you want, or 128 for beta
+            : 0x00000080;
+
+        final swValue = 0x01020000 | rawType; // 1.2.0 + type
+
+        final checksum = Uint8List.fromList([
+          for (var i = 0; i < 32; i++) i % 256,
+        ]);
+
+        final ugvSwVer = UgvSubsystemVersion(
+          type: type,
+          component1Sw: swValue,
+          component2Sw: swValue + 1,
+          component3Sw: swValue + 2,
+          component4Sw: swValue + 3,
+          component5Sw: swValue + 4,
+          component1Checksum: checksum,
+          component2Checksum: checksum,
+          component3Checksum: checksum,
+          component4Checksum: checksum,
+          component5Checksum: checksum,
+        );
+
+        return Future<void>.delayed(const Duration(milliseconds: 20), () {
+          if (!_connected) return;
+          _emitRaw(ugvSwVer);
+        });
+      }
+
+      if (param2 == 2.0) {
+        // Mock software versions response
+        _logger.info("Sending mock software component versions");
+        sendMockResponse(2);
+      } else if (param2 == 3.0) {
+        // Mock hardware versions response
+        _logger.info("Sending mock hardware component versions");
+        sendMockResponse(3);
+      }
+
+      return; // skip default send echo behavior
+    }
+
   }
 
   // ── Frame emitters ────────────────────────────────────────────────────────
@@ -168,8 +222,6 @@ class MockMavlinkService implements MavlinkService {
 
   void _emitUgvSystemInfo() {
     if (_frameCtrl.isClosed) return;
-
-    final now = DateTime.now();
 
     // ── VCU FAULT ERRORS (bitmask) ──────────────────────────────────────────
     // Example: bit 0 = general fault, bit 2 = mode logic fault
