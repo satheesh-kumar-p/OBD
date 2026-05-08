@@ -1,8 +1,9 @@
 abstract final class AppConstants {
 
-  static const bool useMockBackends = true;
+  static const bool useMockBackends = false;
 
-  static const String mavlinkHost = '192.168.168.98';
+  // static const String mavlinkHost = '192.168.168.98';
+  static const String mavlinkHost = '10.10.60.147';
   static const int mavlinkPort = 7000;
 
   static const String primaryLinkId = 'ugv_obd';

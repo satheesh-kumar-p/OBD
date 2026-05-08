@@ -1,6 +1,6 @@
-import '../../enums/ugv_motor_error.dart';
-import '../../enums/ugv_sensor_error.dart';
-import '../../enums/ugv_subsystem_status.dart';
+import '../../../../shared/enums/ugv_motor_error.dart';
+import '../../../../shared/enums/ugv_sensor_error.dart';
+import '../../../../shared/enums/ugv_subsystem_status.dart';
 
 class UgvSystemEntity {
   final UgvSubsystemStatus subsystems;

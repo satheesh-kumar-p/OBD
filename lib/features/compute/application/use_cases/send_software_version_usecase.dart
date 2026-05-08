@@ -1,7 +1,7 @@
 import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
 class SendUgvVersionOnHeartbeatUseCase {
-  final UgvVersionRepository repository;
+  final UgvComponentVersionRepository repository;
 
   const SendUgvVersionOnHeartbeatUseCase(this.repository);
 

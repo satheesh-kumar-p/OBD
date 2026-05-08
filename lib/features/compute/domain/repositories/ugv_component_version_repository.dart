@@ -1,4 +1,4 @@
-abstract class UgvVersionRepository {
+abstract class UgvComponentVersionRepository {
   Future<void> sendVersionOnFirstHeartbeat({
     required int softwareVersion,
     required List<int> checksum,

@@ -4,7 +4,7 @@ import 'package:scout_obd/features/system/application/usecases/watch_ugv_health_
 import '../../../core/di/injection_container.dart';
 import '../../../core/logger/logger.dart';
 import '../../../shared/data/repositories/ugv_system_info_repository_impl.dart';
-import '../../../shared/domain/entities/ugv_system_entity.dart';
+import '../domain/entities/ugv_system_entity.dart';
 import '../../../shared/domain/repositories/ugv_system_info_repository.dart';
 
 

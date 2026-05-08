@@ -6,13 +6,13 @@ import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/logger/logger.dart';
 import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
-class UgvVersionRepositoryImpl implements UgvVersionRepository {
+class UgvComponentVersionRespositoryImpl implements UgvComponentVersionRepository {
   final CommManager _commManager;
   final Logger _logger;
 
   StreamSubscription<MavlinkFrame>? _heartbeatSub;
 
-  UgvVersionRepositoryImpl({
+  UgvComponentVersionRespositoryImpl({
     required CommManager commManager,
     required Logger logger
   })  : _commManager = commManager,

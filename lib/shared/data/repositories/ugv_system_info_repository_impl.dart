@@ -7,7 +7,7 @@ import '../../../core/comm/comm_manager.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/logger/logger.dart';
 import '../../domain/entities/ugv_mode_entity.dart';
-import '../../domain/entities/ugv_system_entity.dart';
+import '../../../features/system/domain/entities/ugv_system_entity.dart';
 import '../../domain/repositories/ugv_system_info_repository.dart';
 import '../models/ugv_system_info_model.dart';
 

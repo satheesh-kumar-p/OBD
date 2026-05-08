@@ -1,4 +1,4 @@
-import '../../../../shared/domain/entities/ugv_system_entity.dart';
+import '../../domain/entities/ugv_system_entity.dart';
 import '../../../../shared/domain/repositories/ugv_system_info_repository.dart';
 
 class WatchUgvHealthUseCase {

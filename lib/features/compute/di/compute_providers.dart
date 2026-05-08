@@ -7,11 +7,11 @@ import 'package:scout_obd/features/compute/data/models/ugv_component_version_mod
 import 'package:scout_obd/features/compute/data/repositories/ugv_component_version_repository_impl.dart';
 import 'package:scout_obd/features/compute/domain/repositories/ugv_component_version_repository.dart';
 
-final ugvVersionRepoProvider = Provider<UgvVersionRepository>((ref) {
+final ugvVersionRepoProvider = Provider<UgvComponentVersionRepository>((ref) {
   final commManager = ref.watch(commManagerProvider);
   final logger = Logger('UGV_VERSION_REPO');
 
-  return UgvVersionRepositoryImpl(
+  return UgvComponentVersionRespositoryImpl(
     commManager: commManager,
     logger: logger,
   );

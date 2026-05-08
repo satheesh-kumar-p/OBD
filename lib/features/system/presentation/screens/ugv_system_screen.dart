@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../shared/domain/entities/ugv_system_entity.dart';
+import '../../domain/entities/ugv_system_entity.dart';
 import '../../../../shared/enums/ugv_motor_error.dart';
 import '../../../../shared/enums/ugv_sensor_error.dart';
 import '../../di/ugv_health_providers.dart';

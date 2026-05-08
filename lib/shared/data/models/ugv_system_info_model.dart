@@ -1,5 +1,5 @@
 import '../../domain/entities/ugv_mode_entity.dart';
-import '../../domain/entities/ugv_system_entity.dart';
+import '../../../features/system/domain/entities/ugv_system_entity.dart';
 import '../../enums/ugv_mode.dart';
 import '../../enums/ugv_motor_error.dart';
 import '../../enums/ugv_sensor_error.dart';
