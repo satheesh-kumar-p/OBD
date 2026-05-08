@@ -50,24 +50,24 @@ class MockMavlinkService implements MavlinkService {
     _connectionCtrl.add(true);
     _logger.info('MockMavlinkService connected');
 
-    // _heartbeatTimer = Timer.periodic(AppConstants.heartbeatSendInterval, (_) {
-    //   _bootMs += AppConstants.heartbeatSendInterval.inMilliseconds;
-    //   _emitHeartbeat();
-    // });
-    //
-    // _systemTimeTimer = Timer.periodic(
-    //   const Duration(seconds: 5),
-    //   (_) => _emitSystemTime(),
-    // );
-    //
-    // _ugvSystemInfoTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-    //   _emitUgvSystemInfo();
-    // });
+    _heartbeatTimer = Timer.periodic(AppConstants.heartbeatSendInterval, (_) {
+      _bootMs += AppConstants.heartbeatSendInterval.inMilliseconds;
+      _emitHeartbeat();
+    });
+
+    _systemTimeTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _emitSystemTime(),
+    );
+
+    _ugvSystemInfoTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _emitUgvSystemInfo();
+    });
 
     // Emit one of each immediately so downstream repos are not “stuck”.
-    // _emitHeartbeat();
-    // _emitSystemTime();
-    // _emitUgvSystemInfo();
+    _emitHeartbeat();
+    _emitSystemTime();
+    _emitUgvSystemInfo();
   }
 
   @override
