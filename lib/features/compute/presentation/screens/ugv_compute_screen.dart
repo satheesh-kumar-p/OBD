@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../dashboard/di/dashboard_providers.dart';
 import '../../data/models/ugv_subsystem_version_model.dart';
 import '../../di/ugv_subsystem_providers.dart';
 import '../../enums/firmware_version_type.dart';

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
-import 'package:scout_obd/features/compute/di/ugv_subsystem_providers.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/shared/di/heartbeat_providers.dart';
 import 'package:scout_obd/shared/di/link_status_providers.dart';
