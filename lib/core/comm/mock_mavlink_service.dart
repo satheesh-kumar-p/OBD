@@ -171,24 +171,62 @@ class MockMavlinkService implements MavlinkService {
 
     final now = DateTime.now();
 
+    // ── VCU FAULT ERRORS (bitmask) ──────────────────────────────────────────
+    // Example: bit 0 = general fault, bit 2 = mode logic fault
+    final vcuFaultErrors = 0x05; // 0b0000_0101
+
+    // ── COMM DROP RATE (cA) → percentage format: dropRateComm / 100.0 ─────
+    final dropRateComm = 2324; // 23.24% in ICD scale (23.24 * 100)
+
+    // ── MOTOR ERRORS (bitmask) ─────────────────────────────────────────────
+    // LEFT: overload + overTemp + phaseLoss
+    final leftMotorErrors = 0x0D; // 0b0000_1101 → overload(1) | overTemp(2) | phaseLoss(16? verify bit)
+    // If your bits are different, adjust; example:
+    // leftMotorErrors = UgvMotorError.overload.bit |
+    //                   UgvMotorError.overTemp.bit |
+    //                   UgvMotorError.phaseLoss.bit;
+
+    // RIGHT: stalled + encoderFault
+    final rightMotorErrors = 0x48; // 0b0100_1000 → stalled(8) | encoderFault(64)
+
+    // ── SENSOR BUS (BMS) ERRORS ────────────────────────────────────────────
+    final sensorBusErrors = 0x0B; // 0b0000_1011
+    // 0x01 = underVoltage, 0x02 = overCurrent, 0x08 = overTemp
+    // -> "UNDER_VOLTAGE, OVER_CURRENT, OVER_TEMP"
+
+    // ── Realistic mix of present / enabled / healthy ────────────────────────
+    // 10 subsystems in total; bits 0–9
+
+    // 1. All present EXCEPT leftMotor (bit 2, 0x0004)
+    final ugvSubsystemPresent = 0x03FF & ~0x0004; // 0b0011_1111_1011
+
+    // 2. All enabled EXCEPT bms (bit 4, 0x0010) and handCtrl (bit 8, 0x0100)
+    final ugvSubsystemEnabled = 0x03FF & ~(0x0010 | 0x0100); // 0b0011_1001_1111
+
+    // 3. All healthy EXCEPT pdu (bit 5, 0x0020) and uhfRadio (bit 6, 0x0040)
+    final ugvSubsystemHealth = 0x03FF & ~(0x0020 | 0x0040); // 0b0011_1001_1111
+
+    final mainMode = 1;   // MODE_B
+    final subMode = 10;   // HOLD
+
     final msg = UgvSystemInfo(
-      ugvSubsystemPresent: 0x03ff, // all 10 subs present
-      ugvSubsystemEnabled: 0x03ff, // all enabled
-      ugvSubsystemHealth: 0x03ff,  // all healthy
-      computeLoad: 500,            // 50.0%
-      mainVoltage: 24000,          // 24 V
-      mainCurrent: 1200,           // 12 A
-      vcuFaultErrors: 0,
-      dropRateComm: 0,
-      leftMotorErrors: 0,
-      rightMotorErrors: 0,
-      sensorBusErrors: 0,
+      ugvSubsystemPresent: ugvSubsystemPresent,
+      ugvSubsystemEnabled: ugvSubsystemEnabled,
+      ugvSubsystemHealth: ugvSubsystemHealth,
+      computeLoad: 500,           // 50.0%
+      mainVoltage: 24000,         // 24 V
+      mainCurrent: 1200,          // 12 A
+      vcuFaultErrors: vcuFaultErrors,
+      dropRateComm: dropRateComm,
+      leftMotorErrors: leftMotorErrors,
+      rightMotorErrors: rightMotorErrors,
+      sensorBusErrors: sensorBusErrors,
       batteryRemaining: 85,
-      mainMode: 1,                 // MODE_B
-      subMode: 10,                 // HOLD
-      intendedMainMode: 1,
-      intendedSubMode: 10,
-      modeChangeReason: 0,         // GCS_COMMAND
+      mainMode: mainMode,
+      subMode: subMode,
+      intendedMainMode: mainMode,
+      intendedSubMode: subMode,
+      modeChangeReason: 0,        // GCS_COMMAND
     );
 
     _emitRaw(msg);

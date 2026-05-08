@@ -5,6 +5,8 @@ import 'package:scout_obd/features/dashboard/presentation/widgets/hud_frame_over
 import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 
+import 'package:scout_obd/features/system/presentation/screens/ugv_system_screen.dart';
+
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
@@ -50,7 +52,7 @@ class _DashboardContent extends StatelessWidget {
     return IndexedStack(
       index: state.selectedIndex,
       children: const [
-        _PlaceholderPage(title: 'SYSTEM'),
+        UgvSystemScreen(),
         _PlaceholderPage(title: 'DRIVE'),
         _PlaceholderPage(title: 'POWER'),
         _PlaceholderPage(title: 'COMPUTE'),
