@@ -16,34 +16,62 @@ class UgvComputeScreen extends ConsumerWidget {
     final leftPadding = size.width * 0.20;
     final topPadding = size.height * 0.10;
 
+    // Force showing the loading screen if we are currently fetching fresh data,
+    // even if we had a previous error or result.
+    if (versionsAsync.isLoading) {
+      return _buildLoading(leftPadding, topPadding);
+    }
+
     return versionsAsync.when(
       data: (models) => _buildContent(models, leftPadding, topPadding),
-      loading: () => Center(
-        child: Padding(
-          padding: EdgeInsets.only(left: leftPadding, top: topPadding),
-          child: const Text('REQUESTING VERSIONS...',
-              style: TextStyle(
-                  color: Colors.white24,
-                  fontSize: 32,
-                  fontFamily: 'monospace')),
-        ),
+      loading: () => _buildLoading(leftPadding, topPadding),
+      error: (err, stack) => _buildError(err, leftPadding, topPadding),
+    );
+  }
+
+  Widget _buildLoading(double leftPadding, double topPadding) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(left: leftPadding, top: topPadding),
+        child: const Text('REQUESTING VERSIONS...',
+            style: TextStyle(
+                color: Colors.white24,
+                fontSize: 32,
+                fontFamily: 'monospace')),
       ),
-      error: (err, stack) => Center(
-        child: Padding(
-          padding: EdgeInsets.only(left: leftPadding, top: topPadding),
-          child: Text('ERROR: $err',
-              style: const TextStyle(
-                  color: Colors.red, fontSize: 32, fontFamily: 'monospace')),
+    );
+  }
+
+  Widget _buildError(Object err, double leftPadding, double topPadding) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(left: leftPadding, top: topPadding, right: 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('SYSTEM ERROR',
+                style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Text('$err',
+                style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 24,
+                    fontFamily: 'monospace')),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildContent(
-      List<UgvSubsystemVersionModel> models, double leftPadding, double topPadding) {
+  Widget _buildContent(List<UgvSubsystemVersionModel> models,
+      double leftPadding, double topPadding) {
     const textStyle = TextStyle(
       color: Colors.white,
-      fontSize: 36, // Increased SW version size further
+      fontSize: 36,
       height: 1.3,
       fontFamily: 'monospace',
       fontWeight: FontWeight.w600,
@@ -57,7 +85,7 @@ class UgvComputeScreen extends ConsumerWidget {
     );
     const checksumStyle = TextStyle(
       color: Colors.white38,
-      fontSize: 30, // SHA font size is now almost equal to sw version
+      fontSize: 30,
       fontFamily: 'monospace',
       height: 1.1,
     );
@@ -71,8 +99,8 @@ class UgvComputeScreen extends ConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding:
-          EdgeInsets.only(left: leftPadding, top: topPadding, right: 20, bottom: 60),
+      padding: EdgeInsets.only(
+          left: leftPadding, top: topPadding, right: 20, bottom: 60),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,7 +127,7 @@ class UgvComputeScreen extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(width: 20), // Reduced gap between columns
+          const SizedBox(width: 20),
 
           // Right Column: Hardware
           Expanded(
@@ -126,7 +154,6 @@ class UgvComputeScreen extends ConsumerWidget {
 
   Widget _versionItem(String label, int swValue, List<int>? checksum,
       TextStyle textStyle, TextStyle checksumStyle) {
-    // Decode the uint32 version using the FirmwareVersion32 logic
     final versionStr = FirmwareVersion32.fromUint32(swValue).toString();
 
     String toHex(List<int> bytes) {
@@ -143,8 +170,7 @@ class UgvComputeScreen extends ConsumerWidget {
           Text('$label: $versionStr', style: textStyle),
           if (checksum != null && checksum.any((b) => b != 0))
             Text('SHA: ${toHex(checksum)}',
-                softWrap: true, // Ensure it wraps to next row
-                style: checksumStyle),
+                softWrap: true, style: checksumStyle),
         ],
       ),
     );
