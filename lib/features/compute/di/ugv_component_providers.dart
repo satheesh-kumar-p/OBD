@@ -34,7 +34,7 @@ final ugvVersionProvider = FutureProvider<void>((ref) {
   final useCase = ref.watch(sendUgvVersionUseCaseProvider);
 
   final versionModel = UgvComponentVersionModel(
-    softwareVersion: 0x01000204,
+    softwareVersion: 0x00000104,
     checksum: hexStringToBytes('6a7f3ae72d88f3cb5cf8101f2797ea28b31fcf98a5012c4d10231e8a9536063b'),
     targetSystem: AppConstants.ugvSystemId,
     targetComponent: AppConstants.ugvComponentId,
