@@ -258,7 +258,7 @@ class MockMavlinkService implements MavlinkService {
     // 3. All healthy EXCEPT pdu (bit 5, 0x0020) and uhfRadio (bit 6, 0x0040)
     final ugvSubsystemHealth = 0x03FF & ~(0x0020 | 0x0040); // 0b0011_1001_1111
 
-    final mainMode = 1;   // MODE_B
+    final mainMode = 2;   // MODE_B
     final subMode = 10;   // HOLD
 
     final msg = UgvSystemInfo(
