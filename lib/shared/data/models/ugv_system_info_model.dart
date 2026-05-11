@@ -65,11 +65,21 @@ class UgvSystemInfoModel {
 
   UgvModeEntity toModeEntity() {
     return UgvModeEntity(
-      mainMode: UgvMainMode.values.elementAt(mainMode),
-      subMode: UgvSubMode.values.firstWhere((e) => e.value == subMode),
-      intendedMainMode: UgvMainMode.values.elementAt(intendedMainMode),
-      intendedSubMode: UgvSubMode.values.firstWhere((e) => e.value == intendedSubMode),
-      modeChangeReason: ModeChangeReason.values.elementAt(modeChangeReason),
+      mainMode: UgvMainMode.values.firstWhere(
+            (e) => e.value == mainMode,
+      ),
+      subMode: UgvSubMode.values.firstWhere(
+            (e) => e.value == subMode,
+      ),
+      intendedMainMode: UgvMainMode.values.firstWhere(
+            (e) => e.value == intendedMainMode,
+      ),
+      intendedSubMode: UgvSubMode.values.firstWhere(
+            (e) => e.value == intendedSubMode,
+      ),
+      modeChangeReason: ModeChangeReason.values.firstWhere(
+            (e) => e.value == modeChangeReason,
+      ),
     );
   }
 

@@ -18,11 +18,21 @@ class UgvModeEntity {
 
   factory UgvModeEntity.fromDto(UgvSystemInfoModel dto) {
     return UgvModeEntity(
-      mainMode: UgvMainMode.values[dto.mainMode],
-      subMode: UgvSubMode.values.elementAt(UgvSubMode.values.indexWhere((e) => e.value == dto.subMode)),
-      intendedMainMode: UgvMainMode.values[dto.intendedMainMode],
-      intendedSubMode: UgvSubMode.values.elementAt(UgvSubMode.values.indexWhere((e) => e.value == dto.intendedSubMode)),
-      modeChangeReason: ModeChangeReason.values[dto.modeChangeReason],
+      mainMode: UgvMainMode.values.firstWhere(
+            (e) => e.value == dto.mainMode,
+      ),
+      subMode: UgvSubMode.values.firstWhere(
+            (e) => e.value == dto.subMode,
+      ),
+      intendedMainMode: UgvMainMode.values.firstWhere(
+            (e) => e.value == dto.intendedMainMode,
+      ),
+      intendedSubMode: UgvSubMode.values.firstWhere(
+            (e) => e.value == dto.intendedSubMode,
+      ),
+      modeChangeReason: ModeChangeReason.values.firstWhere(
+            (e) => e.value == dto.modeChangeReason,
+      ),
     );
   }
 }
