@@ -1,6 +1,6 @@
 enum UgvMainMode {
-  modeA(0), // 0 = MODE_A
-  modeB(1); // 1 = MODE_B
+  modeA(1), // 1 = MODE_A
+  modeB(2); // 2 = MODE_B
 
   const UgvMainMode(this.value);
   final int value;
