@@ -22,9 +22,7 @@ class UgvSubsystemVersionRepositoryImpl
         _logger = logger;
 
   @override
-  Future<List<UgvSubsystemVersionModel>> requestSubsystemVersions({
-    Duration timeout = const Duration(seconds: 5),
-  }) async {
+  Future<List<UgvSubsystemVersionModel>> requestSubsystemVersions() async {
     final List<UgvSubsystemVersionModel> results = [];
     final completer = Completer<List<UgvSubsystemVersionModel>>();
     final Set<int> receivedTypes = {};
@@ -99,35 +97,22 @@ class UgvSubsystemVersionRepositoryImpl
         confirmation: 1,
       );
 
-      try {
-        await _commManager.send(
-          linkId: AppConstants.primaryLinkId,
-          message: cmd,
-        );
-        _logger.info('Sent version request', context: {'type': type});
-      } catch (err) {
-        _logger.error('Failed to send version request', context: {'type': type}, error: err);
-      }
-    }
+      _logger.info("Sent Version Request");
 
-    final timer = Timer(timeout, () {
-      if (!completer.isCompleted) {
-        if (results.isNotEmpty) {
-          // If we got at least one, return what we have
-          completer.complete(results);
-        } else {
-          completer.completeError(
-            TimeoutException('UgvSubsystemVersion response timeout after ${timeout.inSeconds}s'),
-          );
-        }
-      }
-    });
+      _commManager
+          .send(linkId: AppConstants.primaryLinkId, message: cmd)
+          .catchError((err) {
+            _logger.error(
+              'Failed to send version request for type $type',
+              error: err,
+            );
+          });
+    }
 
     try {
       final finalResults = await completer.future;
       return finalResults;
     } finally {
-      timer.cancel();
       await sub.cancel();
     }
   }
