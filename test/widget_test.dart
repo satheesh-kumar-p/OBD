@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:scout_display/main.dart';
+import 'package:scout_obd/main.dart';
 
 void main() {
   testWidgets('HUD app smoke test', (WidgetTester tester) async {

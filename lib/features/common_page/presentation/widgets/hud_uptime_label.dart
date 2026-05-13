@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:scout_display/core/utils/duration_format.dart';
+import 'package:scout_obd/core/utils/duration_format.dart';
 
 class HudUptimeLabel extends StatefulWidget {
   const HudUptimeLabel({super.key, required this.height});

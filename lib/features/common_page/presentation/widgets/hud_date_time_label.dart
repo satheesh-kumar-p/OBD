@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_display/core/providers.dart';
-import 'package:scout_display/core/utils/date_time_format.dart';
+import 'package:scout_obd/core/providers.dart';
+import 'package:scout_obd/core/utils/date_time_format.dart';
 
 class HudDateTimeLabel extends ConsumerWidget {
   const HudDateTimeLabel({super.key, required this.height});

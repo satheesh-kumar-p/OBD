@@ -1,7 +1,13 @@
-import 'package:scout_display/shared/domain/models/time_sync.dart';
+import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
+import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
 
-abstract class TimeSyncRepository {
-  Stream<TimeSync> get stream;
+abstract interface class TimeSyncRepository {
 
-  Future<void> sendRequest();
+  Stream<SystemTimeEntity> watchSystemTime();
+
+  Stream<TimeSyncEntity> watchTimeSync();
+
+  void startTimeSync();
+
+  void stopTimeSync();
 }

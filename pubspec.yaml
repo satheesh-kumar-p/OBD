@@ -1,9 +1,9 @@
-name: scout_display
-description: "A new Flutter project."
+name: scout_obd
+description: Scout OBD Application
 
 publish_to: 'none' 
 
-version: 0.0.1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.11.4

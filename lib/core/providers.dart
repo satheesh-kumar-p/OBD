@@ -5,11 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:comm_module/transport/udp_transport.dart';
 import 'package:mavlink_nrt/dialects/ardupilotmega.dart';
 import 'package:mavlink_nrt/mavlink.dart';
+import 'package:scout_obd/core/logger/logger.dart';
 
-import 'package:scout_display/core/mavlink_service.dart';
-import 'package:scout_display/shared/data/repositories/time_sync_repository_impl.dart';
+import 'package:scout_obd/core/mavlink_service.dart';
+import 'package:scout_obd/shared/data/repositories/time_sync_repository_impl.dart';
 
 final transportProvider = FutureProvider<UdpTransport>((ref) async {
+  final logger = Logger('TransportProvider');
 
   final transport = UdpTransport(
     address: InternetAddress.anyIPv4,

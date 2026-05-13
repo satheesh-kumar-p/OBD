@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_display/core/providers.dart';
+import 'package:scout_obd/core/providers.dart';
 import '../widgets/hud_sidebar.dart';
 
 class CommonPage extends ConsumerStatefulWidget {
