@@ -1,4 +1,3 @@
-
 import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
 
 /// Maps raw MAVLink TIMESYNC fields → domain entity.
