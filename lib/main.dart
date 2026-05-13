@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/features/compute/di/ugv_component_providers.dart';
 import 'package:scout_obd/features/system/di/ugv_health_providers.dart';
@@ -31,38 +32,45 @@ class MyApp extends ConsumerWidget {
     // 1. Watch the connection process.
     final connectionState = ref.watch(commConnectionProvider);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Scout Display',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightBlueAccent,
-          brightness: Brightness.dark,
-        ),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(1280, 800),
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: (context, child) {
-        return AppBackground(child: child ?? const SizedBox.shrink());
+        return MaterialApp(
+          debugShowCheckedModeBanner: AppConstants.useMockBackends,
+          title: 'Scout Display',
+          theme: ThemeData(
+            useMaterial3: true,
+            scaffoldBackgroundColor: Colors.black,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.lightBlueAccent,
+              brightness: Brightness.dark,
+            ),
+          ),
+          builder: (context, child) {
+            return AppBackground(child: child ?? const SizedBox.shrink());
+          },
+          // 2. Handle connection lifecycle in the UI
+          home: connectionState.when(
+            data: (_) {
+              // Once connected, trigger the startup services
+              ref.watch(heartbeatProvider(AppConstants.primaryLinkId));
+              ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
+              ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
+              ref.watch(ugvVersionProvider);
+              ref.watch(ugvModeProvider(AppConstants.primaryLinkId));
+              ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
+              return const Dashboard();
+            },
+            loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),
+            error: (err, stack) => _ConnectionErrorScreen(
+              error: err,
+              onRetry: () => ref.invalidate(commConnectionProvider),
+            ),
+          ),
+        );
       },
-      // 2. Handle connection lifecycle in the UI
-      home: connectionState.when(
-        data: (_) {
-          // Once connected, trigger the startup services
-          ref.watch(heartbeatProvider(AppConstants.primaryLinkId));
-          ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
-          ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
-          ref.watch(ugvVersionProvider);
-          ref.watch(ugvModeProvider(AppConstants.primaryLinkId));
-          ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
-          return const Dashboard();
-        },
-        loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),
-        error: (err, stack) => _ConnectionErrorScreen(
-          error: err,
-          onRetry: () => ref.invalidate(commConnectionProvider),
-        ),
-      ),
     );
   }
 }

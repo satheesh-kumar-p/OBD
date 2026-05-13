@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../domain/entities/ugv_system_entity.dart';
-import '../../../../shared/enums/ugv_motor_error.dart';
-import '../../../../shared/enums/ugv_sensor_error.dart';
+import '../../../../shared/enums/ugv_sub_system.dart';
 import '../../di/ugv_health_providers.dart';
 
 class UgvSystemScreen extends ConsumerWidget {
@@ -13,82 +13,131 @@ class UgvSystemScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final healthDataAsync = ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
     
-    // Calculate safe margins based on screen size to avoid HUD elements
-    final size = MediaQuery.of(context).size;
-    // Sidebar is up to 20% of width, so 25% left padding provides a safe margin.
-    // Top HUD bar is ~12-15% of height, so 20% top padding clears it.
-    final leftPadding = size.width * 0.20;
-    final topPadding = size.height * 0.10;
-
     return healthDataAsync.when(
-      data: (data) => _buildPlainList(data, leftPadding, topPadding),
-      loading: () => const Center(child: Text('LOADING...', style: TextStyle(color: Colors.white24, fontSize: 32))),
-      error: (err, stack) => Center(child: Text('ERROR: $err', style: const TextStyle(color: Colors.red, fontSize: 32))),
+      data: (data) => _buildSubsystemTable(data),
+      loading: () => Center(
+        child: Text(
+          'LOADING...', 
+          style: TextStyle(
+            color: Colors.white24, 
+            fontSize: 32.sp,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ),
+      error: (err, stack) => Center(
+        child: Text(
+          'ERROR: $err', 
+          style: TextStyle(
+            color: Colors.red, 
+            fontSize: 32.sp,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildPlainList(UgvSystemEntity data, double leftPadding, double topPadding) {
-    const textStyle = TextStyle(
+  Widget _buildSubsystemTable(UgvSystemEntity data) {
+    final textStyle = TextStyle(
       color: Colors.white, 
-      fontSize: 32,
+      fontSize: 36.sp, 
       height: 1.5, 
       fontFamily: 'monospace',
       fontWeight: FontWeight.w500,
     );
-    const headerStyle = TextStyle(
+    final headerStyle = TextStyle(
       color: Colors.cyanAccent, 
-      fontSize: 32,
+      fontSize: 36.sp,
       fontWeight: FontWeight.bold, 
       height: 2.2,
-      letterSpacing: 1.2,
+      letterSpacing: 1.1,
     );
 
-    // Scaling data based on ICD:
-    // Compute Load: d% -> % (divide by 10)
-    final computeLoad = (data.computeLoad / 10.0).toStringAsFixed(1);
-    // Main Voltage: mV -> V (divide by 1000)
-    final mainVoltage = (data.mainVoltage / 1000.0).toStringAsFixed(2);
-    // Main Current: cA -> A (divide by 100)
-    final mainCurrent = (data.mainCurrent / 100.0).toStringAsFixed(2);
-    // Comm Drop Rate: c% -> % (divide by 100)
-    final dropRate = (data.dropRateComm / 100.0).toStringAsFixed(2);
-
     return SingleChildScrollView(
-      padding: EdgeInsets.only(left: leftPadding, top: topPadding, right: 60, bottom: 60),
+      padding: EdgeInsets.only(
+        left: 256.w, 
+        top: 80.h,
+        right: 60.w, 
+        bottom: 60.h,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('--- UGV SYSTEM HEALTH REPORT ---', style: headerStyle),
-          Text('BATTERY REMAINING : ${data.batteryRemaining}%', style: textStyle),
-          Text('MAIN VOLTAGE      : $mainVoltage V', style: textStyle),
-          Text('MAIN CURRENT      : $mainCurrent A', style: textStyle),
-          Text('COMPUTE LOAD      : $computeLoad%', style: textStyle),
-          Text('VCU FAULT ERRORS  : ${data.vcuFaultErrors}', style: textStyle),
-          Text('COMM DROP RATE    : $dropRate%', style: textStyle),
-          
-          const SizedBox(height: 30),
-          const Text('--- SUBSYSTEM STATUS ---', style: headerStyle),
-          Text('PRESENT : ${data.subsystems.present.map((e) => e.name.toUpperCase()).join(", ")}', style: textStyle),
-          Text('ENABLED : ${data.subsystems.enabled.map((e) => e.name.toUpperCase()).join(", ")}', style: textStyle),
-          Text('HEALTHY : ${data.subsystems.healthy.map((e) => e.name.toUpperCase()).join(", ")}', style: textStyle),
+          Table(
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            columnWidths: const {
+              0: IntrinsicColumnWidth(),
+              1: IntrinsicColumnWidth(),
+            },
+            children: [
+              TableRow(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 24.h, right: 60.w),
+                    child: Text(
+                      'SUB SYSTEM', 
+                      style: headerStyle,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 24.h),
+                    child: Center(
+                      child: Text(
+                        'STATUS', 
+                        style: headerStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...UgvSubsystem.values.map((sub) {
+                final isPresent = data.subsystems.present.contains(sub);
+                final isHealthy = data.subsystems.healthy.contains(sub);
 
-          const SizedBox(height: 30),
-          const Text('--- MOTOR ERROR MAP ---', style: headerStyle),
-          ...UgvMotorError.values.map((error) {
-            final left = data.leftMotorErrors.errors.contains(error) ? "FAULT" : "OK";
-            final right = data.rightMotorErrors.errors.contains(error) ? "FAULT" : "OK";
-            final label = error.name.replaceAll(RegExp(r'(?=[A-Z])'), '_').toUpperCase();
-            return Text('${label.padRight(15)} : L[$left] R[$right]', style: textStyle);
-          }),
+                Color dotColor;
+                if (!isPresent) {
+                  dotColor = Colors.white;
+                } else if (isHealthy) {
+                  dotColor = Colors.green; // Green
+                } else {
+                  dotColor = Colors.red;
+                }
 
-          const SizedBox(height: 30),
-          const Text('--- SENSOR ERROR MAP ---', style: headerStyle),
-          ...UgvSensorError.values.map((error) {
-            final status = data.sensorBusErrors.errors.contains(error) ? "FAULT" : "OK";
-            final label = error.name.replaceAll(RegExp(r'(?=[A-Z])'), '_').toUpperCase();
-            return Text('${label.padRight(15)} : [$status]', style: textStyle);
-          }),
-
+                return TableRow(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 60.w, bottom: 20.h),
+                      child: Text(
+                        sub.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
+                        style: textStyle
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20.h),
+                      child: Center(
+                        child: Container(
+                          width: 20.w,
+                          height: 20.w,
+                          decoration: BoxDecoration(
+                            color: dotColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: dotColor.withOpacity(0.4),
+                                blurRadius: 6.w,
+                                spreadRadius: 2.w,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
         ],
       ),
     );
