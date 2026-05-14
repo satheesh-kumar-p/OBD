@@ -281,10 +281,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2342f2f14dc6618aabc2f4f0d88010388ef6075c"
+      resolved-ref: "34446f2631819aaf476e36fc6c1a75484ad4464f"
       url: "https://github.com/karthikeya-tummala-nrt/mavlink_module"
     source: git
-    version: "0.2.0"
+    version: "0.2.1"
   meta:
     dependency: transitive
     description:
