@@ -223,57 +223,32 @@ class MockMavlinkService implements MavlinkService {
   void _emitUgvSystemInfo() {
     if (_frameCtrl.isClosed) return;
 
-    // ── VCU FAULT ERRORS (bitmask) ──────────────────────────────────────────
-    // Example: bit 0 = general fault, bit 2 = mode logic fault
-    final vcuFaultErrors = 0x05; // 0b0000_0101
+    // subsystemHealth1: bits 0-7 → subsystems 0-3
+    // [LeftMotorCtrl(0-1), RightMotorCtrl(2-3), HV_Batt(4-5), LV_Batt(6-7)]
+    final health1 = (1 << 0) | (2 << 2) | (2 << 4) | (3 << 6);  // healthy, healthy, healthy, unhealthy
 
-    // ── COMM DROP RATE (cA) → percentage format: dropRateComm / 100.0 ─────
-    final dropRateComm = 2324; // 23.24% in ICD scale (23.24 * 100)
+    // subsystemHealth2: bits 0-7 → subsystems 4-7
+    // [LV_PDU(0-1), DCDC_48V(2-3), DCDC_5V(4-5), VCU(6-7)]
+    final health2 = (2 << 0) | (1 << 2) | (2 << 4) | (2 << 6);  // healthy, noComm, healthy, healthy
 
-    // ── MOTOR ERRORS (bitmask) ─────────────────────────────────────────────
-    // LEFT: overload + overTemp + phaseLoss
-    final leftMotorErrors = 0x0D; // 0b0000_1101 → overload(1) | overTemp(2) | phaseLoss(16? verify bit)
-    // If your bits are different, adjust; example:
-    // leftMotorErrors = UgvMotorError.overload.bit |
-    //                   UgvMotorError.overTemp.bit |
-    //                   UgvMotorError.phaseLoss.bit;
+    // subsystemHealth3: bits 0-7 → subsystems 8-11
+    // [FrontLeftMotor(0-1), RearLeftMotor(2-3), FrontRightMotor(4-5), RearRightMotor(6-7)]
+    final health3 = (3 << 0) | (2 << 2) | (1 << 4) | (2 << 6);  // unhealthy, healthy, noComm, healthy
 
-    // RIGHT: stalled + encoderFault
-    final rightMotorErrors = 0x48; // 0b0100_1000 → stalled(8) | encoderFault(64)
+    // subsystemHealth4: bits 0-3 → subsystems 12-14 (UHF=12 healthy!)
+    // [UHF_Radio(0-1), L_Band(2-3), Compute(4-5)]
+    final health4 = (2 << 0) | (3 << 2) | (1 << 4);  // UHF=healthy, L_Band=unhealthy, Compute=noComm
 
-    // ── SENSOR BUS (BMS) ERRORS ────────────────────────────────────────────
-    final sensorBusErrors = 0x0B; // 0b0000_1011
-    // 0x01 = underVoltage, 0x02 = overCurrent, 0x08 = overTemp
-    // -> "UNDER_VOLTAGE, OVER_CURRENT, OVER_TEMP"
-
-    // ── Realistic mix of present / enabled / healthy ────────────────────────
-    // 10 subsystems in total; bits 0–9
-
-    // 1. All present EXCEPT leftMotor (bit 2, 0x0004)
-    final ugvSubsystemPresent = 0x03FF & ~0x0004; // 0b0011_1111_1011
-
-    // 2. All enabled EXCEPT bms (bit 4, 0x0010) and handCtrl (bit 8, 0x0100)
-    final ugvSubsystemEnabled = 0x03FF & ~(0x0010 | 0x0100); // 0b0011_1001_1111
-
-    // 3. All healthy EXCEPT pdu (bit 5, 0x0020) and uhfRadio (bit 6, 0x0040)
-    final ugvSubsystemHealth = 0x03FF & ~(0x0020 | 0x0040); // 0b0011_1001_1111
 
     final mainMode = 2;   // MODE_B
     final subMode = 10;   // HOLD
 
     final msg = UgvSystemInfo(
-      ugvSubsystemPresent: ugvSubsystemPresent,
-      ugvSubsystemEnabled: ugvSubsystemEnabled,
-      ugvSubsystemHealth: ugvSubsystemHealth,
-      computeLoad: 500,           // 50.0%
-      mainVoltage: 24000,         // 24 V
-      mainCurrent: 1200,          // 12 A
-      vcuFaultErrors: vcuFaultErrors,
-      dropRateComm: dropRateComm,
-      leftMotorErrors: leftMotorErrors,
-      rightMotorErrors: rightMotorErrors,
-      sensorBusErrors: sensorBusErrors,
-      batteryRemaining: 85,
+      subsystemHealth1: health1,
+      subsystemHealth2: health2,
+      subsystemHealth3: health3,
+      subsystemHealth4: health4,
+      batterySoc: 85,
       mainMode: mainMode,
       subMode: subMode,
       intendedMainMode: mainMode,

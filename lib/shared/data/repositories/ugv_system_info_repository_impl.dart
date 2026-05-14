@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:mavlink_module/dialects/ugvcustom.dart';
 import 'package:mavlink_module/mavlink_frame.dart';
+import 'package:scout_obd/features/system/domain/entities/health_status_entity.dart';
 
 import '../../../core/comm/comm_manager.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/logger/logger.dart';
 import '../../domain/entities/ugv_mode_entity.dart';
-import '../../../features/system/domain/entities/ugv_system_entity.dart';
 import '../../domain/repositories/ugv_system_info_repository.dart';
 import '../models/ugv_system_info_model.dart';
 
@@ -23,7 +23,7 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   final _modeCtrl = StreamController<UgvModeEntity>.broadcast();
 
   /// Stream for UGV telemetry / health changes.
-  final _telemetryCtrl = StreamController<UgvSystemEntity>.broadcast();
+  final _telemetryCtrl = StreamController<HealthStatusEntity>.broadcast();
 
   UgvSystemInfoRepositoryImpl({
     required CommManager commManager,
@@ -57,24 +57,17 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   Stream<UgvModeEntity> watchUgvMode(String linkId) => _modeCtrl.stream;
 
   @override
-  Stream<UgvSystemEntity> watchUgvHealth(String linkId) => _telemetryCtrl.stream;
+  Stream<HealthStatusEntity> watchUgvHealth(String linkId) => _telemetryCtrl.stream;
 
   void _handleUgvSystemInfo(MavlinkFrame frame) {
     final msg = frame.message as UgvSystemInfo;
 
     final model = UgvSystemInfoModel(
-      ugvSubsystemPresent: msg.ugvSubsystemPresent,
-      ugvSubsystemEnabled: msg.ugvSubsystemEnabled,
-      ugvSubsystemHealth: msg.ugvSubsystemHealth,
-      computeLoad: msg.computeLoad,
-      mainVoltage: msg.mainVoltage,
-      mainCurrent: msg.mainCurrent,
-      vcuFaultErrors: msg.vcuFaultErrors,
-      dropRateComm: msg.dropRateComm,
-      leftMotorErrors: msg.leftMotorErrors,
-      rightMotorErrors: msg.rightMotorErrors,
-      sensorBusErrors: msg.sensorBusErrors,
-      batteryRemaining: msg.batteryRemaining,
+      subsystemHealth1: msg.subsystemHealth1,
+      subsystemHealth2: msg.subsystemHealth2,
+      subsystemHealth3: msg.subsystemHealth3,
+      subsystemHealth4: msg.subsystemHealth4,
+      batterySoc: msg.batterySoc,
       mainMode: msg.mainMode,
       subMode: msg.subMode,
       intendedMainMode: msg.intendedMainMode,
@@ -83,18 +76,18 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
     );
 
     final modeEntity = model.toModeEntity();
-    final telemetryEntity = model.toSystemEntity();
+    final healthStatusEntity = model.toHealthStatusEntity();
 
     _modeCtrl.add(modeEntity);
-    _telemetryCtrl.add(telemetryEntity);
+    _telemetryCtrl.add(healthStatusEntity);
 
+    _logger.debug('Map entries ${healthStatusEntity.subsystemHealthMap.keys}');
     _logger.debug(
       'UGV_SYSTEM_INFO rx',
       context: {
         'mainMode': modeEntity.mainMode.name,
         'subMode': modeEntity.subMode.name,
-        'batteryRemaining': telemetryEntity.batteryRemaining,
-        'mainCurrent': telemetryEntity.mainCurrent,
+        'uhfRadio': healthStatusEntity.subsystemHealthMap['UHF Radio']?.value
       },
     );
   }
