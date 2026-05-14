@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim AS production
+FROM ubuntu:22.04 AS production
 
 ENV DEBIAN_FRONTEND=noninteractive
 
