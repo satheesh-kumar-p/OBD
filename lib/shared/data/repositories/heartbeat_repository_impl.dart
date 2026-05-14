@@ -55,7 +55,7 @@ class HeartbeatRepositoryImpl implements HeartbeatRepository {
         .listen(_handleHeartbeat);
 
     // 2. Start sender loop
-    _sendTimer = Timer.periodic(const Duration(seconds: 1), (_) => _sendHeartbeat(linkId));
+    // _sendTimer = Timer.periodic(AppConstants.heartbeatSendInterval, (_) => _sendHeartbeat(linkId));
 
     // 3. Start watchdog loop
     _watchdogTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkLiveness());
