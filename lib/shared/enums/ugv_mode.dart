@@ -1,4 +1,5 @@
 enum UgvMainMode {
+  unknown(-1), // Invalid values
   modeA(1), // 1 = MODE_A
   modeB(2); // 2 = MODE_B
 
@@ -7,6 +8,7 @@ enum UgvMainMode {
 }
 
 enum UgvSubMode {
+  unknown(-1), // Invalid values
   none(0),
   hold(10);
 
@@ -15,6 +17,7 @@ enum UgvSubMode {
 }
 
 enum ModeChangeReason {
+  unknown(-1), // Invalid values
   gcsCommand(0),
   failsafe(1),
   sensorFault(2),

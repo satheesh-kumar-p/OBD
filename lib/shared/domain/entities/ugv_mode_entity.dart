@@ -19,19 +19,24 @@ class UgvModeEntity {
   factory UgvModeEntity.fromDto(UgvSystemInfoModel dto) {
     return UgvModeEntity(
       mainMode: UgvMainMode.values.firstWhere(
-            (e) => e.value == dto.mainMode,
+        (e) => e.value == dto.mainMode,
+        orElse: () => UgvMainMode.unknown,
       ),
       subMode: UgvSubMode.values.firstWhere(
-            (e) => e.value == dto.subMode,
+        (e) => e.value == dto.subMode,
+        orElse: () => UgvSubMode.unknown,
       ),
       intendedMainMode: UgvMainMode.values.firstWhere(
-            (e) => e.value == dto.intendedMainMode,
+        (e) => e.value == dto.intendedMainMode,
+        orElse: () => UgvMainMode.unknown,
       ),
       intendedSubMode: UgvSubMode.values.firstWhere(
-            (e) => e.value == dto.intendedSubMode,
+        (e) => e.value == dto.intendedSubMode,
+        orElse: () => UgvSubMode.unknown,
       ),
       modeChangeReason: ModeChangeReason.values.firstWhere(
-            (e) => e.value == dto.modeChangeReason,
+        (e) => e.value == dto.modeChangeReason,
+        orElse: () => ModeChangeReason.unknown,
       ),
     );
   }

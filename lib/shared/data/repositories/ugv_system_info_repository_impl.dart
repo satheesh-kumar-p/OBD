@@ -75,20 +75,13 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
       modeChangeReason: msg.modeChangeReason,
     );
 
+    _logger.info("Received", context: {"data": msg.toString()});
+
     final modeEntity = model.toModeEntity();
     final healthStatusEntity = model.toHealthStatusEntity();
 
     _modeCtrl.add(modeEntity);
     _telemetryCtrl.add(healthStatusEntity);
 
-    _logger.debug('Map entries ${healthStatusEntity.subsystemHealthMap.keys}');
-    _logger.debug(
-      'UGV_SYSTEM_INFO rx',
-      context: {
-        'mainMode': modeEntity.mainMode.name,
-        'subMode': modeEntity.subMode.name,
-        'uhfRadio': healthStatusEntity.subsystemHealthMap['UHF Radio']?.value
-      },
-    );
   }
 }
