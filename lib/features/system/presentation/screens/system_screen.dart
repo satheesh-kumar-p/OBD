@@ -6,8 +6,8 @@ import '../../di/ugv_health_providers.dart';
 import '../../domain/entities/health_status_entity.dart';
 import '../../enums/subsystem_status_enum.dart';
 
-class UgvSystemScreen extends ConsumerWidget {
-  const UgvSystemScreen({super.key});
+class SystemScreen extends ConsumerWidget {
+  const SystemScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
