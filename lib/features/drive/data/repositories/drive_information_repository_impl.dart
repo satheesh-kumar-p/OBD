@@ -37,6 +37,7 @@ class DriveInformationRepositoryImpl implements DriveInformationRepository {
       rearLeftMotor: motor(Status.healthy),
       rearRightMotor: motor(Status.healthy),
       leftMotorController: MotorControllerInformation(
+        drive: Status.fault,
         overCurrent: Status.healthy,
         underPressure: Status.healthy,
         underVoltage: toggle ? Status.fault : Status.healthy,
@@ -46,6 +47,7 @@ class DriveInformationRepositoryImpl implements DriveInformationRepository {
         temperature: 30 + (index % 20),
       ),
       rightMotorController: MotorControllerInformation(
+        drive: Status.healthy,
         overCurrent: Status.healthy,
         underPressure: Status.healthy,
         underVoltage: Status.healthy,

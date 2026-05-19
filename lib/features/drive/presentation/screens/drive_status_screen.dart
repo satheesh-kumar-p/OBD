@@ -141,11 +141,12 @@ class DriveScreen extends ConsumerWidget {
     );
 
     final controllers = {
-      'LEFT MOTOR \nCONTROLLER': data.leftMotorController,
-      'RIGHT MOTOR \nCONTROLLER': data.rightMotorController,
+      'LEFT MOTOR CTRL': data.leftMotorController,
+      'RIGHT MOTOR CTRL': data.rightMotorController,
     };
 
     final columns = [
+      'DRIVE',
       'OVER CURRENT',
       'OVER PRESSURE',
       'UNDER VOLTAGE',
@@ -180,13 +181,14 @@ class DriveScreen extends ConsumerWidget {
                 padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
                 child: Text(entry.key, style: rowHeaderStyle),
               ),
+              _buildStatusDot(ctrl.drive),
               _buildStatusDot(ctrl.overCurrent),
               _buildStatusDot(ctrl.underPressure),
               _buildStatusDot(ctrl.underVoltage),
               _buildStatusDot(ctrl.overTemperature),
               _buildStatusDot(ctrl.canCommunication),
-              Center(child: Text('${ctrl.voltage}V', style: valueStyle)),
-              Center(child: Text('${ctrl.temperature}°C', style: valueStyle)),
+              Center(child: Text('${ctrl.voltage} V', style: valueStyle)),
+              Center(child: Text('${ctrl.temperature} C', style: valueStyle)),
             ],
           );
         }),

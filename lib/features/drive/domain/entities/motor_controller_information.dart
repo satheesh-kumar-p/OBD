@@ -1,6 +1,7 @@
 import './status.dart';
 
 class MotorControllerInformation {
+  final Status drive;
   final Status overCurrent;
   final Status underPressure;
   final Status underVoltage;
@@ -11,6 +12,7 @@ class MotorControllerInformation {
   final int temperature;
 
   const MotorControllerInformation({
+    required this.drive,
     required this.overCurrent,
     required this.underPressure,
     required this.underVoltage,
