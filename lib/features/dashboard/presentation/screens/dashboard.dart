@@ -6,8 +6,8 @@ import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.da
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/features/drive/presentation/screens/drive_status_screen.dart';
 
-import 'package:scout_obd/features/system/presentation/screens/ugv_system_screen.dart';
-import 'package:scout_obd/features/compute/presentation/screens/ugv_compute_screen.dart';
+import 'package:scout_obd/features/system/presentation/screens/system_screen.dart';
+import 'package:scout_obd/features/compute/presentation/screens/compute_screen.dart';
 import 'package:scout_obd/features/compute/di/ugv_subsystem_providers.dart';
 
 class Dashboard extends ConsumerWidget {
