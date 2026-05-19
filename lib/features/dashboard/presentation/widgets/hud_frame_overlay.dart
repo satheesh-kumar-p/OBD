@@ -1,14 +1,19 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
+import 'package:scout_obd/core/constants/app_constants.dart';
+import 'package:scout_obd/features/system/di/ugv_health_providers.dart';
+import 'package:scout_obd/features/system/enums/subsystem_status_enum.dart';
 import 'hud_date_time_label.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_link_status_icon.dart';
 import 'hud_mode_label.dart';
 import 'hud_uptime_label.dart';
+import 'hud_handctrlStatus.dart';
 
-class HudFrameOverlay extends StatelessWidget {
+class HudFrameOverlay extends ConsumerWidget {
   const HudFrameOverlay({
     super.key,
     required this.state,
@@ -19,7 +24,21 @@ class HudFrameOverlay extends StatelessWidget {
   final bool drawLeftSlots;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ugvHealth = ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId)).asData?.value;
+
+    const subsystemKeyForHud = 'UHF Radio';
+    final status = ugvHealth?.subsystemHealthMap[subsystemKeyForHud];
+
+    final bool? isHandCtrlHealthy = status == null? null: status == SubsystemStatus.healthy;
+
+    final String handCtrlStatusText = switch (status) {
+      null => '---',
+      SubsystemStatus.healthy => 'HEALTHY',
+      SubsystemStatus.unhealthy => 'UNHEALTHY',
+      SubsystemStatus.noCommunication => 'NO COMMUNICATION',
+    };
+
     return IgnorePointer(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -40,9 +59,7 @@ class HudFrameOverlay extends StatelessWidget {
             w - 2 * (m + inset),
             h - 2 * (m + inset),
           );
-
           final thin = (s * 0.002).clamp(1.0, 2.0).toDouble();
-
           final innerInset = s * 0.015;
           final innerTop = rect.top + innerInset;
 
@@ -125,6 +142,14 @@ class HudFrameOverlay extends StatelessWidget {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    HudHandctrlStatus(
+                                      height: labelH,
+                                      statusText: handCtrlStatusText,
+                                      isHealthy: isHandCtrlHealthy,
+                                      gapAfter: (labelH * 0.12)
+                                          .clamp(4.0, 12.0)
+                                          .toDouble(),
+                                    ),
                                     HudLinkStatusIcon(
                                       size: labelH * 0.65,
                                       healthLevel: state.healthLevel,
