@@ -4,6 +4,7 @@ import 'package:scout_obd/features/dashboard/di/dashboard_providers.dart';
 import 'package:scout_obd/features/dashboard/presentation/widgets/hud_frame_overlay.dart';
 import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
+import 'package:scout_obd/features/drive/presentation/screens/drive_status_screen.dart';
 
 import 'package:scout_obd/features/system/presentation/screens/ugv_system_screen.dart';
 import 'package:scout_obd/features/compute/presentation/screens/ugv_compute_screen.dart';
@@ -58,10 +59,10 @@ class _DashboardContent extends StatelessWidget {
     return IndexedStack(
       index: state.selectedIndex,
       children: const [
-        UgvSystemScreen(),
-        _PlaceholderPage(title: 'DRIVE'),
+        SystemScreen(),
+        DriveScreen(),
         _PlaceholderPage(title: 'POWER'),
-        UgvComputeScreen(),
+        ComputeScreen(),
         _PlaceholderPage(title: 'SENSOR'),
         _PlaceholderPage(title: 'COM'),
         _PlaceholderPage(title: 'ALERTS'),
