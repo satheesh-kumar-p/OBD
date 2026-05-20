@@ -11,7 +11,7 @@ import 'package:scout_obd/shared/di/timesync_providers.dart';
 import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
-import 'shared/di/ugv_mode_providers.dart';
+import 'shared/di/mode_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,8 +59,8 @@ class MyApp extends ConsumerWidget {
               ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
               ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
               ref.watch(ugvVersionProvider);
-              ref.watch(ugvModeProvider(AppConstants.primaryLinkId));
-              ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
+              ref.watch(modeProvider);
+              ref.watch(ugvHealthDataProvider);
               return const Dashboard();
             },
             loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),

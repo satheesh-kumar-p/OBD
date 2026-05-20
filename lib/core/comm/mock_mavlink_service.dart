@@ -253,7 +253,18 @@ class MockMavlinkService implements MavlinkService {
       subMode: subMode,
       intendedMainMode: mainMode,
       intendedSubMode: subMode,
-      modeChangeReason: 0,        // GCS_COMMAND
+      modeChangeReason: 0,
+      // TODO: Change these values after integrating ICD
+      rearLeftMotorFaults: 20,
+      rearRightMotorFaults: 20,
+      frontLeftMotorFaults: 20,
+      frontRightMotorFaults: 20,
+      leftMcFaults: 20,
+      rightMcFaults: 20,
+      leftMcVoltage: 350,
+      rightMcVoltage: 400,
+      leftMcTemperature: 39,
+      rightMcTemperature: 45,
     );
 
     _emitRaw(msg);

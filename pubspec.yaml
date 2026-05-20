@@ -22,7 +22,7 @@ dependencies:
   mavlink_module:
     git:
       url: https://github.com/karthikeya-tummala-nrt/mavlink_module
-      ref: v0.2.2
+      ref: v0.2.5
 
   flutter_riverpod: ^3.3.1
   intl: ^0.20.2

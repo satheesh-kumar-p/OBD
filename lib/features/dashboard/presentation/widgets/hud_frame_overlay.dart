@@ -25,7 +25,7 @@ class HudFrameOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ugvHealth = ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId)).asData?.value;
+    final ugvHealth = ref.watch(ugvHealthDataProvider).asData?.value;
 
     const subsystemKeyForHud = 'UHF Radio';
     final status = ugvHealth?.subsystemHealthMap[subsystemKeyForHud];

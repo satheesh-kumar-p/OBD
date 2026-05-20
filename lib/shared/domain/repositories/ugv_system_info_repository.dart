@@ -1,13 +1,15 @@
-import 'package:scout_obd/features/system/domain/entities/health_status_entity.dart';
-
-import '../entities/ugv_mode_entity.dart';
+import '../../../features/drive/domain/entities/drive_information_entity.dart';
+import '../../../features/system/domain/entities/health_status_entity.dart';
+import '../entities/mode_entity.dart';
 
 abstract interface class UgvSystemInfoRepository {
-  Stream<UgvModeEntity> watchUgvMode(String linkId);
+  Stream<ModeEntity> watchUgvMode();
 
-  Stream<HealthStatusEntity> watchUgvHealth(String linkId);
+  Stream<HealthStatusEntity> watchUgvHealth();
 
-  void startUgvSystemInfo(String linkId);
+  Stream<DriveInformationEntity> watchDriveInformation();
+
+  void startUgvSystemInfo();
 
   void stopUgvSystemInfo();
 }

@@ -2,16 +2,17 @@ import 'dart:async';
 
 import 'package:mavlink_module/dialects/ugvcustom.dart';
 import 'package:mavlink_module/mavlink_frame.dart';
-import 'package:scout_obd/features/system/domain/entities/health_status_entity.dart';
 
 import '../../../core/comm/comm_manager.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/logger/logger.dart';
-import '../../domain/entities/ugv_mode_entity.dart';
+import '../../../features/drive/data/mappers/drive_information_mapper.dart';
+import '../../../features/drive/domain/entities/drive_information_entity.dart';
+import '../../../features/system/data/mappers/health_info_mapper.dart';
+import '../../../features/system/domain/entities/health_status_entity.dart';
+import '../../domain/entities/mode_entity.dart';
 import '../../domain/repositories/ugv_system_info_repository.dart';
-import '../models/ugv_system_info_model.dart';
-
-const int _kMsgIdUgvSystemInfo = 50001;
+import '../mappers/mode_mapper.dart';
 
 class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   final CommManager _commManager;
@@ -20,10 +21,13 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   StreamSubscription<MavlinkFrame>? _ugvSystemInfoSub;
 
   /// Stream for UGV mode changes.
-  final _modeCtrl = StreamController<UgvModeEntity>.broadcast();
+  final _modeCtrl = StreamController<ModeEntity>.broadcast();
 
   /// Stream for UGV telemetry / health changes.
   final _telemetryCtrl = StreamController<HealthStatusEntity>.broadcast();
+
+  /// Stream for Drive Information
+  final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
 
   UgvSystemInfoRepositoryImpl({
     required CommManager commManager,
@@ -32,13 +36,13 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
         _logger = logger;
 
   @override
-  void startUgvSystemInfo(String linkId) {
+  void startUgvSystemInfo() {
     if (_ugvSystemInfoSub != null) return;
 
     _ugvSystemInfoSub = _commManager
         .watchMessage(
-      linkId: linkId,
-      messageId: _kMsgIdUgvSystemInfo,
+      linkId: AppConstants.primaryLinkId,
+      messageId: UgvSystemInfo.kMavlinkMessageId,
     )
         .where((frame) => frame.systemId == AppConstants.ugvSystemId)
         .listen(_handleUgvSystemInfo);
@@ -54,34 +58,26 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   }
 
   @override
-  Stream<UgvModeEntity> watchUgvMode(String linkId) => _modeCtrl.stream;
+  Stream<ModeEntity> watchUgvMode() => _modeCtrl.stream;
 
   @override
-  Stream<HealthStatusEntity> watchUgvHealth(String linkId) => _telemetryCtrl.stream;
+  Stream<HealthStatusEntity> watchUgvHealth() => _telemetryCtrl.stream;
+
+  @override
+  Stream<DriveInformationEntity> watchDriveInformation() => _driveCtrl.stream;
 
   void _handleUgvSystemInfo(MavlinkFrame frame) {
     final msg = frame.message as UgvSystemInfo;
 
-    final model = UgvSystemInfoModel(
-      subsystemHealth1: msg.subsystemHealth1,
-      subsystemHealth2: msg.subsystemHealth2,
-      subsystemHealth3: msg.subsystemHealth3,
-      subsystemHealth4: msg.subsystemHealth4,
-      batterySoc: msg.batterySoc,
-      mainMode: msg.mainMode,
-      subMode: msg.subMode,
-      intendedMainMode: msg.intendedMainMode,
-      intendedSubMode: msg.intendedSubMode,
-      modeChangeReason: msg.modeChangeReason,
-    );
-
     _logger.info("Received", context: {"data": msg.toString()});
 
-    final modeEntity = model.toModeEntity();
-    final healthStatusEntity = model.toHealthStatusEntity();
+    final modeEntity = ModeMapper.toModeEntity(msg);
+    final healthStatusEntity = HealthInfoMapper.toHealthStatusEntity(msg);
+    final driveInfoEntity = DriveInformationMapper.toDriveInfoEntity(msg);
 
     _modeCtrl.add(modeEntity);
     _telemetryCtrl.add(healthStatusEntity);
+    _driveCtrl.add(driveInfoEntity);
 
   }
 }

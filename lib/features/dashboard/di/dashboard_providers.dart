@@ -6,7 +6,7 @@ import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/shared/di/heartbeat_providers.dart';
 import 'package:scout_obd/shared/di/link_status_providers.dart';
 import 'package:scout_obd/shared/di/timesync_providers.dart';
-import 'package:scout_obd/shared/di/ugv_mode_providers.dart';
+import 'package:scout_obd/shared/di/mode_providers.dart';
 
 /// Provides a ticker that emits every second to refresh time-dependent UI.
 final clockTickerProvider = StreamProvider<int>((ref) {
@@ -37,7 +37,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
   final heartbeatValue = ref.watch(heartbeatProvider(AppConstants.primaryLinkId)).asData?.value;
   final timeSyncValue = ref.watch(timeSyncProvider(AppConstants.primaryLinkId)).asData?.value;
   final systemTimeValue = ref.watch(systemTimeProvider(AppConstants.primaryLinkId)).asData?.value;
-  final mode = ref.watch(ugvModeProvider(AppConstants.primaryLinkId)).asData?.value;
+  final mode = ref.watch(modeProvider).asData?.value;
   final selectedIndex = ref.watch(dashboardIndexProvider);
 
   // If linkStatusValue is null, but connectionAsync has data, we assume connected initially.

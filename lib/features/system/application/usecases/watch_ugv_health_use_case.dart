@@ -6,8 +6,8 @@ class WatchUgvHealthUseCase {
 
   WatchUgvHealthUseCase(this._repository);
 
-  Stream<HealthStatusEntity> call(String linkId) {
-    _repository.startUgvSystemInfo(linkId);
-    return _repository.watchUgvHealth(linkId);
+  Stream<HealthStatusEntity> call() {
+    _repository.startUgvSystemInfo();
+    return _repository.watchUgvHealth();
   }
 }
