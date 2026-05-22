@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/features/system/di/ugv_health_providers.dart';
-import 'package:scout_obd/features/system/enums/subsystem_status_enum.dart';
+import 'package:scout_obd/features/dashboard/di/handcontroller_status_providers.dart';
+import 'package:scout_obd/features/dashboard/domain/entities/handcontroller_status_entity.dart';
 import 'hud_date_time_label.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_link_status_icon.dart';
@@ -25,18 +25,17 @@ class HudFrameOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ugvHealth = ref.watch(ugvHealthDataProvider).asData?.value;
+    final handctrlEntity = ref
+        .watch(handcontrollerStatusProvider(AppConstants.primaryLinkId))
+        .asData
+        ?.value;
 
-    const subsystemKeyForHud = 'UHF Radio';
-    final status = ugvHealth?.subsystemHealthMap[subsystemKeyForHud];
+    final status = handctrlEntity?.status;
 
-    final bool? isHandCtrlHealthy = status == null? null: status == SubsystemStatus.healthy;
-
-    final String handCtrlStatusText = switch (status) {
-      null => '---',
-      SubsystemStatus.healthy => 'HEALTHY',
-      SubsystemStatus.unhealthy => 'UNHEALTHY',
-      SubsystemStatus.noCommunication => 'NO COMMUNICATION',
+    final handCtrlColor = switch (status) {
+      HandcontrollerStatus.healthy => const Color(0xFF74FF9F),
+      HandcontrollerStatus.unhealthy => Colors.red,
+      HandcontrollerStatus.noCommunication || HandcontrollerStatus.unknown || null => Colors.white,
     };
 
     return IgnorePointer(
@@ -59,7 +58,6 @@ class HudFrameOverlay extends ConsumerWidget {
             w - 2 * (m + inset),
             h - 2 * (m + inset),
           );
-          final thin = (s * 0.002).clamp(1.0, 2.0).toDouble();
           final innerInset = s * 0.015;
           final innerTop = rect.top + innerInset;
 
@@ -144,10 +142,10 @@ class HudFrameOverlay extends ConsumerWidget {
                                   children: [
                                     HudHandctrlStatus(
                                       height: labelH,
-                                      statusText: handCtrlStatusText,
-                                      isHealthy: isHandCtrlHealthy,
-                                      gapAfter: (labelH * 0.12)
-                                          .clamp(4.0, 12.0)
+                                      color: handCtrlColor,
+                                      size: labelH * 0.62,
+                                      gapAfter: (labelH * 0.62)
+                                          .clamp(18.0, 56.0)
                                           .toDouble(),
                                     ),
                                     HudLinkStatusIcon(
