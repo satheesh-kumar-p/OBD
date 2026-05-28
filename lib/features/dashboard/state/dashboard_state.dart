@@ -85,7 +85,9 @@ class DashboardState {
   String get modeName {
     final m = mode;
     if (m == null) return "NULL";
-    return m.mainMode == MainMode.modeA ? 'MODE A' : 'MODE B';
+    if (m.mainMode == MainMode.modeA) return 'MODE A';
+    if (m.mainMode == MainMode.modeB) return 'MODE B';
+    return "UNKNOWN";
   }
 
   String get subModeName {
