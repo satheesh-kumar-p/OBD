@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/features/system/domain/entities/health_status_entity.dart';
+import 'package:scout_obd/features/system/domain/entities/system_info_entity.dart';
 import '../../../core/di/injection_container.dart';
 import '../../../core/logger/logger.dart';
 import '../../../shared/data/repositories/ugv_system_info_repository_impl.dart';
@@ -24,7 +24,7 @@ final watchUgvHealthUseCaseProvider = Provider<WatchUgvHealthUseCase>((ref) {
 });
 
 final ugvHealthDataProvider =
-StreamProvider<HealthStatusEntity>((ref) {
+StreamProvider<SystemInfoEntity>((ref) {
   final useCase = ref.watch(watchUgvHealthUseCaseProvider);
   return useCase();
 });

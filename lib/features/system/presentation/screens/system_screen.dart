@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../di/ugv_health_providers.dart';
-import '../../domain/entities/health_status_entity.dart';
+import '../../domain/entities/system_info_entity.dart';
 import '../../enums/subsystem_status_enum.dart';
 
 class SystemScreen extends ConsumerWidget {
@@ -28,7 +28,7 @@ class SystemScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSubsystemTable(HealthStatusEntity data) {
+  Widget _buildSubsystemTable(SystemInfoEntity data) {
     final textStyle = TextStyle(
       color: Colors.white,
       fontSize: 36.sp,
@@ -95,6 +95,9 @@ class SystemScreen extends ConsumerWidget {
                     break;
                   case SubsystemStatus.noCommunication:
                     dotColor = Colors.white;
+                    break;
+                  case SubsystemStatus.unknown:
+                    dotColor = Colors.black;
                     break;
                 }
 

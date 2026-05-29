@@ -8,8 +8,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/logger/logger.dart';
 import '../../../features/drive/data/mappers/drive_information_mapper.dart';
 import '../../../features/drive/domain/entities/drive_information_entity.dart';
-import '../../../features/system/data/mappers/health_info_mapper.dart';
-import '../../../features/system/domain/entities/health_status_entity.dart';
+import '../../../features/system/data/mappers/system_info_mapper.dart';
+import '../../../features/system/domain/entities/system_info_entity.dart';
 import '../../domain/entities/mode_entity.dart';
 import '../../domain/repositories/ugv_system_info_repository.dart';
 import '../mappers/mode_mapper.dart';
@@ -26,7 +26,7 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   final _modeCtrl = StreamController<ModeEntity>.broadcast();
 
   /// Stream for UGV telemetry / health changes.
-  final _healthCtrl = StreamController<HealthStatusEntity>.broadcast();
+  final _healthCtrl = StreamController<SystemInfoEntity>.broadcast();
 
   /// Stream for Drive Information
   final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
@@ -81,10 +81,10 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   }
 
   @override
-  Stream<HealthStatusEntity> watchUgvHealth() {
+  Stream<SystemInfoEntity> watchUgvHealth() {
     return _mavlinkMessageCtrl.stream
         .map(
-          (msg) => HealthInfoMapper.toHealthStatusEntity(
+          (msg) => SystemInfoMapper.toHealthStatusEntity(
             msg.message as UgvSystemInfo,
           ),
         )

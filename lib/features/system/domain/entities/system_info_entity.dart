@@ -1,6 +1,6 @@
 import 'package:scout_obd/features/system/enums/subsystem_status_enum.dart';
 
-class HealthStatusEntity {
+class SystemInfoEntity {
   final SubsystemStatus leftMotorController;
   final SubsystemStatus rightMotorController;
   final SubsystemStatus hvBattery;
@@ -13,11 +13,11 @@ class HealthStatusEntity {
   final SubsystemStatus rearLeftMotor;
   final SubsystemStatus frontRightMotor;
   final SubsystemStatus rearRightMotor;
-  final SubsystemStatus uhfRadio;
-  final SubsystemStatus lBandRadio;
-  final SubsystemStatus compute;
+  // final SubsystemStatus uhfRadio;
+  // final SubsystemStatus lBandRadio;
+  // final SubsystemStatus compute;
 
-  const HealthStatusEntity({
+  const SystemInfoEntity({
     required this.leftMotorController,
     required this.rightMotorController,
     required this.hvBattery,
@@ -30,9 +30,9 @@ class HealthStatusEntity {
     required this.rearLeftMotor,
     required this.frontRightMotor,
     required this.rearRightMotor,
-    required this.uhfRadio,
-    required this.lBandRadio,
-    required this.compute,
+    // required this.uhfRadio,
+    // required this.lBandRadio,
+    // required this.compute,
   });
 
   Map<String, SubsystemStatus> get subsystemHealthMap => {
@@ -48,9 +48,9 @@ class HealthStatusEntity {
     'Rear Left Motor': rearLeftMotor,
     'Front Right Motor': frontRightMotor,
     'Rear Right Motor': rearRightMotor,
-    'UHF Radio': uhfRadio,
-    'L-Band Radio': lBandRadio,
-    'Compute Unit': compute,
+    // 'UHF Radio': uhfRadio,
+    // 'L-Band Radio': lBandRadio,
+    // 'Compute Unit': compute,
   };
 
 }
