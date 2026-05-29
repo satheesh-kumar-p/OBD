@@ -110,8 +110,6 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
   /// 3 = Communicating not healthy → unhealthy
   SubsystemStatus _rawToStatus(int raw) {
     switch (raw) {
-      case 0: // Reserved
-        return SubsystemStatus.reserved;
       case 1:  // No communication
         return SubsystemStatus.noCommunication;
       case 2:  // Healthy
