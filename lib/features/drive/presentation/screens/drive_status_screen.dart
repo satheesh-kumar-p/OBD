@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../di/drive_information_providers.dart';
+import '../../di/drive_info_providers.dart';
 import '../../domain/entities/drive_information_entity.dart';
 import '../../domain/entities/status.dart';
 
@@ -11,7 +11,7 @@ class DriveScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final driveDataAsync = ref.watch(driveInformationProvider);
+    final driveDataAsync = ref.watch(driveInfoProvider);
 
     return driveDataAsync.when(
       data: (data) => _buildBody(data),
@@ -187,8 +187,9 @@ class DriveScreen extends ConsumerWidget {
               _buildStatusDot(ctrl.underVoltage),
               _buildStatusDot(ctrl.overTemperature),
               _buildStatusDot(ctrl.canCommunication),
-              Center(child: Text('${ctrl.voltage} V', style: valueStyle)),
-              Center(child: Text('${ctrl.temperature} C', style: valueStyle)),
+              // TODO: MAVLINK
+              // Center(child: Text('${ctrl.voltage} V', style: valueStyle)),
+              // Center(child: Text('${ctrl.temperature} C', style: valueStyle)),
             ],
           );
         }),

@@ -20,4 +20,16 @@ class DriveInformationEntity {
     required this.leftMotorController,
     required this.rightMotorController,
   });
+
+  @override
+  String toString() {
+    return 'DriveInformationEntity(\n'
+        '  frontLeft: $frontLeftMotor,\n'
+        '  frontRight: $frontRightMotor,\n'
+        '  rearLeft: $rearLeftMotor,\n'
+        '  rearRight: $rearRightMotor,\n'
+        '  leftMC: $leftMotorController,\n'
+        '  rightMC: $rightMotorController\n'
+        ')';
+  }
 }

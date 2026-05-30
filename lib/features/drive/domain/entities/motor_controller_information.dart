@@ -8,9 +8,6 @@ class MotorControllerInformation {
   final Status overTemperature;
   final Status canCommunication;
 
-  final int voltage;
-  final int temperature;
-
   const MotorControllerInformation({
     required this.drive,
     required this.overCurrent,
@@ -18,7 +15,10 @@ class MotorControllerInformation {
     required this.underVoltage,
     required this.overTemperature,
     required this.canCommunication,
-    required this.voltage,
-    required this.temperature,
   });
+
+  @override
+  String toString() {
+    return 'MotorControllerInfo(drive: $drive, overCurrent: $overCurrent, underPressure: $underPressure, underVoltage: $underVoltage, overTemp: $overTemperature, canComm: $canCommunication)';
+  }
 }
