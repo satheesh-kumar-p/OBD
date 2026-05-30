@@ -87,6 +87,7 @@ class HudTopBar extends ConsumerWidget {
                           color: handCtrlColor,
                           size: 48.r,
                           gapAfter: 20.w,
+                          status: state.computeCommInfo?.uhfRadio,
                         ),
                         HudLinkStatusIcon(
                           size: 48.r,

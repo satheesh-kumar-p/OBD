@@ -13,9 +13,6 @@ class SystemInfoEntity {
   final SubsystemStatus rearLeftMotor;
   final SubsystemStatus frontRightMotor;
   final SubsystemStatus rearRightMotor;
-  // final SubsystemStatus uhfRadio;
-  // final SubsystemStatus lBandRadio;
-  // final SubsystemStatus compute;
 
   const SystemInfoEntity({
     required this.leftMotorController,
@@ -30,9 +27,6 @@ class SystemInfoEntity {
     required this.rearLeftMotor,
     required this.frontRightMotor,
     required this.rearRightMotor,
-    // required this.uhfRadio,
-    // required this.lBandRadio,
-    // required this.compute,
   });
 
   Map<String, SubsystemStatus> get subsystemHealthMap => {
@@ -48,9 +42,6 @@ class SystemInfoEntity {
     'Rear Left Motor': rearLeftMotor,
     'Front Right Motor': frontRightMotor,
     'Rear Right Motor': rearRightMotor,
-    // 'UHF Radio': uhfRadio,
-    // 'L-Band Radio': lBandRadio,
-    // 'Compute Unit': compute,
   };
 
   @override

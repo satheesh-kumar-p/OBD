@@ -4,6 +4,7 @@ import '../../../shared/domain/entities/heartbeat_entity.dart';
 import '../../../shared/domain/entities/link_status_entity.dart';
 import '../../../shared/domain/entities/system_time_entity.dart';
 import '../../../shared/domain/entities/time_sync_entity.dart';
+import '../../system/domain/entities/compute_comm_info_entity.dart';
 import '../../system/domain/entities/system_info_entity.dart';
 import '../domain/entities/battery_info_entity.dart';
 import '../domain/entities/mode_entity.dart';
@@ -21,6 +22,7 @@ class DashboardState {
     this.mode,
     this.battery,
     this.systemInfo,
+    this.computeCommInfo,
     this.selectedIndex = 0,
   });
 
@@ -32,6 +34,7 @@ class DashboardState {
   final ModeEntity? mode;
   final BatteryInfoEntity? battery;
   final SystemInfoEntity? systemInfo;
+  final ComputeCommInfoEntity? computeCommInfo;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -43,6 +46,7 @@ class DashboardState {
     ModeEntity? mode,
     BatteryInfoEntity? battery,
     SystemInfoEntity? systemInfo,
+    ComputeCommInfoEntity? computeCommInfo,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -54,6 +58,7 @@ class DashboardState {
       mode: mode ?? this.mode,
       battery: battery ?? this.battery,
       systemInfo: systemInfo ?? this.systemInfo,
+      computeCommInfo: computeCommInfo ?? this.computeCommInfo,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
