@@ -31,10 +31,6 @@ class HudLinkStatusIcon extends StatelessWidget {
       icon,
       size: size,
       color: base,
-      shadows: [
-        Shadow(color: glow, blurRadius: size * 0.55, offset: Offset.zero),
-        Shadow(color: glow, blurRadius: size * 0.25, offset: Offset.zero),
-      ],
     );
   }
 }

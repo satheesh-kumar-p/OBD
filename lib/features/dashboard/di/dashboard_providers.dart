@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
+import 'package:scout_obd/features/dashboard/di/battery_info_providers.dart';
+import 'package:scout_obd/features/dashboard/di/mode_info_providers.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/shared/di/heartbeat_providers.dart';
-import 'package:scout_obd/shared/di/link_status_providers.dart';
-import 'package:scout_obd/shared/di/timesync_providers.dart';
-import 'package:scout_obd/shared/di/mode_providers.dart';
+import 'package:scout_obd/shared/di/global_time_info_providers.dart';
+
+import '../../system/di/system_info_providers.dart';
 
 /// Provides a ticker that emits every second to refresh time-dependent UI.
 final clockTickerProvider = StreamProvider<int>((ref) {
@@ -31,8 +31,20 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
 
   // 3. For now, only CAN-based features are active.
   final selectedIndex = ref.watch(dashboardIndexProvider);
-  
+  final modeAsync = ref.watch(modeInfoProvider);
+  final batteryAsync = ref.watch(batteryInfoProvider);
+  final systemAsync = ref.watch(systemInfoProvider);
+  final globalTimeAsync = ref.watch(globalTimeProvider);
+
+  // 4. Force a UI refresh every second even if data doesn't change
+  // (e.g. to keep the internal clock ticking visually)
+  ref.watch(clockTickerProvider);
+
   return DashboardState(
     selectedIndex: selectedIndex,
+    mode: modeAsync.asData?.value,
+    battery: batteryAsync.asData?.value,
+    systemInfo: systemAsync.asData?.value,
+    globalTime: globalTimeAsync.asData?.value,
   );
 });

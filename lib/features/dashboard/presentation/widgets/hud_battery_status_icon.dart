@@ -83,13 +83,6 @@ class HudBatteryStatusIcon extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: batteryColor,
                           borderRadius: BorderRadius.circular(fillRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: batteryColor.withOpacity(0.4),
-                              blurRadius: 5 * unit,
-                              spreadRadius: 1.5 * unit,
-                            )
-                          ],
                         ),
                       ),
                     ),

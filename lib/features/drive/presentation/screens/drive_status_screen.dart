@@ -32,11 +32,9 @@ class DriveScreen extends ConsumerWidget {
   Widget _buildBody(DriveInformationEntity data) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      padding: EdgeInsets.only(
-        left: 256.w,
-        top: 80.h,
-        right: 60.w,
-        bottom: 60.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 20.w,
+        vertical: 20.h,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

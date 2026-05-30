@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HudUptimeLabel extends StatelessWidget {
   const HudUptimeLabel({
@@ -12,9 +13,6 @@ class HudUptimeLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = height;
-    final fontSize = (h * 0.44).clamp(10.0, 18.0);
-
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
@@ -24,14 +22,11 @@ class HudUptimeLabel extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: Colors.white,
-          fontSize: fontSize,
+          fontSize: 14.sp,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.6,
+          letterSpacing: 0.6.w,
           height: 1,
           decoration: TextDecoration.none,
-          shadows: const [
-            Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(0, 1)),
-          ],
         ),
       ),
     );

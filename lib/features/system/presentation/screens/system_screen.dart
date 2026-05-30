@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../di/system_info_providers.dart';
-import '../../domain/entities/system_info_entity.dart';
+import '../state/system_screen_state.dart';
 import '../../enums/subsystem_status_enum.dart';
 
 class SystemScreen extends ConsumerWidget {
@@ -10,132 +10,122 @@ class SystemScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final healthDataAsync = ref.watch(systemInfoProvider);
+    final state = ref.watch(systemScreenStateProvider);
 
-    return healthDataAsync.when(
-      data: (data) => _buildSubsystemTable(data),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(
-        child: Text(
-          'ERROR: $err',
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 32.sp,
-            fontFamily: 'monospace',
-          ),
-        ),
+    if (state.systemInfo == null && state.computeCommInfo == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return _buildSubsystemTable(state);
+  }
+
+  Widget _buildSubsystemTable(SystemScreenState state) {
+    final healthMap = state.allHealthStatus;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 4,
+        childAspectRatio: 1.25,
+        mainAxisSpacing: 8.h,
+        crossAxisSpacing: 8.w,
+        children: [
+          _tile('MOTOR FRONT L', healthMap['Front Left Motor'], Icons.settings_suggest),
+          _tile('MOTOR FRONT R', healthMap['Front Right Motor'], Icons.settings_suggest),
+          _tile('VCU', healthMap['VCU'], Icons.developer_board),
+          _tile('LV PDU', healthMap['LV PDU'], Icons.power),
+          _tile('MOTOR REAR L', healthMap['Rear Left Motor'], Icons.settings_suggest),
+          _tile('MOTOR REAR R', healthMap['Rear Right Motor'], Icons.settings_suggest),
+          _tile('HV BATT', healthMap['HV Battery'], Icons.battery_charging_full),
+          _tile('LV BATT', healthMap['LV Battery'], Icons.battery_std),
+          _tile('MOTOR CTRL L', healthMap['Left Motor Controller'], Icons.settings_outlined),
+          _tile('MOTOR CTRL R', healthMap['Right Motor Controller'], Icons.settings_outlined),
+          _tile('COMPUTE', healthMap['Compute Unit'], Icons.computer),
+          _tile('UHF RADIO', healthMap['UHF Radio'], Icons.settings_input_antenna),
+        ],
       ),
     );
   }
 
-  Widget _buildSubsystemTable(SystemInfoEntity data) {
-    final textStyle = TextStyle(
-      color: Colors.white,
-      fontSize: 36.sp,
-      height: 1.5,
-      fontFamily: 'monospace',
-      fontWeight: FontWeight.w500,
+  Widget _tile(String name, SubsystemStatus? status, IconData icon) {
+    return _SubsystemTile(
+      name: name,
+      status: status ?? SubsystemStatus.unknown,
+      icon: icon,
     );
-    final headerStyle = TextStyle(
-      color: Colors.cyanAccent,
-      fontSize: 36.sp,
-      fontWeight: FontWeight.bold,
-      height: 2.2,
-      letterSpacing: 1.1,
-    );
+  }
+}
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(
-        left: 256.w,
-        top: 80.h,
-        right: 60.w,
-        bottom: 60.h,
+class _SubsystemTile extends StatelessWidget {
+  final String name;
+  final SubsystemStatus status;
+  final IconData icon;
+
+  const _SubsystemTile({
+    required this.name,
+    required this.status,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final (Color color, String statusText) = switch (status) {
+      SubsystemStatus.healthy => (const Color(0xFF00FF66), 'Healthy'),
+      SubsystemStatus.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
+      SubsystemStatus.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
+      SubsystemStatus.unknown => (Colors.white10, 'Unknown'),
+    };
+
+    final isErr = status == SubsystemStatus.unhealthy;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isErr ? color.withOpacity(0.15) : Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(4.r),
+        border: Border.all(
+          color: isErr ? color.withOpacity(0.8) : Colors.white10,
+          width: 1.w,
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Table(
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            columnWidths: const {
-              0: IntrinsicColumnWidth(),
-              1: IntrinsicColumnWidth(),
-            },
-            children: [
-              TableRow(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 24.h, right: 60.w),
-                    child: Text(
-                      'SUB SYSTEM',
-                      style: headerStyle,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 24.h),
-                    child: Center(
-                      child: Text(
-                        'STATUS',
-                        style: headerStyle,
-                      ),
-                    ),
-                  ),
-                ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(
+              icon,
+              size: 34.r,
+              color: isErr ? color : Colors.white54,
+            ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                ),
               ),
-              ...data.subsystemHealthMap.entries.map((entry) {
-                final name = entry.key;
-                final status = entry.value;
-
-                Color dotColor;
-                switch (status) {
-                  case SubsystemStatus.healthy:
-                    dotColor = Colors.green;
-                    break;
-                  case SubsystemStatus.unhealthy:
-                    dotColor = Colors.red;
-                    break;
-                  case SubsystemStatus.noCommunication:
-                    dotColor = Colors.white;
-                    break;
-                  case SubsystemStatus.unknown:
-                    dotColor = Colors.black;
-                    break;
-                }
-
-                return TableRow(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 60.w, bottom: 20.h),
-                      child: Text(
-                        name.toUpperCase(),
-                        style: textStyle
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20.h),
-                      child: Center(
-                        child: Container(
-                          width: 20.w,
-                          height: 20.w,
-                          decoration: BoxDecoration(
-                            color: dotColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: dotColor.withOpacity(0.4),
-                                blurRadius: 6.w,
-                                spreadRadius: 2.w,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }),
-            ],
-          ),
-        ],
+            ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                statusText.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
