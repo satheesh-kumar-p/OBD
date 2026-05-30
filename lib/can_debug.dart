@@ -7,14 +7,13 @@ import 'features/drive/data/repositories/drive_info_repository.dart';
 import 'features/system/data/repositories/system_info_repository.dart';
 
 void main() async {
-  // Initialize Flutter bindings (required by some plugins even in mock mode)
   WidgetsFlutterBinding.ensureInitialized();
 
   final logger = Logger('CAN_DEBUG');
 
   // 1. Manually setup the stack without Riverpod DI
-  final mockService = MockCanService(logger: logger);
-  final canManager = CanCommManager(service: mockService, logger: logger);
+  final mockService = MockCanService(logger);
+  final canManager = CanCommManager(logger: logger);
   final systemInfoRepo = SystemInfoRepository(canManager: canManager, logger: logger);
   final driveInfoRepo = DriveInfoRepository(canManager: canManager, logger: logger);
 

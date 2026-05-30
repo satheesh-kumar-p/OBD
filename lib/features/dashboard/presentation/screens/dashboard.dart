@@ -34,10 +34,12 @@ class Dashboard extends ConsumerWidget {
             selectedIndex: dashboardState.selectedIndex,
             onSelect: (index) {
               ref.read(dashboardIndexProvider.notifier).state = index;
+              /*
               if (index == 3) {
                 // Force a fresh request when COMPUTE is clicked
                 ref.invalidate(ugvVersionsProvider);
               }
+              */
             },
           ),
 
@@ -62,7 +64,7 @@ class _DashboardContent extends StatelessWidget {
         SystemScreen(),
         DriveScreen(),
         _PlaceholderPage(title: 'POWER'),
-        ComputeScreen(),
+        _PlaceholderPage(title: 'COMPUTE'), // Replaced ComputeScreen
         _PlaceholderPage(title: 'SENSOR'),
         _PlaceholderPage(title: 'COM'),
         _PlaceholderPage(title: 'ALERTS'),

@@ -1,19 +1,31 @@
 import 'dart:async';
 
+import '../../constants/app_constants.dart';
 import '../../logger/logger.dart';
 import 'can_config.dart';
 import 'can_frame.dart';
+import 'can_frame_parser.dart';
 import 'can_service.dart';
+import 'can_service_impl.dart';
+import 'mock_can_service.dart';
+import 'serial_port_transport.dart';
 
 /// Central manager for CAN communication.
 /// Handles the lifecycle of a single [CanService] connection.
 class CanCommManager {
-  CanCommManager({required CanService service, required Logger logger})
-      : _service = service,
-        _logger = logger;
+  CanCommManager({
+    required Logger logger,
+  }) : _logger = logger;
 
   final Logger _logger;
-  final CanService _service;
+
+  late final CanService _service =
+  AppConstants.useMockBackends
+      ? MockCanService(Logger('MOCK_CAN'))
+      : CanServiceImpl(
+    transport: SerialPortTransport(),
+    parser: CanFrameParser(),
+  );
   StreamSubscription<CanFrame>? _frameSub;
 
   // A persistent controller so listeners can subscribe before connection

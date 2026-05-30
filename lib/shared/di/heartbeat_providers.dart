@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
 import 'package:scout_obd/core/logger/logger.dart';
@@ -27,3 +28,4 @@ StreamProvider.family<HeartbeatEntity, String>((ref, linkId) {
   final useCase = ref.watch(watchHeartbeatUseCaseProvider);
   return useCase(linkId);
 });
+*/

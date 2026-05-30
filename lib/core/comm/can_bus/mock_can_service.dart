@@ -16,7 +16,7 @@ class MockCanService implements CanService {
   bool _connected = false;
   Timer? _periodicTimer;
 
-  MockCanService({required Logger logger}) : _logger = logger;
+  MockCanService(Logger logger) : _logger = logger;
 
   @override
   Stream<CanFrame> get frameStream => _frameCtrl.stream;
@@ -43,6 +43,7 @@ class MockCanService implements CanService {
       if (!_connected) return;
       _emitSystemInfo();
       _emitDriveInfo();
+      _emitBatteryInfo();
     });
   }
 
@@ -145,6 +146,28 @@ class MockCanService implements CanService {
 
     _frameCtrl.add(CanFrame(
       id: 0x204,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitBatteryInfo() {
+    final data = Uint8List(8);
+
+    // Dummy time
+    _setBits(data, 0, 5, 12);
+    _setBits(data, 5, 6, 34);
+    _setBits(data, 11, 6, 56);
+
+    // SOC: 85% (bits 17-24)
+    _setBits(data, 17, 8, 85);
+
+    // Voltage: 24.5V -> 245 (bits 25-32)
+    // 8 bits max is 255. 245 results in 24V with ~/10 transformer.
+    _setBits(data, 25, 8, 245);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x200,
       idType: CanIdType.standard,
       data: data,
     ));

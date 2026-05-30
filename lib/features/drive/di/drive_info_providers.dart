@@ -5,7 +5,7 @@ import '../domain/entities/drive_information_entity.dart';
 import '../../../core/logger/logger.dart';
 
 final driveLoggerProvider =
-Provider<Logger>((ref) => Logger('UGV_DRIVE'));
+Provider<Logger>((ref) => Logger('DRIVE'));
 
 final driveInfoRepoProvider =
 Provider<DriveInfoRepository>((ref) {

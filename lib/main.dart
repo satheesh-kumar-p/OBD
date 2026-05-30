@@ -3,10 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/features/compute/di/ugv_component_providers.dart';
-import 'package:scout_obd/features/system/di/ugv_health_providers.dart';
-import 'package:scout_obd/shared/di/heartbeat_providers.dart';
-import 'package:scout_obd/shared/di/timesync_providers.dart';
+import 'package:scout_obd/features/system/di/system_info_providers.dart';
 
 import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
@@ -30,7 +27,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 1. Watch the connection process.
-    final connectionState = ref.watch(commConnectionProvider);
+    final connectionState = ref.watch(canConnectionProvider);
 
     return ScreenUtilInit(
       designSize: const Size(1280, 800),
@@ -55,18 +52,18 @@ class MyApp extends ConsumerWidget {
           home: connectionState.when(
             data: (_) {
               // Once connected, trigger the startup services
-              ref.watch(heartbeatProvider(AppConstants.primaryLinkId));
-              ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
-              ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
-              ref.watch(ugvVersionProvider);
-              ref.watch(modeProvider);
-              ref.watch(ugvHealthDataProvider);
+              // ref.watch(heartbeatProvider(AppConstants.primaryLinkId));
+              // ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
+              // ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
+              // ref.watch(ugvVersionProvider);
+              // ref.watch(modeProvider);
+              ref.watch(systemInfoProvider);
               return const Dashboard();
             },
             loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),
             error: (err, stack) => _ConnectionErrorScreen(
               error: err,
-              onRetry: () => ref.invalidate(commConnectionProvider),
+              onRetry: () => ref.invalidate(canConnectionProvider),
             ),
           ),
         );

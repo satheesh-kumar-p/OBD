@@ -152,8 +152,8 @@ class DriveScreen extends ConsumerWidget {
       'UNDER VOLTAGE',
       'OVER TEMP',
       'CAN COMM',
-      'BATT VOLT',
-      'TEMP'
+      // 'BATT VOLT',
+      // 'TEMP'
     ];
 
     return Table(

@@ -3,9 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/features/dashboard/di/handcontroller_status_providers.dart';
-import 'package:scout_obd/features/dashboard/domain/entities/handcontroller_status_entity.dart';
+import 'package:scout_obd/features/dashboard/di/battery_info_providers.dart';
 import 'hud_date_time_label.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_link_status_icon.dart';
@@ -25,18 +23,10 @@ class HudFrameOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final handctrlEntity = ref
-        .watch(handcontrollerStatusProvider(AppConstants.primaryLinkId))
-        .asData
-        ?.value;
+    final batteryAsync = ref.watch(batteryInfoProvider);
+    final batteryData = batteryAsync.asData?.value;
 
-    final status = handctrlEntity?.status;
-
-    final handCtrlColor = switch (status) {
-      HandcontrollerStatus.healthy => const Color(0xFF74FF9F),
-      HandcontrollerStatus.unhealthy => Colors.red,
-      HandcontrollerStatus.noCommunication || HandcontrollerStatus.unknown || null => Colors.white,
-    };
+    final handCtrlColor = Colors.black;
 
     return IgnorePointer(
       child: LayoutBuilder(
@@ -49,7 +39,7 @@ class HudFrameOverlay extends ConsumerWidget {
 
           final s = math.min(w, h);
           // Reduced margins and padding for small 5" screen
-          final m = s * 0.015; 
+          final m = s * 0.015;
           final inset = s * 0.005;
 
           final rect = Rect.fromLTWH(
@@ -157,7 +147,8 @@ class HudFrameOverlay extends ConsumerWidget {
                                     ),
                                     HudBatteryStatusIcon(
                                       size: labelH * 0.55,
-                                      percentage: state.batteryLevel,
+                                      soc: batteryData?.soc ?? 0,
+                                      voltage: batteryData?.voltage ?? 0.0,
                                     ),
                                   ],
                                 ),

@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
 import 'package:scout_obd/core/logger/logger.dart';
@@ -32,3 +33,4 @@ final handcontrollerStatusProvider =
   final useCase = ref.watch(watchHandcontrollerStatusUseCaseProvider);
   return useCase(linkId);
 });
+*/

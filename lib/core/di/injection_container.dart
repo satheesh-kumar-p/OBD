@@ -9,6 +9,7 @@ import '../enums/can_enums.dart';
 import '../enums/transport_type.dart';
 import '../logger/logger.dart';
 
+/*
 final commManagerProvider = Provider<CommManager>((ref) {
   final logger = Logger("COMM_MANAGER");
 
@@ -38,6 +39,7 @@ final commConnectionProvider = FutureProvider<void>((ref) async {
     );
   }
 });
+*/
 
 /// Raw transport layer provider.
 final serialTransportProvider = Provider<ISerialTransport>((ref) => SerialPortTransport());
@@ -50,11 +52,8 @@ final canServiceProvider = Provider<CanService>((ref) => CanServiceImpl(
 
 /// High-level communication manager.
 final canManagerProvider = Provider<CanCommManager>((ref) {
-  final logger = Logger("COMM_MANAGER");
-  return CanCommManager(
-    service: ref.read(canServiceProvider),
-    logger: logger,
-  );
+  final logger = Logger("CAN_MANAGER");
+  return CanCommManager(logger: logger);
 });
 
 /// FutureProvider that handles the initial connection handshake.
@@ -65,8 +64,8 @@ final canConnectionProvider = FutureProvider<void>((ref) async {
   try {
     // Port and config can be adjusted for your specific setup
     await manager.connect(
-      portName: '/dev/can',
-      config: const CanConfig(baudRate: CanBaudRate.bps500k),
+      portName: AppConstants.canPortName,
+      config: const CanConfig(baudRate: AppConstants.canBaudRate),
     );
   } catch (e, st) {
     logger.error('Failed to establish CAN connection', error: e, stack: st);

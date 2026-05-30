@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/logger/logger.dart';
 import 'package:scout_obd/shared/application/use_cases/watch_link_use_case.dart';
@@ -25,3 +26,4 @@ final linkStatusProvider = StreamProvider.family<LinkStatusEntity, String>((ref,
   final useCase = ref.watch(linkStatusUseCaseProvider);
   return useCase(linkId);
 });
+*/
