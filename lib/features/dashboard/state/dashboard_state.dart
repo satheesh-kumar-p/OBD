@@ -8,7 +8,6 @@ import '../../system/domain/entities/compute_comm_info_entity.dart';
 import '../../system/domain/entities/system_info_entity.dart';
 import '../domain/entities/battery_info_entity.dart';
 import '../domain/entities/mode_entity.dart';
-import '../enums/mode_enum.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 

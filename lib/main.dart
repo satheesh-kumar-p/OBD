@@ -11,7 +11,6 @@ import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
 import 'shared/di/global_time_info_providers.dart';
-import 'shared/di/mode_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

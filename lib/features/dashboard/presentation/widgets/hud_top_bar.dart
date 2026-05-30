@@ -1,8 +1,6 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_obd/features/dashboard/di/battery_info_providers.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
