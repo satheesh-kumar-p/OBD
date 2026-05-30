@@ -49,7 +49,7 @@ class HudBatteryStatusIcon extends StatelessWidget {
           '${voltage.toStringAsFixed(1)} V',
           style: TextStyle(
             color: Colors.cyanAccent,
-            fontSize: h * 0.85, // Even larger for 5" display visibility
+            fontSize: h * 0.65, // Increased for 5" display visibility
             fontWeight: FontWeight.w900,
             fontFamily: 'monospace',
             letterSpacing: 0.5,
@@ -102,18 +102,6 @@ class HudBatteryStatusIcon extends StatelessWidget {
                           fontSize: h * 0.9, // Significantly increased for visibility
                           fontWeight: FontWeight.w900,
                           fontFamily: 'monospace',
-                          shadows: const [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black,
-                              offset: Offset(-2.0, -2.0),
-                            ),
-                          ],
                         ),
                       ),
                     ),
