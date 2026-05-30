@@ -3,11 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
+import 'package:scout_obd/features/dashboard/di/battery_info_providers.dart';
+import 'package:scout_obd/features/dashboard/di/mode_info_providers.dart';
 import 'package:scout_obd/features/system/di/system_info_providers.dart';
 
 import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
+import 'shared/di/global_time_info_providers.dart';
 import 'shared/di/mode_providers.dart';
 
 Future<void> main() async {
@@ -51,13 +54,10 @@ class MyApp extends ConsumerWidget {
           // 2. Handle connection lifecycle in the UI
           home: connectionState.when(
             data: (_) {
-              // Once connected, trigger the startup services
-              // ref.watch(heartbeatProvider(AppConstants.primaryLinkId));
-              // ref.watch(timeSyncProvider(AppConstants.primaryLinkId));
-              // ref.watch(systemTimeProvider(AppConstants.primaryLinkId));
-              // ref.watch(ugvVersionProvider);
-              // ref.watch(modeProvider);
-              ref.watch(systemInfoProvider);
+              ref.watch(systemScreenStateProvider);
+              ref.watch(modeInfoProvider);
+              ref.watch(batteryInfoProvider);
+              ref.watch(globalTimeProvider);
               return const Dashboard();
             },
             loading: () => const _ConnectionLoadingScreen(message: 'Initializing Transport...'),
