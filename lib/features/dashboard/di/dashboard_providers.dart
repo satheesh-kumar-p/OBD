@@ -34,6 +34,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
   final modeAsync = ref.watch(modeInfoProvider);
   final batteryAsync = ref.watch(batteryInfoProvider);
   final systemAsync = ref.watch(systemInfoProvider);
+  final computeCommAsync = ref.watch(computeCommInfoProvider);
   final globalTimeAsync = ref.watch(globalTimeProvider);
 
   // 4. Force a UI refresh every second even if data doesn't change
@@ -45,6 +46,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
     mode: modeAsync.asData?.value,
     battery: batteryAsync.asData?.value,
     systemInfo: systemAsync.asData?.value,
+    computeCommInfo: computeCommAsync.asData?.value,
     globalTime: globalTimeAsync.asData?.value,
   );
 });
