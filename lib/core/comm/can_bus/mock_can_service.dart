@@ -44,6 +44,10 @@ class MockCanService implements CanService {
       _emitSystemInfo();
       _emitDriveInfo();
       _emitBatteryInfo();
+      _emitModeInfo();
+      _emitGlobalTimeInfo();
+      _emitCompTimeSync();
+      _emitComputeCommInfo();
     });
   }
 
@@ -168,6 +172,110 @@ class MockCanService implements CanService {
 
     _frameCtrl.add(CanFrame(
       id: 0x200,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitModeInfo() {
+    final data = Uint8List(8);
+
+    // Dummy time (0-16)
+    _setBits(data, 0, 5, 12);
+    _setBits(data, 5, 6, 34);
+    _setBits(data, 11, 6, 56);
+
+    // MainMode: modeA (1) bits 17-20
+    _setBits(data, 17, 4, 1);
+
+    // SubMode: none (0) bits 21-24
+    _setBits(data, 21, 4, 0);
+
+    // SpeedMode: medium (2) bits 25-28
+    _setBits(data, 25, 4, 2);
+
+    // DriveMode: speed (1) bits 29-32
+    _setBits(data, 29, 4, 1);
+
+    // Armed: true (1) bit 33
+    _setBits(data, 33, 1, 1);
+
+    // Headlights: true (1) bit 34
+    _setBits(data, 34, 1, 1);
+
+    // FogLights: false (0) bit 35
+    _setBits(data, 35, 1, 0);
+
+    // BrakeLights: false (0) bit 36
+    _setBits(data, 36, 1, 0);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x20B,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitGlobalTimeInfo() {
+    final data = Uint8List(8);
+    final now = DateTime.now();
+
+    // Year offset from 2000 (0-6)
+    _setBits(data, 0, 7, now.year - 2000);
+    // Month (7-10)
+    _setBits(data, 7, 4, now.month);
+    // Date (11-15)
+    _setBits(data, 11, 5, now.day);
+    // Hour (16-20)
+    _setBits(data, 16, 5, now.hour);
+    // Minute (21-26)
+    _setBits(data, 21, 6, now.minute);
+    // Second (27-32)
+    _setBits(data, 27, 6, now.second);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x202,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitCompTimeSync() {
+    final data = Uint8List(8);
+    final now = DateTime.now();
+
+    // Hour (0-4)
+    _setBits(data, 0, 5, now.hour);
+    // Minute (5-10)
+    _setBits(data, 5, 6, now.minute);
+    // Second (11-16)
+    _setBits(data, 11, 6, now.second);
+    // Millisecond (17-26)
+    _setBits(data, 17, 10, now.millisecond);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x105,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitComputeCommInfo() {
+    final data = Uint8List(8);
+
+    // Dummy time (0-16)
+    _setBits(data, 0, 5, 12);
+    _setBits(data, 5, 6, 34);
+    _setBits(data, 11, 6, 56);
+
+    // UHF Radio State: Healthy (2) bits 17-18
+    _setBits(data, 17, 2, 2);
+
+    // Compute State: Unhealthy/Fault (3) bits 21-22
+    _setBits(data, 21, 2, 3);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x20C,
       idType: CanIdType.standard,
       data: data,
     ));

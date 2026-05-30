@@ -12,22 +12,6 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
 
   @override
   List<CanField<dynamic>> get fields => [
-    // Time fields (ICD bits 11-27 → actual bits 0-16)
-    const CanField<int>(
-      name: 'hour',
-      startBit: 0,   // 11 - 11 = 0
-      endBit: 4,     // 15 - 11 = 4
-    ),
-    const CanField<int>(
-      name: 'minute',
-      startBit: 5,   // 16 - 11 = 5
-      endBit: 10,    // 21 - 11 = 10
-    ),
-    const CanField<int>(
-      name: 'second',
-      startBit: 11,  // 22 - 11 = 11
-      endBit: 16,    // 27 - 11 = 16
-    ),
 
     // Motor Controller States (ICD bits 28-31 → actual bits 17-20)
     const CanField<int>(
