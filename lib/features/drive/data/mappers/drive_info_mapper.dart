@@ -8,7 +8,7 @@ import '../../enums/motor_errors.dart';
 
 /// Parser for CAN Drive Information Message (Motor Faults)
 /// Uses bitmask enums (MotorErrors, MotorControllerErrors) for fault extraction
-class DriveInfoParser extends CanExtractionStrategy<DriveInformationEntity> {
+class DriveInfoMapper extends CanExtractionStrategy<DriveInformationEntity> {
   // TODO: Set the correct CAN message ID from your ICD header
   static final int _messageId = 0x204;  // Change this to actual message ID
 

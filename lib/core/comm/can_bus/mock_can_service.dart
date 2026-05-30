@@ -242,7 +242,8 @@ class MockCanService implements CanService {
 
   void _emitCompTimeSync() {
     final data = Uint8List(8);
-    final now = DateTime.now();
+    // Send time 1 hour ahead
+    final now = DateTime.now().add(const Duration(hours: 1));
 
     // Hour (0-4)
     _setBits(data, 0, 5, now.hour);

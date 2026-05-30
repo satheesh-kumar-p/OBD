@@ -22,4 +22,9 @@ class ModeEntity {
     required this.frontFogLightsOn,
     required this.rearBrakeLightsOn,
   });
+
+  @override
+  String toString() {
+    return 'Mode(Main: ${mainMode.label}, Sub: ${subMode.label}, Speed: $speedMode, Armed: $armed, Lights: ${headlightsOn ? 'ON' : 'OFF'})';
+  }
 }

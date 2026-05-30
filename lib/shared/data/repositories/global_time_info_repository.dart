@@ -33,7 +33,7 @@ class GlobalTimeInfoRepository {
       final info = globalMapper.parse(frame.data);
       _currentInternalTime = info.toDateTime;
       _hasInitialDate = true;
-      _logger.info('Global Time Anchor Set: $_currentInternalTime');
+      _logger.info('Global Time Anchor Set: $_localIncrementTimer');
       _emitIfChanged();
     });
 

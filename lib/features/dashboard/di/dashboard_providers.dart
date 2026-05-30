@@ -1,12 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:scout_obd/core/di/injection_container.dart';
-import 'package:scout_obd/features/dashboard/di/battery_info_providers.dart';
-import 'package:scout_obd/features/dashboard/di/mode_info_providers.dart';
-import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/shared/di/global_time_info_providers.dart';
 
+import '../../../../core/comm/can_bus/can_frame.dart';
+import '../../../core/di/injection_container.dart';
+import '../../../shared/di/global_time_info_providers.dart';
 import '../../system/di/system_info_providers.dart';
+import '../state/dashboard_state.dart';
+import 'battery_info_providers.dart';
+import 'mode_info_providers.dart';
+
+/// Provides the raw CAN frame stream for debugging.
+final canFrameStreamProvider = StreamProvider<CanFrame>((ref) {
+  final manager = ref.watch(canManagerProvider);
+  return manager.frameStream;
+});
 
 /// Provides a ticker that emits every second to refresh time-dependent UI.
 final clockTickerProvider = StreamProvider<int>((ref) {

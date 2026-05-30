@@ -6,6 +6,7 @@ import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.da
 import 'package:scout_obd/features/dashboard/presentation/widgets/hud_top_bar.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import 'package:scout_obd/features/drive/presentation/screens/drive_status_screen.dart';
+import 'package:scout_obd/features/debug/presentation/screens/debug_screen.dart';
 
 import 'package:scout_obd/features/system/presentation/screens/system_screen.dart';
 
@@ -41,7 +42,7 @@ class Dashboard extends ConsumerWidget {
                   HudSidebar(
                     items: const [
                       'SYSTEM', 'DRIVE', 'POWER', 'COMPUTE',
-                      'SENSOR', 'COM', 'ALERTS', 'PAYLOAD',
+                      'SENSOR', 'COM', 'ALERTS', 'PAYLOAD', 'DEBUG',
                     ],
                     selectedIndex: dashboardState.selectedIndex,
                     width: sidebarWidth,
@@ -82,6 +83,7 @@ class _DashboardContent extends StatelessWidget {
         _PlaceholderPage(title: 'COM'),
         _PlaceholderPage(title: 'ALERTS'),
         _PlaceholderPage(title: 'PAYLOAD'),
+        DebugScreen(),
       ],
     );
   }

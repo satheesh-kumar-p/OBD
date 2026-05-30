@@ -12,7 +12,7 @@ class DriveInfoRepository implements CanDataRepository<DriveInformationEntity> {
 
   final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
 
-  final _mapper = DriveInfoParser();
+  final _mapper = DriveInfoMapper();
 
   StreamSubscription? _driveSub;
 

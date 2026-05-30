@@ -2,7 +2,7 @@ import 'package:scout_obd/core/enums/can_enums.dart';
 
 abstract final class AppConstants {
 
-  static const bool useMockBackends = true;
+  static const bool useMockBackends = false;
 
   static const String mavlinkHost = '192.168.168.98';
   // static const String mavlinkHost = '10.10.60.147';
