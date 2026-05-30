@@ -4,7 +4,7 @@ import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../shared/domain/repositories/can_data_repository.dart';
 import '../../data/mappers/system_info_mapper.dart';
-import '../entities/system_info_entity.dart';
+import '../../domain/entities/system_info_entity.dart';
 
 class SystemInfoRepository
     implements CanDataRepository<SystemInfoEntity> {

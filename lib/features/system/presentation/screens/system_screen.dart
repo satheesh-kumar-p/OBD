@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../di/ugv_health_providers.dart';
+import '../../di/system_info_providers.dart';
 import '../../domain/entities/system_info_entity.dart';
 import '../../enums/subsystem_status_enum.dart';
 
@@ -10,7 +10,7 @@ class SystemScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final healthDataAsync = ref.watch(ugvHealthDataProvider);
+    final healthDataAsync = ref.watch(systemInfoProvider);
 
     return healthDataAsync.when(
       data: (data) => _buildSubsystemTable(data),

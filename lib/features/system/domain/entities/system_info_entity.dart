@@ -53,4 +53,21 @@ class SystemInfoEntity {
     // 'Compute Unit': compute,
   };
 
+  @override
+  String toString() {
+    return 'SystemInfoEntity(\n'
+        '  leftMotorController: $leftMotorController,\n'
+        '  rightMotorController: $rightMotorController,\n'
+        '  hvBattery: $hvBattery,\n'
+        '  lvBattery: $lvBattery,\n'
+        '  lvPdu: $lvPdu,\n'
+        '  dcDc48v12v: $dcDc48v12v,\n'
+        '  dcDc12v5v: $dcDc12v5v,\n'
+        '  vcu: $vcu,\n'
+        '  frontLeftMotor: $frontLeftMotor,\n'
+        '  rearLeftMotor: $rearLeftMotor,\n'
+        '  frontRightMotor: $frontRightMotor,\n'
+        '  rearRightMotor: $rearRightMotor\n'
+        ')';
+  }
 }
