@@ -11,6 +11,6 @@ class ComputeCommInfoEntity {
 
   @override
   String toString() {
-    return 'ComputeCommInfoEntity(uhf: $uhfRadio, compute: $compute)';
+    return 'ComputeCommInfo(uhf: $uhfRadio, compute: $compute)';
   }
 }

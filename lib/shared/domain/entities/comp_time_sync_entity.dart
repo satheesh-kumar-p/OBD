@@ -13,6 +13,6 @@ class CompTimeSyncEntity {
 
   @override
   String toString() {
-    return 'CompTimeSyncEntity($hour:$minute:$second.$millisecond)';
+    return 'CompTimeSync($hour:$minute:$second.$millisecond)';
   }
 }
