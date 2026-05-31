@@ -25,27 +25,36 @@ class DriveInfoRepository implements CanDataRepository<DriveInformationEntity> {
   @override
   void startCanData() {
     if (_driveSub != null) return;
+    _logger.info('Starting Drive Info data stream (CAN ID: 0x${_mapper.messageId.toRadixString(16).toUpperCase()})');
 
     _driveSub = _canManager
         .watchMessage(_mapper.messageId)
         .listen(
           (frame) {
-        final driveInfo = _mapper.parse(frame.data);
+            try {
+              final driveInfo = _mapper.parse(frame.data);
+              _driveCtrl.add(driveInfo);
 
-        _driveCtrl.add(driveInfo);
-
-        _logger.debug(
-          'Drive Info - Front Left Motor OverSpeed: ${driveInfo.frontLeftMotor.overSpeed}',
+              _logger.debug('Drive data received', context: {
+                'fl_motor': driveInfo.frontLeftMotor.overSpeed,
+                'fr_motor': driveInfo.frontRightMotor.overSpeed,
+                'rl_motor': driveInfo.rearLeftMotor.overSpeed,
+                'rr_motor': driveInfo.rearRightMotor.overSpeed,
+              });
+            } catch (e, st) {
+              _logger.error('Failed to parse Drive Info frame', error: e, stack: st);
+            }
+          },
+          onError: (e, st) {
+            _logger.error('CAN Drive Info Stream Error', error: e, stack: st);
+          },
         );
-      },
-      onError: (e) {
-        _logger.error('CAN Drive Info Stream Error $e');
-      },
-    );
   }
 
   @override
   void stopCanData() {
+    if (_driveSub == null) return;
+    _logger.info('Stopping Drive Info data stream');
     _driveSub?.cancel();
     _driveSub = null;
   }

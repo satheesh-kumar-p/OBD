@@ -27,27 +27,35 @@ class SystemInfoRepository
   @override
   void startCanData() {
     if (_healthSub != null) return;
+    _logger.info('Starting System Health data stream (CAN ID: 0x${SystemInfoMapper.id.toRadixString(16).toUpperCase()})');
 
     _healthSub = _canManager
         .watchMessage(SystemInfoMapper.id)
         .listen(
           (frame) {
-        final health = _mapper.parse(frame.data);
+            try {
+              final health = _mapper.parse(frame.data);
+              _healthCtrl.add(health);
 
-        _healthCtrl.add(health);
-
-        _logger.debug(
-          'Health Status - HV Battery: ${health.hvBattery}',
+              _logger.debug('System Health data received', context: {
+                'hv_batt': health.hvBattery,
+                'vcu': health.vcu,
+                'pdu': health.lvPdu,
+              });
+            } catch (e, st) {
+              _logger.error('Failed to parse System Health frame', error: e, stack: st);
+            }
+          },
+          onError: (e, st) {
+            _logger.error('CAN System Health Stream Error', error: e, stack: st);
+          },
         );
-      },
-      onError: (e) {
-        _logger.error('CAN Health Stream Error $e');
-      },
-    );
   }
 
   @override
   void stopCanData() {
+    if (_healthSub == null) return;
+    _logger.info('Stopping System Health data stream');
     _healthSub?.cancel();
     _healthSub = null;
   }

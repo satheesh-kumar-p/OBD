@@ -25,6 +25,13 @@ class ModeEntity {
 
   @override
   String toString() {
-    return 'Mode(Main: ${mainMode.label}, Sub: ${subMode.label}, Speed: $speedMode, Armed: $armed, Lights: ${headlightsOn ? 'ON' : 'OFF'})';
+    return 'Mode(Main Mode: ${mainMode.label}, '
+        'Sub Mode: ${subMode.label}, '
+        'Drive Mode: $driveMode, '
+        'Speed Mode: $speedMode, '
+        'Armed: $armed, '
+        'Head Lights: ${headlightsOn ? 'ON' : 'OFF'},'
+        'Front Fog Lights: ${frontFogLightsOn ? 'ON' : 'OFF'}, '
+        'Rear Brake Lights: ${rearBrakeLightsOn ? 'ON' : 'OFF'})';
   }
 }

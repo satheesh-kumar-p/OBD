@@ -23,25 +23,33 @@ class BatteryInfoRepository implements CanDataRepository<BatteryInfoEntity> {
   @override
   void startCanData() {
     if (_batterySub != null) return;
+    _logger.info('Starting Battery Info data stream (CAN ID: 0x${BatteryInfoMapper.id.toRadixString(16).toUpperCase()})');
 
     _batterySub = _canManager
         .watchMessage(BatteryInfoMapper.id)
         .listen(
           (frame) {
-            final batteryInfo = _mapper.parse(frame.data);
-            _batteryCtrl.add(batteryInfo);
-            _logger.debug(
-              'Battery Info - SOC: ${batteryInfo.soc}%, Voltage: ${batteryInfo.voltage}',
-            );
+            try {
+              final batteryInfo = _mapper.parse(frame.data);
+              _batteryCtrl.add(batteryInfo);
+              _logger.debug('Battery data received', context: {
+                'soc': '${batteryInfo.soc}%',
+                'voltage': '${batteryInfo.voltage}V'
+              });
+            } catch (e, st) {
+              _logger.error('Failed to parse Battery Info frame', error: e, stack: st);
+            }
           },
-          onError: (e) {
-            _logger.error('CAN Battery Info Stream Error $e');
+          onError: (e, st) {
+            _logger.error('CAN Battery Info Stream Error', error: e, stack: st);
           },
         );
   }
 
   @override
   void stopCanData() {
+    if (_batterySub == null) return;
+    _logger.info('Stopping Battery Info data stream');
     _batterySub?.cancel();
     _batterySub = null;
   }

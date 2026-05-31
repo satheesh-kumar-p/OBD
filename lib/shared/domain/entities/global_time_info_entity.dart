@@ -19,6 +19,6 @@ class GlobalTimeInfoEntity {
 
   @override
   String toString() {
-    return 'GlobalTimeInfoEntity($year-$month-$date $hour:$minute:$second)';
+    return 'GlobalTimeInfo($year-$month-$date $hour:$minute:$second)';
   }
 }

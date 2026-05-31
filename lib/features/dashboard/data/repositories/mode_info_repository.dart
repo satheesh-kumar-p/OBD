@@ -24,32 +24,37 @@ class ModeInfoRepository implements CanDataRepository<ModeEntity> {
   @override
   void startCanData() {
     if (_modeSub != null) return;
+    _logger.info('Starting Mode Info data stream (CAN ID: 0x${ModeInfoMapper.id.toRadixString(16).toUpperCase()})');
 
     _modeSub = _canManager
         .watchMessage(ModeInfoMapper.id)
         .listen(
           (frame) {
-        final modeInfo = _mapper.parse(frame.data);
+            try {
+              final modeInfo = _mapper.parse(frame.data);
+              _modeCtrl.add(modeInfo);
 
-        _modeCtrl.add(modeInfo);
-
-        _logger.debug(
-          'Mode Info - '
-              'Main: ${modeInfo.mainMode}, '
-              'Sub: ${modeInfo.subMode}, '
-              'Speed: ${modeInfo.speedMode}, '
-              'Drive: ${modeInfo.driveMode}, '
-              'Armed: ${modeInfo.armed}',
+              _logger.debug('Mode data received', context: {
+                'main': modeInfo.mainMode.label,
+                'sub': modeInfo.subMode.label,
+                'speed': modeInfo.speedMode,
+                'drive': modeInfo.driveMode.name,
+                'armed': modeInfo.armed,
+              });
+            } catch (e, st) {
+              _logger.error('Failed to parse Mode Info frame', error: e, stack: st);
+            }
+          },
+          onError: (e, st) {
+            _logger.error('CAN Mode Info Stream Error', error: e, stack: st);
+          },
         );
-      },
-      onError: (e) {
-        _logger.error('CAN Mode Info Stream Error $e');
-      },
-    );
   }
 
   @override
   void stopCanData() {
+    if (_modeSub == null) return;
+    _logger.info('Stopping Mode Info data stream');
     _modeSub?.cancel();
     _modeSub = null;
   }

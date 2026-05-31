@@ -23,7 +23,7 @@ class DriveInformationEntity {
 
   @override
   String toString() {
-    return 'DriveInformationEntity(\n'
+    return 'DriveInformation(\n'
         '  frontLeft: $frontLeftMotor,\n'
         '  frontRight: $frontRightMotor,\n'
         '  rearLeft: $rearLeftMotor,\n'

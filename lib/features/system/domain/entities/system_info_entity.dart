@@ -46,7 +46,7 @@ class SystemInfoEntity {
 
   @override
   String toString() {
-    return 'SystemInfoEntity(\n'
+    return 'SystemInfo(\n'
         '  leftMotorController: $leftMotorController,\n'
         '  rightMotorController: $rightMotorController,\n'
         '  hvBattery: $hvBattery,\n'
