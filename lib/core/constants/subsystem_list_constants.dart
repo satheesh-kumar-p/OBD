@@ -1,6 +1,17 @@
-const List<String> kSubsystems = [
-  'Left Motor Controller', 'Right Motor Controller', 'HV Battery', 'LV Battery',
-  'LV PDU', 'DC DC (48V - 12V)', 'DC DC (12V - 5V)', 'VCU',
-  'Front Left Motor', 'Rear Left Motor', 'Front Right Motor','Rear Right Motor',
-  'UHF Radio', 'L Band Radio', 'Compute'
-];
+enum Subsystem {
+  frontMotorController,
+  rearMotorController,
+  hvBattery,
+  lvBattery,
+  lvPdu,
+  dcDc48v12v,
+  dcDc12v5v,
+  vcu,
+  frontLeftMotor,
+  rearLeftMotor,
+  frontRightMotor,
+  rearRightMotor,
+  uhfRadio,
+  lBandRadio,
+  compute;
+}

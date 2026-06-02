@@ -29,21 +29,6 @@ class SystemInfoEntity {
     required this.rearRightMotor,
   });
 
-  Map<String, SubsystemStatus> get subsystemHealthMap => {
-    'Forward Motor Controller': frontMotorController,
-    'Rear Motor Controller': rearMotorController,
-    'HV Battery': hvBattery,
-    'LV Battery': lvBattery,
-    'LV PDU': lvPdu,
-    'DC-DC (48V to 12V)': dcDc48v12v,
-    'DC-DC (12V to 5V)': dcDc12v5v,
-    'VCU': vcu,
-    'Forward Left Motor': frontLeftMotor,
-    'Rear Left Motor': rearLeftMotor,
-    'Forward Right Motor': frontRightMotor,
-    'Rear Right Motor': rearRightMotor,
-  };
-
   @override
   String toString() {
     return 'SystemInfo(\n'

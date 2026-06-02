@@ -1,3 +1,4 @@
+import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../domain/entities/system_info_entity.dart';
 import '../../domain/entities/compute_comm_info_entity.dart';
 import '../../enums/subsystem_status_enum.dart';
@@ -21,21 +22,23 @@ class SystemScreenState {
     );
   }
 
-  Map<String, SubsystemStatus> get allHealthStatus {
-    final Map<String, SubsystemStatus> statusMap = {};
-    
-    // Data from 0x203
-    if (systemInfo != null) {
-      statusMap.addAll(systemInfo!.subsystemHealthMap);
-    }
-
-    // Data from 0x20C
-    if (computeCommInfo != null) {
-      statusMap['UHF Radio'] = computeCommInfo!.uhfRadio;
-      statusMap['L Band Radio'] = computeCommInfo!.lBandRadio;
-      statusMap['Compute Unit'] = computeCommInfo!.compute;
-    }
-
-    return statusMap;
+  Map<Subsystem, SubsystemStatus> get subsystemStatuses {
+    return {
+      Subsystem.frontMotorController: systemInfo?.frontMotorController ?? SubsystemStatus.unknown,
+      Subsystem.rearMotorController: systemInfo?.rearMotorController ?? SubsystemStatus.unknown,
+      Subsystem.hvBattery: systemInfo?.hvBattery ?? SubsystemStatus.unknown,
+      Subsystem.lvBattery: systemInfo?.lvBattery ?? SubsystemStatus.unknown,
+      Subsystem.lvPdu: systemInfo?.lvPdu ?? SubsystemStatus.unknown,
+      Subsystem.dcDc48v12v: systemInfo?.dcDc48v12v ?? SubsystemStatus.unknown,
+      Subsystem.dcDc12v5v: systemInfo?.dcDc12v5v ?? SubsystemStatus.unknown,
+      Subsystem.vcu: systemInfo?.vcu ?? SubsystemStatus.unknown,
+      Subsystem.frontLeftMotor: systemInfo?.frontLeftMotor ?? SubsystemStatus.unknown,
+      Subsystem.rearLeftMotor: systemInfo?.rearLeftMotor ?? SubsystemStatus.unknown,
+      Subsystem.frontRightMotor: systemInfo?.frontRightMotor ?? SubsystemStatus.unknown,
+      Subsystem.rearRightMotor: systemInfo?.rearRightMotor ?? SubsystemStatus.unknown,
+      Subsystem.uhfRadio: computeCommInfo?.uhfRadio ?? SubsystemStatus.unknown,
+      Subsystem.lBandRadio: computeCommInfo?.lBandRadio ?? SubsystemStatus.unknown,
+      Subsystem.compute: computeCommInfo?.compute ?? SubsystemStatus.unknown,
+    };
   }
 }

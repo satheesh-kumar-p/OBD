@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../di/system_info_providers.dart';
 import '../state/system_screen_state.dart';
 import '../../enums/subsystem_status_enum.dart';
@@ -20,44 +21,73 @@ class SystemScreen extends ConsumerWidget {
   }
 
   Widget _buildSubsystemTable(SystemScreenState state) {
-    final healthMap = state.allHealthStatus;
+    final statusMap = state.subsystemStatuses;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      child: GridView.count(
+      child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 4,
-        childAspectRatio: 1.15, // Slightly more vertical space for names
-        mainAxisSpacing: 6.h,
-        crossAxisSpacing: 6.w,
-        children: [
-          _tile('FORWARD LEFT MOTOR', healthMap['Front Left Motor'], Icons.settings_suggest),
-          _tile('FORWARD RIGHT MOTOR', healthMap['Front Right Motor'], Icons.settings_suggest),
-          _tile('VCU', healthMap['VCU'], Icons.developer_board),
-          _tile('LV PDU', healthMap['LV PDU'], Icons.power),
-          _tile('REAR LEFT MOTOR', healthMap['Rear Left Motor'], Icons.settings_suggest),
-          _tile('REAR RIGHT MOTOR', healthMap['Rear Right Motor'], Icons.settings_suggest),
-          _tile('HV BATTERY', healthMap['HV Battery'], Icons.battery_charging_full),
-          _tile('LV BATTERY', healthMap['LV Battery'], Icons.battery_std),
-          _tile('FRONT MOTOR CONTROLLER', healthMap['Left Motor Controller'], Icons.settings_outlined),
-          _tile('REAR MOTOR CONTROLLER', healthMap['Right Motor Controller'], Icons.settings_outlined),
-          _tile('DC-DC 48V-12V', healthMap['DC-DC (48V to 12V)'], Icons.ev_station),
-          _tile('DC-DC 12V-5V', healthMap['DC-DC (12V to 5V)'], Icons.bolt),
-          _tile('COMPUTE', healthMap['Compute Unit'], Icons.computer),
-          _tile('UHF RADIO', healthMap['UHF Radio'], Icons.settings_input_antenna),
-          _tile('L BAND RADIO', healthMap['L Band Radio'], Icons.radar)
-        ],
+        itemCount: Subsystem.values.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          childAspectRatio: 1.15,
+          mainAxisSpacing: 6.h,
+          crossAxisSpacing: 6.w,
+        ),
+        itemBuilder: (context, index) {
+          final subsystem = Subsystem.values[index];
+          final status = statusMap[subsystem] ?? SubsystemStatus.unknown;
+          return _SubsystemTile(
+            name: _getLabelForSubsystem(subsystem),
+            status: status,
+            icon: _getIconForSubsystem(subsystem),
+          );
+        },
       ),
     );
   }
 
-  Widget _tile(String name, SubsystemStatus? status, IconData icon) {
-    return _SubsystemTile(
-      name: name,
-      status: status ?? SubsystemStatus.unknown,
-      icon: icon,
-    );
+  String _getLabelForSubsystem(Subsystem subsystem) {
+    return switch (subsystem) {
+      Subsystem.frontMotorController => 'FRONT MOTOR\nCONTROLLER',
+      Subsystem.rearMotorController => 'REAR MOTOR\nCONTROLLER',
+      Subsystem.hvBattery => 'HV BATTERY',
+      Subsystem.lvBattery => 'LV BATTERY',
+      Subsystem.lvPdu => 'LV PDU',
+      Subsystem.dcDc48v12v => 'DC-DC\n48V-12V',
+      Subsystem.dcDc12v5v => 'DC-DC\n12V-5V',
+      Subsystem.vcu => 'VCU',
+      Subsystem.frontLeftMotor => 'FRONT LEFT\nMOTOR',
+      Subsystem.rearLeftMotor => 'REAR LEFT\nMOTOR',
+      Subsystem.frontRightMotor => 'FRONT RIGHT\nMOTOR',
+      Subsystem.rearRightMotor => 'REAR RIGHT\nMOTOR',
+      Subsystem.uhfRadio => 'UHF RADIO',
+      Subsystem.lBandRadio => 'L BAND RADIO',
+      Subsystem.compute => 'COMPUTE',
+    };
+  }
+
+  IconData _getIconForSubsystem(Subsystem subsystem) {
+    return switch (subsystem) {
+      Subsystem.frontLeftMotor ||
+      Subsystem.frontRightMotor ||
+      Subsystem.rearLeftMotor ||
+      Subsystem.rearRightMotor =>
+        Icons.settings_suggest,
+      Subsystem.vcu => Icons.developer_board,
+      Subsystem.lvPdu => Icons.power,
+      Subsystem.hvBattery => Icons.battery_charging_full,
+      Subsystem.lvBattery => Icons.battery_std,
+      Subsystem.frontMotorController ||
+      Subsystem.rearMotorController =>
+        Icons.settings_outlined,
+      Subsystem.dcDc48v12v => Icons.ev_station,
+      Subsystem.dcDc12v5v => Icons.bolt,
+      Subsystem.compute => Icons.computer,
+      Subsystem.uhfRadio => Icons.settings_input_antenna,
+      Subsystem.lBandRadio => Icons.radar,
+    };
   }
 }
 
@@ -78,19 +108,28 @@ class _SubsystemTile extends StatelessWidget {
       SubsystemStatus.healthy => (const Color(0xFF00FF66), 'Healthy'),
       SubsystemStatus.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
       SubsystemStatus.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
-      SubsystemStatus.unknown => (Colors.white54, 'Unknown'),
+      SubsystemStatus.unknown => (Colors.white24, 'Unknown'),
     };
 
-    final isErr = status == SubsystemStatus.unhealthy;
+    final isActionable = status == SubsystemStatus.healthy || status == SubsystemStatus.unhealthy;
 
     return Container(
       decoration: BoxDecoration(
-        color: isErr ? color.withOpacity(0.15) : Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(4.r),
+        // Distinguishable from black background using a slightly lighter base
+        color: isActionable ? color.withOpacity(0.02) : Colors.white.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: isErr ? color.withOpacity(0.8) : Colors.white10,
+          color: isActionable ? color.withOpacity(0.5) : Colors.white10,
           width: 1.w,
         ),
+        // Glow effect for actionable states (Healthy and Unhealthy)
+        boxShadow: isActionable ? [
+          BoxShadow(
+            color: color.withOpacity(0.12),
+            blurRadius: 10.r,
+            spreadRadius: 1.r,
+          )
+        ] : null,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
@@ -100,17 +139,19 @@ class _SubsystemTile extends StatelessWidget {
             Icon(
               icon,
               size: 46.r,
-              color: isErr ? color : Colors.white54,
+              color: isActionable ? color : Colors.white38,
             ),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 name,
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.white.withOpacity(0.9),
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
+                  height: 1.1,
                 ),
               ),
             ),
