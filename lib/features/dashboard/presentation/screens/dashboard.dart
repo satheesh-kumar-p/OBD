@@ -81,23 +81,3 @@ class _DashboardContent extends StatelessWidget {
     );
   }
 }
-
-class _PlaceholderPage extends StatelessWidget {
-  const _PlaceholderPage({required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white24,
-          fontSize: 64,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 4,
-        ),
-      ),
-    );
-  }
-}
