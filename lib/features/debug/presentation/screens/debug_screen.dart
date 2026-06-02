@@ -94,21 +94,54 @@ class _DebugScreenState extends ConsumerState<DebugScreen> with TickerProviderSt
   }
 }
 
-class _DebugLogList extends StatelessWidget {
+class _DebugLogList extends StatefulWidget {
   final List<DebugMessage> messages;
 
   const _DebugLogList({required this.messages});
 
   @override
+  State<_DebugLogList> createState() => _DebugLogListState();
+}
+
+class _DebugLogListState extends State<_DebugLogList> {
+  final ScrollController _scrollController = ScrollController();
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // On the very first build of a specific tab, we jump to the top (max extent)
+    // to show the latest messages.
+    if (!_initialized && widget.messages.isNotEmpty) {
+      _initialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      });
+    }
+
     return ListView.builder(
+      controller: _scrollController,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      itemCount: messages.length,
+      reverse: true, // index 0 (oldest) at bottom, anchor point.
+      itemCount: widget.messages.length,
       itemBuilder: (context, index) {
-        final msg = messages[index];
+        final msg = widget.messages[index];
         final bool isDecoded = msg.decodedData != null;
 
         return Container(
+          key: ValueKey('${msg.id}_${msg.timestamp.microsecondsSinceEpoch}'),
           margin: EdgeInsets.only(bottom: 12.h),
           padding: EdgeInsets.all(14.w),
           decoration: BoxDecoration(
@@ -150,7 +183,7 @@ class _DebugLogList extends StatelessWidget {
                 Text(
                   'HEX: ${msg.rawDataHex}',
                   style: TextStyle(
-                    color: Colors.white38,
+                    color: Colors.white70,
                     fontSize: 14.sp,
                     fontFamily: 'monospace',
                   ),

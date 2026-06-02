@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import '../../logger/logger.dart';
 import 'can_frame.dart';
 import 'can_frame_parser.dart';
 import 'can_service.dart';
@@ -11,6 +12,7 @@ import 'can_config.dart';
 class CanServiceImpl implements CanService {
   final ISerialTransport _transport;
   final CanFrameParser _parser;
+  final Logger _logger;
   
   final StreamController<bool> _connectionCtrl = StreamController<bool>.broadcast();
   StreamSubscription<Uint8List>? _transportSub;
@@ -18,8 +20,10 @@ class CanServiceImpl implements CanService {
   CanServiceImpl({
     required ISerialTransport transport,
     required CanFrameParser parser,
+    required Logger logger,
   })  : _transport = transport,
-        _parser = parser;
+        _parser = parser,
+        _logger = logger;
 
   @override
   Stream<CanFrame> get frameStream => _parser.frames;
@@ -37,8 +41,9 @@ class CanServiceImpl implements CanService {
     required CanConfig config,
   }) async {
     try {
+      _logger.info('Connecting to serial transport', context: {'port': portName, 'baud': baudRate});
       await _transport.connect(portName, baudRate: baudRate);
-      print('[CanService] Serial connection established. Sending CAN configuration...');
+      _logger.info('Serial transport connected. Sending CAN configuration...');
       
       // Apply Waveshare handshake/config (Mandatory for Variable Length mode)
       await _transport.write(config.toCommandPacket());
@@ -48,12 +53,19 @@ class CanServiceImpl implements CanService {
 
       _transportSub = _transport.dataStream.listen(
         _parser.feed,
-        onError: (e) => _connectionCtrl.add(false),
-        onDone: () => _connectionCtrl.add(false),
+        onError: (e, st) {
+          _logger.error('Transport stream error', error: e, stack: st);
+          _connectionCtrl.add(false);
+        },
+        onDone: () {
+          _logger.warn('Transport stream closed');
+          _connectionCtrl.add(false);
+        },
       );
 
       _connectionCtrl.add(true);
-    } catch (e) {
+    } catch (e, st) {
+      _logger.error('Failed to establish CAN service connection', error: e, stack: st);
       _connectionCtrl.add(false);
       rethrow;
     }
@@ -61,6 +73,7 @@ class CanServiceImpl implements CanService {
 
   @override
   Future<void> disconnect() async {
+    _logger.info('Disconnecting CAN service');
     await _transportSub?.cancel();
     _transportSub = null;
     await _transport.disconnect();
@@ -69,13 +82,17 @@ class CanServiceImpl implements CanService {
 
   @override
   Future<void> send(CanFrame frame) async {
-    if (!isConnected) return;
+    if (!isConnected) {
+      _logger.warn('Cannot send CAN frame: not connected');
+      return;
+    }
     final bytes = CanFrameParser.serialize(frame);
     await _transport.write(bytes);
   }
 
   @override
   void dispose() {
+    _logger.info('Disposing CAN service');
     disconnect();
     _parser.dispose();
     _connectionCtrl.close();

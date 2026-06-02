@@ -13,7 +13,7 @@ void main() async {
 
   // 1. Manually setup the stack without Riverpod DI
   final mockService = MockCanService(logger);
-  final canManager = CanCommManager(logger: logger);
+  final canManager = CanCommManager(logger: logger, service: mockService);
   final systemInfoRepo = SystemInfoRepository(canManager: canManager, logger: logger);
   final driveInfoRepo = DriveInfoRepository(canManager: canManager, logger: logger);
 

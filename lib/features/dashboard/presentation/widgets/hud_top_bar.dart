@@ -87,17 +87,17 @@ class HudTopBar extends ConsumerWidget {
                           gapAfter: 20.w,
                           status: state.computeCommInfo?.uhfRadio,
                         ),
-                        HudLinkStatusIcon(
-                          size: 48.r,
-                          healthLevel: state.healthLevel,
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
+                        // HudLinkStatusIcon(
+                        //   size: 48.r,
+                        //   healthLevel: state.healthLevel,
+                        // ),
+                        // SizedBox(
+                        //   width: 10.w,
+                        // ),
                         HudBatteryStatusIcon(
                           size: 40.r,
-                          soc: batteryData?.soc ?? 0,
-                          voltage: batteryData?.voltage ?? 0.0,
+                          hvBatterySoc: batteryData?.hvBatterySoc ?? 0,
+                          lvBatterySoc: batteryData?.lvBatterySoc ?? 0,
                         ),
                         if (state.mode != null) ...[
                           SizedBox(width: 16.w),

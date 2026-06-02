@@ -33,8 +33,8 @@ class BatteryInfoRepository implements CanDataRepository<BatteryInfoEntity> {
               final batteryInfo = _mapper.parse(frame.data);
               _batteryCtrl.add(batteryInfo);
               _logger.debug('Battery data received', context: {
-                'soc': '${batteryInfo.soc}%',
-                'voltage': '${batteryInfo.voltage}V'
+                'HV Battery SOC': '${batteryInfo.hvBatterySoc}%',
+                'LV Battery SOC': '${batteryInfo.lvBatterySoc}%'
               });
             } catch (e, st) {
               _logger.error('Failed to parse Battery Info frame', error: e, stack: st);

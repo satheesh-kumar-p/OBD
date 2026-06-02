@@ -11,6 +11,7 @@ class ComputeCommInfoMapper extends CanExtractionStrategy<ComputeCommInfoEntity>
   @override
   List<CanField<dynamic>> get fields => [
     const CanField<int>(name: 'uhfRadio', startBit: 17, endBit: 18),
+    const CanField<int>(name: 'lBandRadio', startBit: 19, endBit: 20),
     const CanField<int>(name: 'compute', startBit: 21, endBit: 22),
   ];
 
@@ -18,6 +19,7 @@ class ComputeCommInfoMapper extends CanExtractionStrategy<ComputeCommInfoEntity>
   ComputeCommInfoEntity build(Map<String, dynamic> parsedValues) {
     return ComputeCommInfoEntity(
       uhfRadio: _toStatus(parsedValues['uhfRadio']),
+      lBandRadio: _toStatus(parsedValues['lBandRadio']),
       compute: _toStatus(parsedValues['compute']),
     );
   }

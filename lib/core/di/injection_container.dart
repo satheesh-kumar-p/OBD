@@ -42,24 +42,38 @@ final commConnectionProvider = FutureProvider<void>((ref) async {
 */
 
 /// Raw transport layer provider.
-final serialTransportProvider = Provider<ISerialTransport>((ref) => SerialPortTransport());
+final serialLoggerProvider = Provider<Logger>((ref) => Logger('SERIAL'));
+final serialTransportProvider = Provider<ISerialTransport>((ref) => SerialPortTransport(logger: ref.read(serialLoggerProvider)));
 
 /// Concrete implementation of the CAN service.
-final canServiceProvider = Provider<CanService>((ref) => CanServiceImpl(
-  transport: ref.read(serialTransportProvider),
-  parser: CanFrameParser(),
-));
+final canServiceLoggerProvider = Provider<Logger>((ref) => Logger('CAN_SERVICE'));
+final canServiceProvider = Provider<CanService>((ref) {
+  final logger = ref.read(canServiceLoggerProvider);
+
+  if (AppConstants.useMockBackends) {
+    return MockCanService(logger);
+  }
+
+  return CanServiceImpl(
+    transport: ref.read(serialTransportProvider),
+    parser: CanFrameParser(),
+    logger: logger,
+  );
+});
 
 /// High-level communication manager.
+final canManagerLoggerProvider = Provider<Logger>((ref) => Logger('CAN_MANAGER'));
 final canManagerProvider = Provider<CanCommManager>((ref) {
-  final logger = Logger("CAN_MANAGER");
-  return CanCommManager(logger: logger);
+  return CanCommManager(
+    service: ref.read(canServiceProvider),
+    logger: ref.read(canManagerLoggerProvider),
+  );
 });
 
 /// FutureProvider that handles the initial connection handshake.
 final canConnectionProvider = FutureProvider<void>((ref) async {
   final manager = ref.read(canManagerProvider);
-  final logger = Logger('CAN_MANAGER');
+  final logger = ref.read(canManagerLoggerProvider);
 
   try {
     // Port and config can be adjusted for your specific setup

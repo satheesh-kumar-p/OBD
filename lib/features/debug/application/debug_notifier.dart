@@ -37,7 +37,7 @@ class DebugState {
 
 class DebugNotifier extends Notifier<DebugState> {
   final Map<int, CanExtractionStrategy> _mappers = {};
-  static const int _maxLogsPerId = 50;
+  static const int _maxLogsPerId = 200;
 
   @override
   DebugState build() {
@@ -92,12 +92,13 @@ class DebugNotifier extends Notifier<DebugState> {
       decodedData: decoded,
     );
 
-    // Update state
+    // Update state: Append to end (latest at highest index)
+    // Works with DebugLogList using reverse:true to anchor bottom and grow top.
     final currentLogs = List<DebugMessage>.from(state.messagesById[frame.id] ?? []);
-    currentLogs.insert(0, newMessage);
+    currentLogs.add(newMessage);
 
     if (currentLogs.length > _maxLogsPerId) {
-      currentLogs.removeLast();
+      currentLogs.removeAt(0); // Prune oldest from the beginning
     }
 
     final newMessagesById = Map<int, List<DebugMessage>>.from(state.messagesById);

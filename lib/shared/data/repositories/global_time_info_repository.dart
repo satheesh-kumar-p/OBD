@@ -35,9 +35,9 @@ class GlobalTimeInfoRepository {
         final info = globalMapper.parse(frame.data);
         _currentInternalTime = info.toDateTime;
         _hasInitialDate = true;
-        _logger.info('Global Time Anchor established', context: {
-          'time': _currentInternalTime.toIso8601String(),
-        });
+        // _logger.info('Global Time Anchor established', context: {
+        //   'time': _currentInternalTime.toIso8601String(),
+        // });
         _emitIfChanged();
       } catch (e, st) {
         _logger.error('Failed to establish Global Time Anchor', error: e, stack: st);

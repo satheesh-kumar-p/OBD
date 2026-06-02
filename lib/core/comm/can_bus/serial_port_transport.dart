@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
+import '../../logger/logger.dart';
 import './can_exception.dart';
 import 'i_serial_transport.dart';
 
@@ -19,7 +20,7 @@ export 'i_serial_transport.dart';
 ///
 /// Usage:
 /// ```dart
-/// final transport = SerialPortTransport();
+/// final transport = SerialPortTransport(logger: Logger('SERIAL'));
 /// final ports = await transport.listAvailablePorts();
 /// await transport.connect(ports.first.name);
 /// transport.dataStream.listen((bytes) { ... });
@@ -27,6 +28,7 @@ export 'i_serial_transport.dart';
 /// await transport.disconnect();
 /// ```
 class SerialPortTransport implements ISerialTransport {
+  final Logger _logger;
   SerialPort? _port;
   SerialPortReader? _reader;
   StreamController<Uint8List>? _controller;
@@ -36,6 +38,8 @@ class SerialPortTransport implements ISerialTransport {
   // delay, ensuring we only close the OS handle after the reader isolate has
   // truly finished its last native read call.
   Completer<void>? _readerClosed;
+
+  SerialPortTransport({required Logger logger}) : _logger = logger;
 
   @override
   bool get isConnected => _port?.isOpen ?? false;
@@ -85,6 +89,7 @@ class SerialPortTransport implements ISerialTransport {
 
     if (!port.openReadWrite()) {
       final err = SerialPort.lastError;
+      _logger.error('Failed to open serial port', context: {'port': portName, 'error': err?.message});
       throw CanConnectionException(
         'Failed to open "$portName": ${err?.message ?? "unknown error"}',
       );
@@ -92,7 +97,9 @@ class SerialPortTransport implements ISerialTransport {
 
     try {
       port.config = config;
-    } catch (e) {
+      _logger.info('Serial port opened and configured', context: {'port': portName});
+    } catch (e, st) {
+      _logger.error('Failed to configure serial port', context: {'port': portName}, error: e, stack: st);
       port.close();
       throw CanConnectionException(
         'Failed to configure "$portName": $e',
@@ -109,7 +116,8 @@ class SerialPortTransport implements ISerialTransport {
     _reader = reader;
     reader.stream.listen(
       (data) => _controller?.add(Uint8List.fromList(data)),
-      onError: (Object err) {
+      onError: (Object err, StackTrace st) {
+        _logger.error('SerialPortReader stream error (likely hardware disconnection)', error: err, stack: st);
         _controller?.addError(err);
         // A read error almost always means the USB device was physically
         // removed.  Mark the transport as disconnected immediately so that
@@ -121,6 +129,7 @@ class SerialPortTransport implements ISerialTransport {
           // port enumeration and the same port can be re-opened after
           // the device is plugged back in.
           try {
+            _logger.warn('Force closing port due to read error');
             _port?.close();
           } catch (_) {}
           _port = null;
@@ -129,6 +138,7 @@ class SerialPortTransport implements ISerialTransport {
         }
       },
       onDone: () {
+        _logger.info('SerialPortReader stream done');
         if (!readerClosed.isCompleted) readerClosed.complete();
         // Only null out the fields if this reader is still the active one.
         // Guards against a race where disconnect() has already swapped in a
@@ -145,6 +155,7 @@ class SerialPortTransport implements ISerialTransport {
 
   @override
   Future<void> disconnect() async {
+    _logger.info('Disconnecting serial transport');
     // Snapshot the completer before nulling fields so we can await it below.
     final readerClosed = _readerClosed;
     final port = _port;
@@ -158,12 +169,17 @@ class SerialPortTransport implements ISerialTransport {
     if (readerClosed != null) {
       await readerClosed.future.timeout(
         const Duration(milliseconds: 500),
-        onTimeout: () {},
+        onTimeout: () {
+          _logger.warn('Timeout waiting for reader to close');
+        },
       );
     }
 
     // Close the OS handle (sp_close).
-    port?.close();
+    if (port != null) {
+      _logger.info('Closing port handle');
+      port.close();
+    }
 
     // Do NOT call port.dispose() (sp_free_port) here.
     // The reader isolate holds a copy of the native sp_port* pointer.

@@ -14,18 +14,17 @@ import 'serial_port_transport.dart';
 /// Handles the lifecycle of a single [CanService] connection.
 class CanCommManager {
   CanCommManager({
+    required CanService service,
     required Logger logger,
-  }) : _logger = logger;
+  })  : _service = service,
+        _logger = logger {
+    _service.connectionStream.listen((connected) {
+      _logger.info('CAN Connection Status: ${connected ? "CONNECTED" : "DISCONNECTED"}');
+    });
+  }
 
   final Logger _logger;
-
-  late final CanService _service =
-  AppConstants.useMockBackends
-      ? MockCanService(Logger('MOCK_CAN'))
-      : CanServiceImpl(
-    transport: SerialPortTransport(),
-    parser: CanFrameParser(),
-  );
+  final CanService _service;
   StreamSubscription<CanFrame>? _frameSub;
 
   // A persistent controller so listeners can subscribe before connection
@@ -53,7 +52,7 @@ class CanCommManager {
 
     _logger.info(
       'CommManager: Connecting to $portName',
-      context: {'baud': baudRate},
+      context: {'Serial baud': baudRate, 'Can Bus Baud Rate': config.baudRate},
     );
 
     try {

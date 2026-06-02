@@ -23,27 +23,30 @@ class SystemScreen extends ConsumerWidget {
     final healthMap = state.allHealthStatus;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       child: GridView.count(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         crossAxisCount: 4,
-        childAspectRatio: 1.25,
-        mainAxisSpacing: 8.h,
-        crossAxisSpacing: 8.w,
+        childAspectRatio: 1.15, // Slightly more vertical space for names
+        mainAxisSpacing: 6.h,
+        crossAxisSpacing: 6.w,
         children: [
-          _tile('MOTOR FRONT L', healthMap['Front Left Motor'], Icons.settings_suggest),
-          _tile('MOTOR FRONT R', healthMap['Front Right Motor'], Icons.settings_suggest),
+          _tile('FORWARD LEFT MOTOR', healthMap['Front Left Motor'], Icons.settings_suggest),
+          _tile('FORWARD RIGHT MOTOR', healthMap['Front Right Motor'], Icons.settings_suggest),
           _tile('VCU', healthMap['VCU'], Icons.developer_board),
           _tile('LV PDU', healthMap['LV PDU'], Icons.power),
-          _tile('MOTOR REAR L', healthMap['Rear Left Motor'], Icons.settings_suggest),
-          _tile('MOTOR REAR R', healthMap['Rear Right Motor'], Icons.settings_suggest),
-          _tile('HV BATT', healthMap['HV Battery'], Icons.battery_charging_full),
-          _tile('LV BATT', healthMap['LV Battery'], Icons.battery_std),
-          _tile('MOTOR CTRL L', healthMap['Left Motor Controller'], Icons.settings_outlined),
-          _tile('MOTOR CTRL R', healthMap['Right Motor Controller'], Icons.settings_outlined),
+          _tile('REAR LEFT MOTOR', healthMap['Rear Left Motor'], Icons.settings_suggest),
+          _tile('REAR RIGHT MOTOR', healthMap['Rear Right Motor'], Icons.settings_suggest),
+          _tile('HV BATTERY', healthMap['HV Battery'], Icons.battery_charging_full),
+          _tile('LV BATTERY', healthMap['LV Battery'], Icons.battery_std),
+          _tile('FRONT MOTOR CONTROLLER', healthMap['Left Motor Controller'], Icons.settings_outlined),
+          _tile('REAR MOTOR CONTROLLER', healthMap['Right Motor Controller'], Icons.settings_outlined),
+          _tile('DC-DC 48V-12V', healthMap['DC-DC (48V to 12V)'], Icons.ev_station),
+          _tile('DC-DC 12V-5V', healthMap['DC-DC (12V to 5V)'], Icons.bolt),
           _tile('COMPUTE', healthMap['Compute Unit'], Icons.computer),
           _tile('UHF RADIO', healthMap['UHF Radio'], Icons.settings_input_antenna),
+          _tile('L BAND RADIO', healthMap['L Band Radio'], Icons.radar)
         ],
       ),
     );
@@ -75,7 +78,7 @@ class _SubsystemTile extends StatelessWidget {
       SubsystemStatus.healthy => (const Color(0xFF00FF66), 'Healthy'),
       SubsystemStatus.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
       SubsystemStatus.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
-      SubsystemStatus.unknown => (Colors.white10, 'Unknown'),
+      SubsystemStatus.unknown => (Colors.white54, 'Unknown'),
     };
 
     final isErr = status == SubsystemStatus.unhealthy;
@@ -96,7 +99,7 @@ class _SubsystemTile extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 34.r,
+              size: 46.r,
               color: isErr ? color : Colors.white54,
             ),
             FittedBox(
@@ -105,7 +108,7 @@ class _SubsystemTile extends StatelessWidget {
                 name,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
                 ),
@@ -118,7 +121,7 @@ class _SubsystemTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: color,
-                  fontSize: 11.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.2,
                 ),

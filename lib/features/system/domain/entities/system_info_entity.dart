@@ -1,8 +1,8 @@
 import 'package:scout_obd/features/system/enums/subsystem_status_enum.dart';
 
 class SystemInfoEntity {
-  final SubsystemStatus leftMotorController;
-  final SubsystemStatus rightMotorController;
+  final SubsystemStatus frontMotorController;
+  final SubsystemStatus rearMotorController;
   final SubsystemStatus hvBattery;
   final SubsystemStatus lvBattery;
   final SubsystemStatus lvPdu;
@@ -15,8 +15,8 @@ class SystemInfoEntity {
   final SubsystemStatus rearRightMotor;
 
   const SystemInfoEntity({
-    required this.leftMotorController,
-    required this.rightMotorController,
+    required this.frontMotorController,
+    required this.rearMotorController,
     required this.hvBattery,
     required this.lvBattery,
     required this.lvPdu,
@@ -30,25 +30,25 @@ class SystemInfoEntity {
   });
 
   Map<String, SubsystemStatus> get subsystemHealthMap => {
-    'Left Motor Controller': leftMotorController,
-    'Right Motor Controller': rightMotorController,
+    'Forward Motor Controller': frontMotorController,
+    'Rear Motor Controller': rearMotorController,
     'HV Battery': hvBattery,
     'LV Battery': lvBattery,
     'LV PDU': lvPdu,
     'DC-DC (48V to 12V)': dcDc48v12v,
     'DC-DC (12V to 5V)': dcDc12v5v,
     'VCU': vcu,
-    'Front Left Motor': frontLeftMotor,
+    'Forward Left Motor': frontLeftMotor,
     'Rear Left Motor': rearLeftMotor,
-    'Front Right Motor': frontRightMotor,
+    'Forward Right Motor': frontRightMotor,
     'Rear Right Motor': rearRightMotor,
   };
 
   @override
   String toString() {
     return 'SystemInfo(\n'
-        '  leftMotorController: $leftMotorController,\n'
-        '  rightMotorController: $rightMotorController,\n'
+        '  leftMotorController: $frontMotorController,\n'
+        '  rightMotorController: $rearMotorController,\n'
         '  hvBattery: $hvBattery,\n'
         '  lvBattery: $lvBattery,\n'
         '  lvPdu: $lvPdu,\n'

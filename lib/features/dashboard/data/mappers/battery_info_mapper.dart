@@ -11,23 +11,22 @@ class BatteryInfoMapper extends CanExtractionStrategy<BatteryInfoEntity> {
   List<CanField<dynamic>> get fields => [
     // Battery fields
     const CanField<int>(
-      name: 'soc',
+      name: 'hvBatterySoc',
       startBit: 17,
       endBit: 24,
     ),
-    CanField<double>(
-      name: 'voltage',
+    CanField<int>(
+      name: 'lvBatterySoc',
       startBit: 25,
       endBit: 32,
-      transformer: (value) => value / 10.0,
     ),
   ];
 
   @override
   BatteryInfoEntity build(Map<String, dynamic> parsedValues) {
     return BatteryInfoEntity(
-      soc: parsedValues['soc'],
-      voltage: parsedValues['voltage'],
+      hvBatterySoc: parsedValues['hvBatterySoc'],
+      lvBatterySoc: parsedValues['lvBatterySoc'],
     );
   }
 }

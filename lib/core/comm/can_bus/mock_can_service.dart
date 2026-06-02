@@ -31,7 +31,10 @@ class MockCanService implements CanService {
   Future<void> connect(String portName, {int baudRate = 2000000, required CanConfig config}) async {
     if (_connected) return;
 
-    _logger.info('MockCanService: Connecting to $portName (Mock)...');
+    _logger.info('MockCanService: Connecting to $portName (Mock)...', context: {
+      'serial_baud': baudRate,
+      'can_bus_speed': config.baudRate.name,
+    });
     await Future.delayed(const Duration(milliseconds: 500));
 
     _connected = true;
@@ -72,19 +75,20 @@ class MockCanService implements CanService {
     _connectionCtrl.close();
   }
 
-  /// Helper to set bits in a payload
+  /// Helper to set bits in a payload (Big Endian - MSB at Bit 0)
   void _setBits(Uint8List data, int startBit, int length, int value) {
     for (int i = 0; i < length; i++) {
       int bitPos = startBit + i;
       int byteIdx = bitPos ~/ 8;
-      int bitIdx = bitPos % 8;
+      // MSB at bit 0 means index 0 is bit 7 in standard shifting
+      int bitIdx = 7 - (bitPos % 8);
 
       if (byteIdx >= data.length) break;
 
       // Clear the bit
       data[byteIdx] &= ~(1 << bitIdx);
-      // Set the bit if value has it
-      if (((value >> i) & 0x01) == 1) {
+      // Set the bit if value has it at corresponding significance (startBit is MSB)
+      if (((value >> (length - 1 - i)) & 0x01) == 1) {
         data[byteIdx] |= (1 << bitIdx);
       }
     }

@@ -4,13 +4,13 @@ class HudBatteryStatusIcon extends StatelessWidget {
   const HudBatteryStatusIcon({
     super.key,
     required this.size,
-    required this.soc,
-    required this.voltage,
+    required this.hvBatterySoc,
+    required this.lvBatterySoc,
   });
 
   final double size;
-  final int soc;
-  final double voltage;
+  final int hvBatterySoc;
+  final int lvBatterySoc;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class HudBatteryStatusIcon extends StatelessWidget {
     final unit = h / 20.0;
     // Slimmer battery icon for 5" screen
     final w = 34.0 * unit;
-    final clampedLevel = (soc / 100.0).clamp(0.0, 1.0);
+    final clampedLevel = (hvBatterySoc / 100.0).clamp(0.0, 1.0);
 
     var batteryColor = const Color(0xFF00FF66); // Standard Healthy Green
     if (clampedLevel < 0.2) {
@@ -44,9 +44,8 @@ class HudBatteryStatusIcon extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Voltage Display - High visibility CyanAccent
         Text(
-          '${voltage.toStringAsFixed(1)} V',
+          '$lvBatterySoc%',
           style: TextStyle(
             color: Colors.cyanAccent,
             fontSize: h * 0.6,
@@ -91,7 +90,7 @@ class HudBatteryStatusIcon extends StatelessWidget {
                     // SOC Percentage Text Overlay - High contrast and large font
                     Center(
                       child: Text(
-                        '$soc%',
+                        '$hvBatterySoc%',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,

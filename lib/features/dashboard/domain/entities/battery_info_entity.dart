@@ -1,9 +1,9 @@
 class BatteryInfoEntity {
-  final int soc;
-  final double voltage;
+  final int hvBatterySoc;
+  final int lvBatterySoc;
 
-  BatteryInfoEntity({required this.soc, required this.voltage});
+  BatteryInfoEntity({required this.hvBatterySoc, required this.lvBatterySoc});
 
   @override
-  String toString() => 'Battery(SOC: $soc%, Volt: ${voltage.toStringAsFixed(1)}V)';
+  String toString() => 'Battery(HV Battery SOC: $hvBatterySoc%, LV Battery SOC: $lvBatterySoc%';
 }

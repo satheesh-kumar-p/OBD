@@ -32,6 +32,7 @@ class SystemScreenState {
     // Data from 0x20C
     if (computeCommInfo != null) {
       statusMap['UHF Radio'] = computeCommInfo!.uhfRadio;
+      statusMap['L Band Radio'] = computeCommInfo!.lBandRadio;
       statusMap['Compute Unit'] = computeCommInfo!.compute;
     }
 
