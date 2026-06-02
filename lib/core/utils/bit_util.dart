@@ -26,11 +26,6 @@ class BitUtil {
       // Since startBit is MSB, as i increases, significance decreases
       value |= (bit << (length - 1 - i));
     }
-
-    if (startBit == 17 && length == 8) {
-      print('DEBUG: SOC Bits Extracted (Big Endian): $bitString | Resulting Value: $value');
-    }
-
     return value;
   }
 
