@@ -29,26 +29,28 @@ class HudSidebar extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final gap = 8.h;
+          final itemHeight = constraints.maxHeight / 6;
 
-          return Column(
-            children: [
-              for (var i = 0; i < items.length; i++)
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: gap / 2,
-                      horizontal: 5.w,
-                    ),
-                    child: _HudSidebarItem(
-                      label: items[i],
-                      selected: i == selectedIndex,
-                      enabled: true,
-                      onTap: () => onSelect(i),
-                    ),
+          return ListView.builder(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            itemCount: items.length,
+            itemBuilder: (context, i) {
+              return SizedBox(
+                height: itemHeight,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 6.h,
+                    horizontal: 8.w,
+                  ),
+                  child: _HudSidebarItem(
+                    label: items[i],
+                    selected: i == selectedIndex,
+                    enabled: true,
+                    onTap: () => onSelect(i),
                   ),
                 ),
-            ],
+              );
+            },
           );
         },
       ),

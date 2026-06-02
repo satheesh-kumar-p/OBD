@@ -41,8 +41,7 @@ class Dashboard extends ConsumerWidget {
                   // Sidebar
                   HudSidebar(
                     items: const [
-                      'SYSTEM', 'DRIVE', 'POWER', 'COMPUTE',
-                      'SENSOR', 'COM', 'ALERTS', 'PAYLOAD', 'DEBUG',
+                      'SYSTEM', 'DRIVE', 'DEBUG',
                     ],
                     selectedIndex: dashboardState.selectedIndex,
                     width: sidebarWidth,
@@ -77,12 +76,6 @@ class _DashboardContent extends StatelessWidget {
       children: const [
         SystemScreen(),
         DriveScreen(),
-        _PlaceholderPage(title: 'POWER'),
-        _PlaceholderPage(title: 'COMPUTE'),
-        _PlaceholderPage(title: 'SENSOR'),
-        _PlaceholderPage(title: 'COM'),
-        _PlaceholderPage(title: 'ALERTS'),
-        _PlaceholderPage(title: 'PAYLOAD'),
         DebugScreen(),
       ],
     );
