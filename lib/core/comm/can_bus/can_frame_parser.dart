@@ -34,12 +34,25 @@ class CanFrameParser {
 
     final int control = _rxBuffer[1];
     
+    // bit7~6: Fixed to 1 for Variable Length protocol
+    if ((control & 0xC0) != 0xC0) {
+      // Not a valid control byte for this protocol, discard header
+      _rxBuffer.removeAt(0);
+      return null;
+    }
+
+    // bit0~3: length (Standard CAN allows 0-8 bytes)
+    final int dlc = control & 0x0F;
+    if (dlc > 8) {
+      // Invalid length code, discard header and keep searching
+      _rxBuffer.removeAt(0);
+      return null;
+    }
+
     // bit5: 0 - standard, 1 - extended
     final bool isExtended = (control & 0x20) != 0;
     // bit4: 0 - data frame, 1 - remote frame
     final bool isRemote = (control & 0x10) != 0;
-    // bit0~3: length
-    final int dlc = control & 0x0F;
     
     final int idBytes = isExtended ? 4 : 2;
     final int totalFrameLen = 2 + idBytes + dlc + 1;
