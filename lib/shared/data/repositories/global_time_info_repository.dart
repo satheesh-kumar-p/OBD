@@ -81,9 +81,6 @@ class GlobalTimeInfoRepository {
     if (_currentInternalTime.second != _lastEmittedSecond) {
       _lastEmittedSecond = _currentInternalTime.second;
       _timeCtrl.add(_currentInternalTime);
-      _logger.debug('System clock tick', context: {
-        'time': _currentInternalTime.toIso8601String().split('T').last,
-      });
     }
   }
 
