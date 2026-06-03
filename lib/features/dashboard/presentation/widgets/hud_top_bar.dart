@@ -6,9 +6,7 @@ import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
 import 'hud_e_stop_status.dart';
 import 'hud_handctrlStatus.dart';
-import 'hud_link_status_icon.dart';
 import 'hud_mode_label.dart';
-import 'hud_uptime_label.dart';
 
 class HudTopBar extends ConsumerWidget {
   const HudTopBar({
@@ -36,9 +34,7 @@ class HudTopBar extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       decoration: const BoxDecoration(
         color: Colors.black,
-        border: Border(
-          bottom: BorderSide(color: Colors.white10, width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.white10, width: 1)),
       ),
       child: Row(
         children: [
@@ -56,13 +52,6 @@ class HudTopBar extends ConsumerWidget {
                 Expanded(
                   child: Row(
                     children: [
-                      Flexible(
-                        child: HudUptimeLabel(
-                          height: labelH,
-                          uptime: state.uptimeFormatted,
-                        ),
-                      ),
-                      SizedBox(width: 20.w),
                       Flexible(
                         child: HudDateTimeLabel(
                           height: labelH,
