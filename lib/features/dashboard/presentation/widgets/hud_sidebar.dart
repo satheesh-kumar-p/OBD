@@ -15,8 +15,6 @@ class HudSidebar extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final double width;
 
-  static const _steel = Color(0xFF93A9B5);
-
   @override
   Widget build(BuildContext context) {
     return Container(
