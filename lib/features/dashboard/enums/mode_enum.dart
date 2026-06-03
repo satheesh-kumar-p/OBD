@@ -30,22 +30,24 @@ enum ModeChangeReason {
 }
 
 enum SpeedMode {
-  unknown(-1),
-  low(1),
-  medium(2),
-  high(3);
+  unknown(-1, 'UNKNOWN'),
+  low(1, 'LOW'),
+  medium(2, 'MEDIUM'),
+  high(3, 'HIGH');
 
-  const SpeedMode(this.value);
+  const SpeedMode(this.value, this.label);
   final int value;
+  final String label;
 }
 
 enum DriveMode {
-  unknown(-1),
-  speed(1),
-  torque(2),
-  torqueWithSpeedLimit(3),
-  position(4);
+  unknown(-1, 'UNKNOWN'),
+  speed(1, 'SPEED'),
+  torque(2, 'TORQUE'),
+  torqueWithSpeedLimit(3, 'TRQ W SL'),
+  position(4, 'POSITION');
 
-  const DriveMode(this.value);
+  const DriveMode(this.value, this.label);
   final int value;
+  final String label;
 }

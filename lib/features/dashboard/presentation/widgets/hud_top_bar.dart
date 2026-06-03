@@ -45,6 +45,13 @@ class HudTopBar extends ConsumerWidget {
             height: 64.h,
             maxWidth: maxWidth,
           ),
+          SizedBox(width: 8.w),
+          HudModeLabel(
+            mainText: state.driveModeName,
+            subText: state.speedModeName,
+            height: 64.h,
+            maxWidth: maxWidth / 1.5,
+          ),
           SizedBox(width: 12.w),
           Expanded(
             child: Row(

@@ -113,6 +113,10 @@ class DashboardState {
 
   String get subModeName => mode?.subMode.label ?? 'N/A';
 
+  String get driveModeName => mode?.driveMode.label ?? 'UNKNOWN';
+
+  String get speedModeName => mode?.speedMode.label ?? 'UNKNOWN';
+
   String get uptimeFormatted {
     final bootSeconds = systemTime?.currentUpTimeSeconds;
     if (bootSeconds == null) return 'AWAITING';
