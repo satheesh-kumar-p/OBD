@@ -43,11 +43,11 @@ class SystemScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildStageSection('STAGE 1: IDLE', _stage1, state),
-          SizedBox(height: 8.h),
+          SizedBox(height: 16.h),
           _buildStageSection('STAGE 2: KEY ON', _stage2, state),
-          SizedBox(height: 8.h),
+          SizedBox(height: 16.h),
           _buildStageSection('STAGE 3: DRIVE ON', _stage3, state),
-          SizedBox(height: 4.h),
+          SizedBox(height: 8.h),
         ],
       ),
     );
@@ -65,7 +65,7 @@ class SystemScreen extends ConsumerWidget {
             title,
             style: TextStyle(
               color: Colors.white.withOpacity(0.5),
-              fontSize: 14.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
@@ -78,8 +78,8 @@ class SystemScreen extends ConsumerWidget {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 6,
             childAspectRatio: 1.3, // Short and wide
-            mainAxisSpacing: 2.h,
-            crossAxisSpacing: 2.w,
+            mainAxisSpacing: 6.h,
+            crossAxisSpacing: 6.w,
           ),
           itemBuilder: (context, index) {
             final subsystem = items[index];
@@ -177,9 +177,10 @@ class _SubsystemTile extends StatelessWidget {
             // 1. ICON at the top
             Icon(
               icon,
-              size: 38.r, // Balanced middle ground
+              size: 38.r,
               color: isActionable ? color : Colors.white38,
             ),
+            SizedBox(height: 5.h),
             // 2. TITLE in the middle
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -188,12 +189,13 @@ class _SubsystemTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.95),
-                  fontSize: 18.sp, // Balanced middle ground
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
                 ),
               ),
             ),
+            SizedBox(height: 5.h),
             // 3. VALUE at the bottom
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -202,7 +204,7 @@ class _SubsystemTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: color,
-                  fontSize: 14.sp, // Balanced middle ground
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
                 ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
+import '../../state/dashboard_state.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
-import 'hud_e_stop_status.dart';
 import 'hud_handctrlStatus.dart';
+import 'hud_e_stop_status.dart';
 import 'hud_mode_label.dart';
 
 class HudTopBar extends ConsumerWidget {
