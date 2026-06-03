@@ -23,9 +23,4 @@ abstract final class AppConstants {
   static const Duration heartbeatLostTimeout = Duration(seconds: 3);
   static const Duration heartbeatSendInterval = Duration(seconds: 1);
 
-  // ── Time Sync
-  static const Duration timeSyncInterval = Duration(seconds: 10);
-
-
-
 }
