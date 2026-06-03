@@ -22,6 +22,12 @@ class Dashboard extends ConsumerWidget {
     final horizontalMargin = 20.w;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('SCOUT UGV OBD'),
+        backgroundColor: Colors.black,
+        toolbarHeight: 60.h,
+        centerTitle: true,
+      ),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
