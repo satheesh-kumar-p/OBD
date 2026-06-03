@@ -42,7 +42,7 @@ class MockCanService implements CanService {
     _logger.info('MockCanService: Connected.');
 
     // Start emitting fake robot data (e.g. System Info 0x203, Drive Info 0x204)
-    _periodicTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _periodicTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (!_connected) return;
       _emitSystemInfo();
       _emitDriveInfo();
@@ -170,9 +170,9 @@ class MockCanService implements CanService {
     // SOC: 85% (bits 17-24)
     _setBits(data, 17, 8, 85);
 
-    // Voltage: 24.5V -> 245 (bits 25-32)
-    // 8 bits max is 255. 245 results in 24V with ~/10 transformer.
-    _setBits(data, 25, 8, 245);
+    // Voltage: 24.5V -> 24 (bits 25-32)
+    // 8 bits max is 255. 24 results in 24V with ~/10 transformer.
+    _setBits(data, 25, 8, 24);
 
     _frameCtrl.add(CanFrame(
       id: 0x200,
