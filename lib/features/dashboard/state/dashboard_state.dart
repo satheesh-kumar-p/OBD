@@ -7,6 +7,7 @@ import '../../../shared/domain/entities/time_sync_entity.dart';
 import '../../system/domain/entities/compute_comm_info_entity.dart';
 import '../../system/domain/entities/system_info_entity.dart';
 import '../domain/entities/battery_info_entity.dart';
+import '../domain/entities/e_stop_info_entity.dart';
 import '../domain/entities/mode_entity.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
@@ -20,6 +21,7 @@ class DashboardState {
     this.systemTime,
     this.mode,
     this.battery,
+    this.eStopInfo,
     this.systemInfo,
     this.computeCommInfo,
     this.selectedIndex = 0,
@@ -32,6 +34,7 @@ class DashboardState {
   final SystemTimeEntity? systemTime;
   final ModeEntity? mode;
   final BatteryInfoEntity? battery;
+  final EStopInfoEntity? eStopInfo;
   final SystemInfoEntity? systemInfo;
   final ComputeCommInfoEntity? computeCommInfo;
   final int selectedIndex;
@@ -44,6 +47,7 @@ class DashboardState {
     SystemTimeEntity? systemTime,
     ModeEntity? mode,
     BatteryInfoEntity? battery,
+    EStopInfoEntity? eStopInfo,
     SystemInfoEntity? systemInfo,
     ComputeCommInfoEntity? computeCommInfo,
     int? selectedIndex,
@@ -56,6 +60,7 @@ class DashboardState {
       systemTime: systemTime ?? this.systemTime,
       mode: mode ?? this.mode,
       battery: battery ?? this.battery,
+      eStopInfo: eStopInfo ?? this.eStopInfo,
       systemInfo: systemInfo ?? this.systemInfo,
       computeCommInfo: computeCommInfo ?? this.computeCommInfo,
       selectedIndex: selectedIndex ?? this.selectedIndex,

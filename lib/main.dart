@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/constants/app_constants.dart';
 import 'core/di/injection_container.dart';
 import 'features/dashboard/di/battery_info_providers.dart';
+import 'features/dashboard/di/e_stop_info_providers.dart';
 import 'features/dashboard/di/mode_info_providers.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
@@ -65,6 +66,7 @@ class _AppBootstrapper extends ConsumerWidget {
     ref.watch(systemScreenStateProvider);
     ref.watch(modeInfoProvider);
     ref.watch(batteryInfoProvider);
+    ref.watch(eStopInfoProvider);
     ref.watch(globalTimeProvider);
     ref.watch(debugNotifierProvider);
 

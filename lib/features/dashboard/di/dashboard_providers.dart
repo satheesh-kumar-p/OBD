@@ -7,6 +7,7 @@ import '../../../shared/di/global_time_info_providers.dart';
 import '../../system/di/system_info_providers.dart';
 import '../state/dashboard_state.dart';
 import 'battery_info_providers.dart';
+import 'e_stop_info_providers.dart';
 import 'mode_info_providers.dart';
 
 /// Provides the raw CAN frame stream for debugging.
@@ -40,6 +41,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
   final selectedIndex = ref.watch(dashboardIndexProvider);
   final modeAsync = ref.watch(modeInfoProvider);
   final batteryAsync = ref.watch(batteryInfoProvider);
+  final eStopAsync = ref.watch(eStopInfoProvider);
   final systemAsync = ref.watch(systemInfoProvider);
   final computeCommAsync = ref.watch(computeCommInfoProvider);
   final globalTimeAsync = ref.watch(globalTimeProvider);
@@ -52,6 +54,7 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
     selectedIndex: selectedIndex,
     mode: modeAsync.asData?.value,
     battery: batteryAsync.asData?.value,
+    eStopInfo: eStopAsync.asData?.value,
     systemInfo: systemAsync.asData?.value,
     computeCommInfo: computeCommAsync.asData?.value,
     globalTime: globalTimeAsync.asData?.value,
