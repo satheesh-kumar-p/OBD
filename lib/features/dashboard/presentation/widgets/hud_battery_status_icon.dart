@@ -25,7 +25,7 @@ class HudBatteryStatusIcon extends StatelessWidget {
         _BatteryWidget(
           soc: lvBatterySoc,
           height: h * 0.8,
-          color: Colors.cyanAccent,
+          color: _getBatteryColor(lvBatterySoc),
           isCarBattery: false,
           label: 'LV',
         ),
