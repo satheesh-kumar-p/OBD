@@ -47,12 +47,31 @@ final computeCommInfoProvider = StreamProvider<ComputeCommInfoEntity>((ref) {
   return repository.watchCanData();
 });
 
-final systemScreenStateProvider = Provider<SystemScreenState>((ref) {
-  final systemInfo = ref.watch(systemInfoProvider).asData?.value;
-  final computeInfo = ref.watch(computeCommInfoProvider).asData?.value;
+class SystemScreenNotifier extends Notifier<SystemScreenState> {
+  @override
+  SystemScreenState build() {
+    ref.listen(systemInfoProvider, (previous, next) {
+      if (next.hasValue) {
+        state = state.copyWith(
+          systemInfo: next.value,
+          lastUpdateTime: DateTime.now(),
+        );
+      }
+    });
 
-  return SystemScreenState(
-    systemInfo: systemInfo,
-    computeCommInfo: computeInfo,
-  );
-});
+    ref.listen(computeCommInfoProvider, (previous, next) {
+      if (next.hasValue) {
+        state = state.copyWith(
+          computeCommInfo: next.value,
+          lastUpdateTime: DateTime.now(),
+        );
+      }
+    });
+
+    return const SystemScreenState();
+  }
+}
+
+final systemScreenStateProvider = NotifierProvider<SystemScreenNotifier, SystemScreenState>(
+  SystemScreenNotifier.new,
+);
