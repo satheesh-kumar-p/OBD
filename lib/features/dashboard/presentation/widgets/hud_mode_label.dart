@@ -31,13 +31,13 @@ class HudModeLabel extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: borderColor, width: 1.w),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (armed) ...[
               Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 24.r),
-              SizedBox(width: 12.w),
+              SizedBox(width: 10.w),
             ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
