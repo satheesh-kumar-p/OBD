@@ -59,7 +59,7 @@ class HudModeLabel extends StatelessWidget {
                   child: Text(
                     subText,
                     style: TextStyle(
-                      color: armed ? Colors.redAccent.withOpacity(0.7) : Colors.cyanAccent,
+                      color: armed ? Colors.redAccent.withOpacity(0.7) : Colors.orangeAccent,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.3.w,
