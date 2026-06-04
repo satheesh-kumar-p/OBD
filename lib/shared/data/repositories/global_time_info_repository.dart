@@ -35,16 +35,13 @@ class GlobalTimeInfoRepository {
         final info = globalMapper.parse(frame.data);
         _currentInternalTime = info.toDateTime;
         _hasInitialDate = true;
-        // _logger.info('Global Time Anchor established', context: {
-        //   'time': _currentInternalTime.toIso8601String(),
-        // });
         _emitIfChanged();
       } catch (e, st) {
         _logger.error('Failed to establish Global Time Anchor', error: e, stack: st);
       }
     });
 
-    // 2. Listen for Time Sync (0x105) - 50Hz updates
+    // 2. Listen for Time Sync (0x206) - 50Hz updates
     final syncMapper = CompTimeSyncMapper();
     _syncTimeSub = _canManager.watchMessage(CompTimeSyncMapper.id).listen((frame) {
       try {
@@ -61,7 +58,6 @@ class GlobalTimeInfoRepository {
           sync.millisecond,
         );
         
-        _logger.verbose('System time synced via CAN 0x105');
         _emitIfChanged();
       } catch (e, st) {
         _logger.error('Time Sync (0x105) parse error', error: e, stack: st);
