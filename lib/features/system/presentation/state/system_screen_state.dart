@@ -6,19 +6,23 @@ import '../../enums/subsystem_status_enum.dart';
 class SystemScreenState {
   final SystemInfoEntity? systemInfo;
   final ComputeCommInfoEntity? computeCommInfo;
+  final DateTime? lastUpdateTime;
 
   const SystemScreenState({
     this.systemInfo,
     this.computeCommInfo,
+    this.lastUpdateTime,
   });
 
   SystemScreenState copyWith({
     SystemInfoEntity? systemInfo,
     ComputeCommInfoEntity? computeCommInfo,
+    DateTime? lastUpdateTime,
   }) {
     return SystemScreenState(
       systemInfo: systemInfo ?? this.systemInfo,
       computeCommInfo: computeCommInfo ?? this.computeCommInfo,
+      lastUpdateTime: lastUpdateTime ?? this.lastUpdateTime,
     );
   }
 
