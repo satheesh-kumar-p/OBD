@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
+import '../../../dashboard/di/dashboard_providers.dart';
 import '../../di/system_info_providers.dart';
 import '../state/system_screen_state.dart';
 import '../../enums/subsystem_status_enum.dart';
@@ -37,19 +38,28 @@ class SystemScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(systemScreenStateProvider);
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildStageSection('STAGE 1: IDLE', _stage1, state),
-          SizedBox(height: 16.h),
-          _buildStageSection('STAGE 2: KEY ON', _stage2, state),
-          SizedBox(height: 16.h),
-          _buildStageSection('STAGE 3: DRIVE ON', _stage3, state),
-          SizedBox(height: 8.h),
-        ],
-      ),
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStageSection('STAGE 1: IDLE', _stage1, state),
+              SizedBox(height: 16.h),
+              _buildStageSection('STAGE 2: KEY ON', _stage2, state),
+              SizedBox(height: 16.h),
+              _buildStageSection('STAGE 3: DRIVE ON', _stage3, state),
+              SizedBox(height: 8.h),
+            ],
+          ),
+        ),
+        Positioned(
+          top: 10.h,
+          right: 20.w,
+          child: _LastUpdatedIndicator(lastUpdate: state.lastUpdateTime),
+        ),
+      ],
     );
   }
 
@@ -135,6 +145,68 @@ class SystemScreen extends ConsumerWidget {
       Subsystem.uhfRadio => Icons.settings_input_antenna,
       Subsystem.lBandRadio => Icons.radar,
     };
+  }
+}
+
+class _LastUpdatedIndicator extends ConsumerWidget {
+  final DateTime? lastUpdate;
+  const _LastUpdatedIndicator({required this.lastUpdate});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (lastUpdate == null) return const SizedBox.shrink();
+
+    // Rebuild every second
+    ref.watch(clockTickerProvider);
+
+    final diff = DateTime.now().difference(lastUpdate!);
+    final String timeStr = _formatDiff(diff);
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.access_time_rounded,
+            size: 16.sp,
+            color: Colors.white38,
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            timeStr,
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'monospace',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDiff(Duration d) {
+    final seconds = d.inSeconds;
+    if (seconds < 5) return 'NOW';
+    if (seconds < 60) return '${seconds}s';
+
+    final minutes = d.inMinutes;
+    if (minutes < 60) {
+      final s = seconds % 60;
+      return '${minutes.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    }
+
+    final hours = d.inHours;
+    final m = minutes % 60;
+    final s = seconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 }
 
