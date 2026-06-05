@@ -28,6 +28,7 @@ dependencies:
   intl: ^0.20.2
   flutter_screenutil: ^5.9.3
   flutter_libserialport: ^0.6.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
