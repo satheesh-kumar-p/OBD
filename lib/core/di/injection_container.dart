@@ -31,7 +31,6 @@ final canManagerLoggerProvider = Provider<Logger>((ref) => Logger('CAN_MANAGER')
 final canDispatcherProvider = Provider<CanMessageDispatcher>((ref) {
   return CanMessageDispatcher(
     configs: CanDispatchConfigs.defaultConfigs,
-    logger: Logger('CAN_DISPATCHER'),
   );
 });
 
