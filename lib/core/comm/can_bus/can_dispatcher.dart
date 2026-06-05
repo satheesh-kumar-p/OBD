@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:collection/collection.dart';
-import '../../logger/logger.dart';
 import 'can_frame.dart';
 
 /// Strategy for handling incoming CAN messages.
@@ -49,7 +48,6 @@ class _ScheduledTask {
 class CanMessageDispatcher {
   final Map<int, MessageConfig> _configs;
   final StreamController<CanFrame> _outputController = StreamController<CanFrame>.broadcast();
-  final Logger? _logger;
   
   // Storage: Always holds the latest frame for an ID.
   final Map<int, CanFrame> _latestFrames = {};
@@ -71,9 +69,7 @@ class CanMessageDispatcher {
   CanMessageDispatcher({
     List<MessageConfig> configs = const [],
     Duration tickInterval = const Duration(milliseconds: 10),
-    Logger? logger,
-  }) : _configs = {for (var c in configs) c.messageId: c},
-       _logger = logger {
+  }) : _configs = {for (var c in configs) c.messageId: c} {
     _startMasterTicker(tickInterval);
     _startWatchdog();
   }
