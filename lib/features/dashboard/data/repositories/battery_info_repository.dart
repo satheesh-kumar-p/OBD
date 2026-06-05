@@ -2,11 +2,11 @@ import 'dart:async';
 
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
-import '../../../../shared/domain/repositories/can_data_repository.dart';
+import '../../../../shared/domain/repositories/i_can_data_repository.dart';
 import '../mappers/battery_info_mapper.dart';
 import '../../domain/entities/battery_info_entity.dart';
 
-class BatteryInfoRepository implements CanDataRepository<BatteryInfoEntity> {
+class BatteryInfoRepository implements ICanDataRepository<BatteryInfoEntity> {
   final CanCommManager _canManager;
   final Logger _logger;
 

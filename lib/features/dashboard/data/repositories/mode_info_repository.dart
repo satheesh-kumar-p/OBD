@@ -2,11 +2,11 @@ import 'dart:async';
 
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
-import '../../../../shared/domain/repositories/can_data_repository.dart';
+import '../../../../shared/domain/repositories/i_can_data_repository.dart';
 import '../mappers/mode_info_mapper.dart';
 import '../../domain/entities/mode_entity.dart';
 
-class ModeInfoRepository implements CanDataRepository<ModeEntity> {
+class ModeInfoRepository implements ICanDataRepository<ModeEntity> {
   final CanCommManager _canManager;
   final Logger _logger;
 
