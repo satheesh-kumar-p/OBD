@@ -1,14 +1,10 @@
 import 'dart:async';
 
-import '../../constants/app_constants.dart';
 import '../../logger/logger.dart';
 import 'can_config.dart';
+import 'can_dispatcher.dart';
 import 'can_frame.dart';
-import 'can_frame_parser.dart';
 import 'can_service.dart';
-import 'can_service_impl.dart';
-import 'mock_can_service.dart';
-import 'serial_port_transport.dart';
 
 /// Central manager for CAN communication.
 /// Handles the lifecycle of a single [CanService] connection.
@@ -16,8 +12,10 @@ class CanCommManager {
   CanCommManager({
     required CanService service,
     required Logger logger,
+    CanMessageDispatcher? dispatcher,
   })  : _service = service,
-        _logger = logger {
+        _logger = logger,
+        _dispatcher = dispatcher ?? CanMessageDispatcher() {
     _service.connectionStream.listen((connected) {
       _logger.info('CAN Connection Status: ${connected ? "CONNECTED" : "DISCONNECTED"}');
     });
@@ -25,13 +23,14 @@ class CanCommManager {
 
   final Logger _logger;
   final CanService _service;
+  final CanMessageDispatcher _dispatcher;
   StreamSubscription<CanFrame>? _frameSub;
 
   // A persistent controller so listeners can subscribe before connection
   final _frameController = StreamController<CanFrame>.broadcast();
 
-  /// Stream of all incoming CAN frames.
-  Stream<CanFrame> get frameStream => _frameController.stream;
+  /// Stream of all incoming CAN frames (filtered/sampled by dispatcher).
+  Stream<CanFrame> get frameStream => _dispatcher.frameStream;
 
   /// Stream of connection status.
   Stream<bool> get connectionStream => _service.connectionStream;
@@ -58,10 +57,10 @@ class CanCommManager {
     try {
       await _service.connect(portName, baudRate: baudRate, config: config);
 
-      // Pipe the service frames into our central controller
+      // Pipe the service frames into our dispatcher
       _frameSub = _service.frameStream.listen(
-        _frameController.add,
-        onError: _frameController.addError,
+        _dispatcher.dispatch,
+        onError: (e, st) => _logger.error('Dispatcher input error', error: e, stack: st),
       );
 
       _logger.info('CommManager: Successfully connected');
@@ -97,6 +96,7 @@ class CanCommManager {
   void dispose() {
     disconnect();
     _frameController.close();
+    _dispatcher.dispose();
     _service.dispose();
   }
 }
