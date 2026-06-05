@@ -3,7 +3,7 @@ import 'can_frame.dart';
 import 'can_config.dart';
 
 /// Abstract interface for CAN communication.
-abstract class CanService {
+abstract class ICanService {
   /// Stream of successfully parsed CAN frames.
   Stream<CanFrame> get frameStream;
 

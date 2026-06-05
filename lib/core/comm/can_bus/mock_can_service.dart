@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import '../../enums/can_enums.dart';
 import '../../logger/logger.dart';
 import 'can_frame.dart';
-import 'can_service.dart';
+import 'i_can_service.dart';
 import 'can_config.dart';
 
 /// Mock CAN service that emits fake frames.
 /// Matches the architecture of MockMavlinkService.
-class MockCanService implements CanService {
+class MockCanService implements ICanService {
   final Logger _logger;
   final _frameCtrl = StreamController<CanFrame>.broadcast();
   final _connectionCtrl = StreamController<bool>.broadcast();

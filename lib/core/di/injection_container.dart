@@ -12,7 +12,7 @@ final serialTransportProvider = Provider<ISerialTransport>((ref) => SerialPortTr
 
 /// Concrete implementation of the CAN service.
 final canServiceLoggerProvider = Provider<Logger>((ref) => Logger('CAN_SERVICE'));
-final canServiceProvider = Provider<CanService>((ref) {
+final canServiceProvider = Provider<ICanService>((ref) {
   final logger = ref.read(canServiceLoggerProvider);
 
   if (AppConstants.useMockBackends) {

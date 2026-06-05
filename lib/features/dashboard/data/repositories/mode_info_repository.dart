@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
-import '../../../../shared/domain/repositories/i_can_data_repository.dart';
+import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../mappers/mode_info_mapper.dart';
 import '../../domain/entities/mode_entity.dart';
 

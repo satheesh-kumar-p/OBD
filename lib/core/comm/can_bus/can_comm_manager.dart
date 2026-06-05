@@ -4,13 +4,13 @@ import '../../logger/logger.dart';
 import 'can_config.dart';
 import 'can_dispatcher.dart';
 import 'can_frame.dart';
-import 'can_service.dart';
+import 'i_can_service.dart';
 
 /// Central manager for CAN communication.
-/// Handles the lifecycle of a single [CanService] connection.
+/// Handles the lifecycle of a single [ICanService] connection.
 class CanCommManager {
   CanCommManager({
-    required CanService service,
+    required ICanService service,
     required Logger logger,
     CanMessageDispatcher? dispatcher,
   })  : _service = service,
@@ -22,7 +22,7 @@ class CanCommManager {
   }
 
   final Logger _logger;
-  final CanService _service;
+  final ICanService _service;
   final CanMessageDispatcher _dispatcher;
   StreamSubscription<CanFrame>? _frameSub;
 

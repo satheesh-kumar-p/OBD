@@ -4,7 +4,7 @@ import '../mappers/drive_info_mapper.dart';
 import '../../domain/entities/drive_information_entity.dart';
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
-import '../../../../shared/domain/repositories/i_can_data_repository.dart';
+import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 
 class DriveInfoRepository implements ICanDataRepository<DriveInformationEntity> {
   final CanCommManager _canManager;

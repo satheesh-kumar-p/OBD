@@ -4,12 +4,12 @@ import 'dart:typed_data';
 import '../../logger/logger.dart';
 import 'can_frame.dart';
 import 'can_frame_parser.dart';
-import 'can_service.dart';
+import 'i_can_service.dart';
 import 'i_serial_transport.dart';
 import 'can_config.dart';
 
-/// Waveshare-specific implementation of [CanService].
-class CanServiceImpl implements CanService {
+/// Waveshare-specific implementation of [ICanService].
+class CanServiceImpl implements ICanService {
   final ISerialTransport _transport;
   final CanFrameParser _parser;
   final Logger _logger;
