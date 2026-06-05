@@ -16,8 +16,6 @@ class GlobalTimeInfoRepository {
   StreamSubscription? _globalTimeSub;
   StreamSubscription? _syncTimeSub;
 
-  int _lastEmittedSecond = -1;
-
   GlobalTimeInfoRepository({
     required CanCommManager canManager,
     required Logger logger,
@@ -35,7 +33,7 @@ class GlobalTimeInfoRepository {
         final info = globalMapper.parse(frame.data);
         _currentInternalTime = info.toDateTime;
         _hasInitialDate = true;
-        _emitIfChanged();
+        _timeCtrl.add(_currentInternalTime);
       } catch (e, st) {
         _logger.error('Failed to establish Global Time Anchor', error: e, stack: st);
       }
@@ -58,9 +56,9 @@ class GlobalTimeInfoRepository {
           sync.millisecond,
         );
         
-        _emitIfChanged();
+        _timeCtrl.add(_currentInternalTime);
       } catch (e, st) {
-        _logger.error('Time Sync (0x105) parse error', error: e, stack: st);
+        _logger.error('Time Sync (0x206) parse error', error: e, stack: st);
       }
     });
 
@@ -68,16 +66,8 @@ class GlobalTimeInfoRepository {
     // This ensures the clock keeps moving even if CAN messages pause.
     _localIncrementTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       _currentInternalTime = _currentInternalTime.add(const Duration(milliseconds: 10));
-      _emitIfChanged();
-    });
-  }
-
-  void _emitIfChanged() {
-    // Throttling: Only emit once per second to the UI
-    if (_currentInternalTime.second != _lastEmittedSecond) {
-      _lastEmittedSecond = _currentInternalTime.second;
       _timeCtrl.add(_currentInternalTime);
-    }
+    });
   }
 
   void stop() {
