@@ -1,11 +1,11 @@
 import 'dart:async';
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
-import '../../../../shared/domain/repositories/can_data_repository.dart';
+import '../../../../shared/domain/repositories/i_can_data_repository.dart';
 import '../../domain/entities/compute_comm_info_entity.dart';
 import '../mappers/compute_comm_info_mapper.dart';
 
-class ComputeCommInfoRepository implements CanDataRepository<ComputeCommInfoEntity> {
+class ComputeCommInfoRepository implements ICanDataRepository<ComputeCommInfoEntity> {
   final CanCommManager _canManager;
   final Logger _logger;
 

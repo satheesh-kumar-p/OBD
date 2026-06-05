@@ -1,4 +1,4 @@
-abstract class CanDataRepository<T> {
+abstract class ICanDataRepository<T> {
   void startCanData();
   void stopCanData();
   Stream<T> watchCanData();
