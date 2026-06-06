@@ -1,88 +1,156 @@
 import 'dart:async';
 
-import 'package:mavlink_nrt/dialects/ardupilotmega.dart';
-import 'package:scout_display/core/mavlink_service.dart';
-import 'package:scout_display/shared/domain/models/time_sync.dart';
-import 'package:scout_display/shared/domain/repositories/time_sync_repository.dart';
+import 'package:mavlink_module/dialects/ugvcustom.dart';
+import 'package:mavlink_module/mavlink.dart';
+import 'package:scout_obd/core/comm/comm_manager.dart';
+import 'package:scout_obd/core/constants/app_constants.dart';
+import 'package:scout_obd/core/logger/logger.dart';
+import 'package:scout_obd/shared/data/models/system_time_model.dart';
+import 'package:scout_obd/shared/data/models/time_sync_model.dart';
+import 'package:scout_obd/shared/data/models/time_sync_request_model.dart';
+import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
+import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
+import 'package:scout_obd/shared/domain/repositories/time_sync_repository.dart';
+
+const int _kMsgIdSystemTime = 2;
+const int _kMsgIdTimesync = 111;
 
 class TimeSyncRepositoryImpl implements TimeSyncRepository {
-  final MavlinkService _service;
-  final int Function() _now;
+  final CommManager _commManager;
+  final Logger _logger;
 
-  late final StreamSubscription<Timesync> _sub;
-  late final Timer _timer;
+  Timer? _syncTimer;
+  int? _lastSentTs1;
 
-  final _controller = StreamController<TimeSync>.broadcast();
+  StreamSubscription<MavlinkFrame>? _timeSyncMsgSub;
 
-  int? _t1;
+  final _timeSyncCtrl = StreamController<TimeSyncEntity>.broadcast();
 
-  TimeSyncRepositoryImpl(
-      this._service,
-      this._now,
-      ) {
-    _sub = _service.messagesOf<Timesync>().listen(_handleTimesync);
+  TimeSyncRepositoryImpl({
+    required CommManager commManager,
+    required Logger logger,
+  }) : _commManager = commManager,
+       _logger = logger;
 
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) {
-      sendRequest();
-    });
+  @override
+  void startTimeSync() {
+    if (_syncTimer != null) return;
+
+    _timeSyncMsgSub = _commManager
+        .watchMessage(
+          linkId: AppConstants.primaryLinkId,
+          messageId: _kMsgIdTimesync,
+        )
+        .where((f) => f.systemId == AppConstants.obdSystemId)
+        .listen(_handleTimeSync);
+
+    _sendRequest();
+    _syncTimer = Timer.periodic(
+      AppConstants.timeSyncInterval,
+      (_) => _sendRequest(),
+    );
+
+    _logger.info('Timesync started');
   }
 
   @override
-  Stream<TimeSync> get stream => _controller.stream;
+  void stopTimeSync() async {
+    _syncTimer?.cancel();
+    _syncTimer = null;
+    await _timeSyncMsgSub?.cancel();
+    _timeSyncMsgSub = null;
+    _lastSentTs1 = null;
 
-  void _handleTimesync(Timesync msg) {
-    print('''
-[TIMESYNC RAW MSG]
-tc1: ${msg.tc1}
-ts1: ${msg.ts1}
-targetSystem: ${msg.targetSystem}
-targetComponent: ${msg.targetComponent}
-''');
-    final now = _now();
+    _logger.info('Timesync stopped');
+  }
 
-    // request → reply
-    if (msg.tc1 == 0) {
-      _service.send(
-        Timesync(
-          tc1: msg.ts1,
-          ts1: now,
-          targetSystem: 0,
-          targetComponent: 0,
-        ),
+  @override
+  Stream<SystemTimeEntity> watchSystemTime() {
+    return _commManager
+        .watchMessage(
+          linkId: AppConstants.primaryLinkId,
+          messageId: _kMsgIdSystemTime,
+        )
+        .where((f) => f.systemId == AppConstants.obdSystemId)
+        .map((frame) {
+          final msg = frame.message as SystemTime;
+
+          final entity = SystemTimeModel(
+            timeUnixUsec: msg.timeUnixUsec,
+            timeBootMs: msg.timeBootMs,
+          ).toEntity(AppConstants.primaryLinkId);
+
+          _logger.debug('SYSTEM_TIME rx', context: {'upTimeSeconds': entity.upTimeSeconds});
+
+          return entity;
+        });
+  }
+
+  @override
+  Stream<TimeSyncEntity> watchTimeSync() => _timeSyncCtrl.stream;
+
+  void _sendRequest() {
+    final nowUs = DateTime.now().microsecondsSinceEpoch;
+
+    final payload = TimeSyncRequestModel(ts1: nowUs);
+    _lastSentTs1 = payload.ts1;
+
+    _commManager
+        .send(
+          linkId: AppConstants.primaryLinkId,
+          message: Timesync(
+            tc1: payload.tc1,
+            // Responding component timestamp (UGV-Main Compute)
+            ts1: payload.ts1,
+            // Syncing component timestamp (Clients: OBD, GCS, Hand controller)
+            targetSystem: AppConstants.ugvSystemId,
+            targetComponent: AppConstants.ugvComponentId,
+          ),
+        )
+        .catchError(
+          (Object err) => _logger.error("Timesync send failed", error: err),
+        );
+
+    _logger.debug(
+      "Timesync sent",
+      context: {
+        'ts1Us': payload.ts1,
+        'targetSystemId': AppConstants.ugvSystemId,
+        'targetComponentId': AppConstants.ugvComponentId,
+      },
+    );
+  }
+
+  void _handleTimeSync(MavlinkFrame frame) {
+    final msg = frame.message as Timesync;
+
+    if (msg.tc1 == 0) return; // Don't handle timesync requests
+
+    if (msg.ts1 != _lastSentTs1 || _lastSentTs1 == null) {
+      _logger.warn(
+        "Timesync response mismatched/stale",
+        context: {'expected': _lastSentTs1, 'received': msg.ts1},
       );
       return;
     }
 
-    // response → compute
-    if (_t1 != null) {
-      final t3 = now;
-      final t2 = msg.tc1;
-
-      final offset = t2 - ((_t1! + t3) ~/ 2);
-      final rtt = t3 - _t1!;
-
-      _controller.add(TimeSync(offset: offset, rtt: rtt));
-    }
-  }
-
-  @override
-  Future<void> sendRequest() async {
-    _t1 = _now();
-
-    print("Sent timestamp: $_t1");
-
-    await _service.send(
-      Timesync(
-        tc1: 0,
-        ts1: _t1!,
-        targetSystem: 1,
-        targetComponent: 191,
-      ),
+    final model = TimeSyncModel(
+      tc1: msg.tc1,
+      ts1: msg.ts1,
+      targetSystem: msg.targetSystem,
+      targetComponent: msg.targetComponent,
     );
-  }
 
-  Future<void> dispose() async {
-    await _sub.cancel();
-    await _controller.close();
+    final entity = model.toEntity(AppConstants.primaryLinkId);
+    _timeSyncCtrl.add(entity);
+    _lastSentTs1 = null;
+
+    _logger.info(
+      'Timesync succeeded',
+      context: {
+        'offsetMs': (entity.timeOffsetUs / 1e3).toStringAsFixed(3),
+        'rttMs': (entity.roundTripUs / 1e3).toStringAsFixed(3),
+      },
+    );
   }
 }

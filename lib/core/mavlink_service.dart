@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:comm_module/comm_module.dart';
-import 'package:mavlink_nrt/mavlink.dart';
+import 'package:mavlink_module/mavlink.dart';
 
 class MavlinkService {
   final Transport transport;

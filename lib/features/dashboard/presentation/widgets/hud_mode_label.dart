@@ -1,0 +1,154 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+class HudModeLabel extends StatelessWidget {
+  const HudModeLabel({
+    super.key,
+    required this.mainText,
+    required this.subText,
+    required this.height,
+    required this.maxWidth,
+  });
+
+  final String mainText;
+  final String subText;
+  final double height;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicWidth(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: height,
+          maxHeight: height,
+          maxWidth: maxWidth,
+        ),
+        child: CustomPaint(
+          painter: _HudModeLabelPainter(),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: height * 0.35,
+              right: height * 0.85,
+              top: height * 0.15,
+              bottom: height * 0.15,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    mainText,
+                    // maxLines: 1,
+                    // overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: (height * 0.5).clamp(12.0, 18.0),
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      height: 1.1,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    subText,
+                    // maxLines: 1,
+                    // overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.75),
+                      fontSize: (height * 0.5).clamp(11.0, 16.0),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                      height: 1.1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HudModeLabelPainter extends CustomPainter {
+  static const _cyan = Color(0xFF2FD0FF);
+  static const _cyanSoft = Color(0xFF8BE9FF);
+
+  static Color _a(Color color, double opacity) {
+    return color.withAlpha((opacity * 255).round());
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    if (w <= 0 || h <= 0) return;
+
+    final cut = math.min(w * 0.1, h * 0.8);
+
+    final p = Path()
+      ..moveTo(0, 0)
+      ..lineTo(w - cut, 0)
+      ..lineTo(w, h / 2)
+      ..lineTo(w - cut, h)
+      ..lineTo(0, h)
+      ..close();
+
+    final fill = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFF05080A), Color(0xFF000000)],
+      ).createShader(Rect.fromLTWH(0, 0, w, h))
+      ..isAntiAlias = true;
+
+    canvas.drawPath(p, fill);
+
+    final strokeWidth = math.max(1.0, h * 0.05);
+    final glowWidth = (h * 0.35).clamp(3.0, 12.0);
+
+    final shader = LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [_a(_cyan, 0.9), _a(_cyanSoft, 0.5), _a(_cyan, 0.1)],
+      stops: const [0.0, 0.6, 1.0],
+    ).createShader(Rect.fromLTWH(0, 0, w, h));
+
+    final glowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..shader = shader
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, glowWidth)
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
+
+    final corePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..shader = shader
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
+
+    final pad = glowWidth + strokeWidth;
+    final full = Path()
+      ..addRect(Rect.fromLTWH(-pad, -pad, w + 2 * pad, h + 2 * pad));
+    final outsideOnly = Path.combine(PathOperation.difference, full, p);
+
+    canvas.save();
+    canvas.clipPath(outsideOnly);
+    canvas.drawPath(p, glowPaint);
+    canvas.drawPath(p, corePaint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
