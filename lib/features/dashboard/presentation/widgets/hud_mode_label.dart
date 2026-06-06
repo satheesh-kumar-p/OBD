@@ -31,13 +31,13 @@ class HudModeLabel extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: borderColor, width: 1.w),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (armed) ...[
               Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 24.r),
-              SizedBox(width: 12.w),
+              SizedBox(width: 10.w),
             ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +59,7 @@ class HudModeLabel extends StatelessWidget {
                   child: Text(
                     subText,
                     style: TextStyle(
-                      color: armed ? Colors.redAccent.withOpacity(0.7) : Colors.cyanAccent,
+                      color: armed ? Colors.redAccent.withOpacity(0.7) : Colors.orangeAccent,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.3.w,
