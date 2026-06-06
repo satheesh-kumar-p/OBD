@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/core/constants/app_constants.dart';
 import 'package:scout_obd/core/di/injection_container.dart';
@@ -46,3 +47,4 @@ final ugvVersionProvider = FutureProvider<void>((ref) {
     targetComponent: versionModel.targetComponent,
   );
 });
+*/

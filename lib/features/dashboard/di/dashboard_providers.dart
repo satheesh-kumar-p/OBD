@@ -1,12 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/core/di/injection_container.dart';
-import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/shared/di/heartbeat_providers.dart';
-import 'package:scout_obd/shared/di/link_status_providers.dart';
-import 'package:scout_obd/shared/di/timesync_providers.dart';
-import 'package:scout_obd/shared/di/mode_providers.dart';
+
+import '../../../../core/comm/can_bus/can_frame.dart';
+import '../../../core/di/injection_container.dart';
+import '../../../shared/di/global_time_info_providers.dart';
+import '../../system/di/system_info_providers.dart';
+import '../state/dashboard_state.dart';
+import 'battery_info_providers.dart';
+import 'e_stop_info_providers.dart';
+import 'mode_info_providers.dart';
+
+/// Provides the raw CAN frame stream for debugging.
+final canFrameStreamProvider = StreamProvider<CanFrame>((ref) {
+  final manager = ref.watch(canManagerProvider);
+  return manager.frameStream;
+});
 
 /// Provides a ticker that emits every second to refresh time-dependent UI.
 final clockTickerProvider = StreamProvider<int>((ref) {
@@ -19,36 +27,36 @@ final dashboardIndexProvider = StateProvider<int>((ref) => 0);
 /// Aggregates all data required for the Dashboard UI.
 /// This provider handles the dependency between the Transport Connection and Data Services.
 final dashboardStateProvider = Provider<DashboardState>((ref) {
-  // 1. Watch the connection state first.
-  final connectionAsync = ref.watch(commConnectionProvider);
+  // 1. Watch the CAN connection state instead of MAVLink
+  final connectionAsync = ref.watch(canConnectionProvider);
 
   // 2. If we aren't connected yet, return a default/disconnected state 
-  // and do NOT watch the heartbeat/timesync providers to avoid premature sending.
   if (connectionAsync.asData == null) {
     return DashboardState(
       selectedIndex: ref.watch(dashboardIndexProvider),
     );
   }
 
-  // 3. Once connected, safely watch the data streams.
-  ref.watch(clockTickerProvider);
-  
-  final linkStatusValue = ref.watch(linkStatusProvider(AppConstants.primaryLinkId)).asData?.value;
-  final heartbeatValue = ref.watch(heartbeatProvider(AppConstants.primaryLinkId)).asData?.value;
-  final timeSyncValue = ref.watch(timeSyncProvider(AppConstants.primaryLinkId)).asData?.value;
-  final systemTimeValue = ref.watch(systemTimeProvider(AppConstants.primaryLinkId)).asData?.value;
-  final mode = ref.watch(modeProvider).asData?.value;
+  // 3. For now, only CAN-based features are active.
   final selectedIndex = ref.watch(dashboardIndexProvider);
+  final modeAsync = ref.watch(modeInfoProvider);
+  final batteryAsync = ref.watch(batteryInfoProvider);
+  final eStopAsync = ref.watch(eStopInfoProvider);
+  final systemAsync = ref.watch(systemInfoProvider);
+  final computeCommAsync = ref.watch(computeCommInfoProvider);
+  final globalTimeAsync = ref.watch(globalTimeProvider);
 
-  // If linkStatusValue is null, but connectionAsync has data, we assume connected initially.
-  final isConnected = linkStatusValue?.isConnected ?? true;
+  // 4. Force a UI refresh every second even if data doesn't change
+  // (e.g. to keep the internal clock ticking visually)
+  ref.watch(clockTickerProvider);
 
   return DashboardState(
-    linkStatus: linkStatusValue?.copyWith(isConnected: isConnected),
-    heartbeat: heartbeatValue,
-    timeSync: timeSyncValue,
-    systemTime: systemTimeValue,
-    mode: mode,
     selectedIndex: selectedIndex,
+    mode: modeAsync.asData?.value,
+    battery: batteryAsync.asData?.value,
+    eStopInfo: eStopAsync.asData?.value,
+    systemInfo: systemAsync.asData?.value,
+    computeCommInfo: computeCommAsync.asData?.value,
+    globalTime: globalTimeAsync.asData?.value,
   );
 });

@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../state/dashboard_state.dart';
+import 'hud_battery_status_icon.dart';
+import 'hud_date_time_label.dart';
+import 'hud_handctrlStatus.dart';
+import 'hud_e_stop_status.dart';
+import 'hud_mode_label.dart';
+
+class HudTopBar extends ConsumerWidget {
+  const HudTopBar({
+    super.key,
+    required this.state,
+    required this.height,
+    required this.horizontalPadding,
+  });
+
+  final DashboardState state;
+  final double height;
+  final double horizontalPadding;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    const handCtrlColor = Colors.white70;
+
+    final labelH = height;
+    final maxWidth = 576.w;
+
+    final batteryData = state.battery;
+
+    return Container(
+      height: labelH,
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        border: Border(bottom: BorderSide(color: Colors.white10, width: 1)),
+      ),
+      child: Row(
+        children: [
+          HudModeLabel(
+            mainText: state.modeName,
+            subText: state.subModeName,
+            armed: state.mode?.armed ?? false,
+            height: 64.h,
+            maxWidth: maxWidth,
+          ),
+          SizedBox(width: 8.w),
+          HudModeLabel(
+            mainText: state.driveModeName,
+            subText: state.speedModeName,
+            height: 64.h,
+            maxWidth: maxWidth / 1.5,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: HudDateTimeLabel(
+                          height: labelH,
+                          systemTime: state.systemTimeFormatted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        HudEStopStatus(
+                          height: labelH,
+                          color: handCtrlColor,
+                          size: 48.r,
+                          gapAfter: 20.w,
+                          status: state.eStopInfo?.status,
+                        ),
+                        HudHandctrlStatus(
+                          height: labelH,
+                          color: handCtrlColor,
+                          size: 48.r,
+                          gapAfter: 20.w,
+                          status: state.computeCommInfo?.uhfRadio,
+                        ),
+                        // HudLinkStatusIcon(
+                        //   size: 48.r,
+                        //   healthLevel: state.healthLevel,
+                        // ),
+                        // SizedBox(
+                        //   width: 10.w,
+                        // ),
+                        HudBatteryStatusIcon(
+                          size: 40.r,
+                          hvBatterySoc: batteryData?.hvBatterySoc ?? 0,
+                          lvBatterySoc: batteryData?.lvBatterySoc ?? 0,
+                        ),
+                        if (state.mode != null) ...[
+                          SizedBox(width: 16.w),
+                          _buildLightIcon(
+                            icon: Icons.light_mode_rounded,
+                            isOn: state.mode!.headlightsOn,
+                          ),
+                          SizedBox(width: 8.w),
+                          _buildLightIcon(
+                            icon: Icons.wb_twilight_rounded,
+                            isOn: state.mode!.frontFogLightsOn,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLightIcon({required IconData icon, required bool isOn}) {
+    return Icon(
+      icon,
+      size: 24.r,
+      color: isOn ? Colors.cyanAccent : Colors.white10,
+    );
+  }
+}

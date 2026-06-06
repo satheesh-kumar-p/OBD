@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../../../system/enums/subsystem_status_enum.dart';
 
 class HudHandctrlStatus extends StatelessWidget {
   const HudHandctrlStatus({
@@ -9,6 +10,7 @@ class HudHandctrlStatus extends StatelessWidget {
     required this.color,
     this.size,
     this.gapAfter = 12.0,
+    this.status,
   });
 
   final double height;
@@ -21,9 +23,17 @@ class HudHandctrlStatus extends StatelessWidget {
 
   final double gapAfter;
 
+  final SubsystemStatus? status;
+
   @override
   Widget build(BuildContext context) {
     final iconSize = size ?? (height * 0.55).clamp(14.0, 32.0).toDouble();
+
+    final statusColor = switch (status) {
+      SubsystemStatus.healthy => const Color(0xFF00FF66),
+      SubsystemStatus.unhealthy => const Color(0xFFFF3B3B),
+      SubsystemStatus.noCommunication || SubsystemStatus.unknown || null => color.withOpacity(0.3),
+    };
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -31,7 +41,7 @@ class HudHandctrlStatus extends StatelessWidget {
         SizedBox(
           width: iconSize,
           height: iconSize,
-          child: HandControllerIcon(color: color),
+          child: HandControllerIcon(color: statusColor),
         ),
         SizedBox(width: gapAfter),
       ],

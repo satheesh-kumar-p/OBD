@@ -20,4 +20,9 @@ class MotorInformation {
     required this.hallFault,
     required this.stalled,
   });
+
+  @override
+  String toString() {
+    return 'MotorInfo(overSpeed: $overSpeed, overload: $overload, phaseLoss: $phaseLoss, brake: $brake, encoder: $encoderFault, overTemp: $overTemp, hall: $hallFault, stalled: $stalled)';
+  }
 }

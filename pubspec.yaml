@@ -27,6 +27,7 @@ dependencies:
   flutter_riverpod: ^3.3.1
   intl: ^0.20.2
   flutter_screenutil: ^5.9.3
+  flutter_libserialport: ^0.6.0
 
 dev_dependencies:
   flutter_test:

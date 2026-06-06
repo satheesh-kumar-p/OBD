@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection_container.dart';
@@ -44,3 +45,4 @@ final ugvVersionsProvider = FutureProvider<List<UgvSubsystemVersionModel>>((ref)
     return useCase();
   },
 );
+*/

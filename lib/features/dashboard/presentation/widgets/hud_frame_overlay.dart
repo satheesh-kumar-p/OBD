@@ -1,19 +1,8 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/core/constants/app_constants.dart';
-import 'package:scout_obd/features/dashboard/di/handcontroller_status_providers.dart';
-import 'package:scout_obd/features/dashboard/domain/entities/handcontroller_status_entity.dart';
-import 'hud_date_time_label.dart';
-import 'hud_battery_status_icon.dart';
-import 'hud_link_status_icon.dart';
-import 'hud_mode_label.dart';
-import 'hud_uptime_label.dart';
-import 'hud_handctrlStatus.dart';
 
-class HudFrameOverlay extends ConsumerWidget {
+class HudFrameOverlay extends StatelessWidget {
   const HudFrameOverlay({
     super.key,
     required this.state,
@@ -24,20 +13,7 @@ class HudFrameOverlay extends ConsumerWidget {
   final bool drawLeftSlots;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final handctrlEntity = ref
-        .watch(handcontrollerStatusProvider(AppConstants.primaryLinkId))
-        .asData
-        ?.value;
-
-    final status = handctrlEntity?.status;
-
-    final handCtrlColor = switch (status) {
-      HandcontrollerStatus.healthy => const Color(0xFF74FF9F),
-      HandcontrollerStatus.unhealthy => Colors.red,
-      HandcontrollerStatus.noCommunication || HandcontrollerStatus.unknown || null => Colors.white,
-    };
-
+  Widget build(BuildContext context) {
     return IgnorePointer(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -48,129 +24,21 @@ class HudFrameOverlay extends ConsumerWidget {
           }
 
           final s = math.min(w, h);
-          // Reduced margins and padding for small 5" screen
-          final m = s * 0.015; 
-          final inset = s * 0.005;
+          final m = s * 0.015;
 
-          final rect = Rect.fromLTWH(
-            m + inset,
-            m + inset,
-            w - 2 * (m + inset),
-            h - 2 * (m + inset),
-          );
-          final innerInset = s * 0.015;
-          final innerTop = rect.top + innerInset;
-
-          final topY = innerTop;
-          final labelH = (s * 0.09).clamp(28.0, 70.0).toDouble();
-
-          final left = rect.left + innerInset;
-          final maxWidth = rect.width * 0.45;
-
-          return Stack(
-            children: [
-              RepaintBoundary(
-                child: CustomPaint(
-                  painter: _HudFramePainter(
-                    labelTop: topY,
-                    labelHeight: labelH,
-                    labelLeft: left,
-                    labelMaxWidth: maxWidth,
-                    drawLeftSlots: drawLeftSlots,
-                    margin: m,
-                  ),
-                  child: const SizedBox.expand(),
-                ),
+          return RepaintBoundary(
+            child: CustomPaint(
+              painter: _HudFramePainter(
+                // We keep these for painting calculations, even if we don't draw the labels here
+                labelTop: s * 0.02, 
+                labelHeight: (s * 0.09).clamp(28.0, 70.0).toDouble(),
+                labelLeft: s * 0.03,
+                labelMaxWidth: w * 0.45,
+                drawLeftSlots: drawLeftSlots,
+                margin: m,
               ),
-              Positioned(
-                left: left,
-                top: topY,
-                child: SizedBox(
-                  width: rect.right - rect.width * 0.04 - left,
-                  height: labelH,
-                  child: Row(
-                    children: [
-                      HudModeLabel(
-                        mainText: state.modeName,
-                        subText: state.subModeName,
-                        height: labelH,
-                        maxWidth: maxWidth,
-                      ),
-                      SizedBox(width: (labelH * 0.15).clamp(4.0, 12.0)),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: LayoutBuilder(
-                                builder: (context, innerConstraints) {
-                                  final availableW = innerConstraints.maxWidth;
-                                  final desiredGap = (labelH * 0.4).clamp(8.0, 40.0);
-                                  final minGap = 4.0;
-                                  final adaptiveGap = math.min(
-                                    desiredGap,
-                                    math.max(minGap, availableW * 0.04),
-                                  );
-
-                                  return Row(
-                                    children: [
-                                      Flexible(
-                                        child: HudUptimeLabel(
-                                          height: labelH,
-                                          uptime: state.uptimeFormatted,
-                                        ),
-                                      ),
-                                      SizedBox(width: adaptiveGap),
-                                      Flexible(
-                                        child: HudDateTimeLabel(
-                                          height: labelH,
-                                          systemTime: state.systemTimeFormatted,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                            SizedBox(width: (labelH * 0.15).clamp(4.0, 12.0)),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerRight,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    HudHandctrlStatus(
-                                      height: labelH,
-                                      color: handCtrlColor,
-                                      size: labelH * 0.62,
-                                      gapAfter: (labelH * 0.62)
-                                          .clamp(18.0, 56.0)
-                                          .toDouble(),
-                                    ),
-                                    HudLinkStatusIcon(
-                                      size: labelH * 0.65,
-                                      healthLevel: state.healthLevel,
-                                    ),
-                                    SizedBox(
-                                      width: (labelH * 0.12).clamp(4.0, 12.0),
-                                    ),
-                                    HudBatteryStatusIcon(
-                                      size: labelH * 0.55,
-                                      percentage: state.batteryLevel,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+              child: const SizedBox.expand(),
+            ),
           );
         },
       ),
@@ -251,12 +119,12 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _leftSidebarDivider(
-    Canvas canvas,
-    RRect frame,
-    double thin,
-    double mid,
-    double glow,
-  ) {
+      Canvas canvas,
+      RRect frame,
+      double thin,
+      double mid,
+      double glow,
+      ) {
     final rect = frame.outerRect;
 
     final panelLeft = rect.left + rect.width * 0.025;
@@ -322,12 +190,12 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _topHeader(
-    Canvas canvas,
-    RRect frame,
-    double thin,
-    double mid,
-    double glow,
-  ) {
+      Canvas canvas,
+      RRect frame,
+      double thin,
+      double mid,
+      double glow,
+      ) {
     final rect = frame.outerRect;
     final y = labelTop + labelHeight;
 
@@ -356,12 +224,12 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _sideAccents(
-    Canvas canvas,
-    RRect frame,
-    double thin,
-    double mid,
-    double glow,
-  ) {
+      Canvas canvas,
+      RRect frame,
+      double thin,
+      double mid,
+      double glow,
+      ) {
     final rect = frame.outerRect;
     final barW = math.max(1.5, rect.width * 0.005);
     final inset = rect.width * 0.005;
@@ -400,12 +268,12 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _leftSlots(
-    Canvas canvas,
-    RRect frame,
-    double thin,
-    double mid,
-    double glow,
-  ) {
+      Canvas canvas,
+      RRect frame,
+      double thin,
+      double mid,
+      double glow,
+      ) {
     final rect = frame.outerRect;
 
     final panelLeft = rect.left + rect.width * 0.025;
@@ -470,12 +338,12 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _bottomNotch(
-    Canvas canvas,
-    RRect frame,
-    double thin,
-    double mid,
-    double glow,
-  ) {
+      Canvas canvas,
+      RRect frame,
+      double thin,
+      double mid,
+      double glow,
+      ) {
     final rect = frame.outerRect;
     final s = math.min(rect.width, rect.height);
 
@@ -533,11 +401,11 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _strokeRRect(
-    Canvas canvas,
-    RRect rrect, {
-    required double strokeWidth,
-    required Color color,
-  }) {
+      Canvas canvas,
+      RRect rrect, {
+        required double strokeWidth,
+        required Color color,
+      }) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
@@ -547,13 +415,13 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _glowRRect(
-    Canvas canvas,
-    RRect rrect, {
-    required double strokeWidth,
-    required double glowWidth,
-    required Rect shaderRect,
-    required Gradient gradient,
-  }) {
+      Canvas canvas,
+      RRect rrect, {
+        required double strokeWidth,
+        required double glowWidth,
+        required Rect shaderRect,
+        required Gradient gradient,
+      }) {
     final shader = gradient.createShader(shaderRect);
 
     final glowPaint = Paint()
@@ -574,11 +442,11 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _glowRect(
-    Canvas canvas,
-    Rect rect, {
-    required double glowWidth,
-    required Gradient gradient,
-  }) {
+      Canvas canvas,
+      Rect rect, {
+        required double glowWidth,
+        required Gradient gradient,
+      }) {
     final shader = gradient.createShader(rect);
 
     final glowPaint = Paint()
@@ -597,13 +465,13 @@ class _HudFramePainter extends CustomPainter {
   }
 
   void _glowPath(
-    Canvas canvas,
-    Path path, {
-    required double strokeWidth,
-    required double glowWidth,
-    required Rect shaderRect,
-    required Gradient gradient,
-  }) {
+      Canvas canvas,
+      Path path, {
+        required double strokeWidth,
+        required double glowWidth,
+        required Rect shaderRect,
+        required Gradient gradient,
+      }) {
     final shader = gradient.createShader(shaderRect);
 
     final glowPaint = Paint()

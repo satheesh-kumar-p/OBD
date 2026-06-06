@@ -1,11 +1,14 @@
 import 'dart:ui';
-import 'package:scout_obd/shared/domain/entities/heartbeat_entity.dart';
-import 'package:scout_obd/shared/domain/entities/link_status_entity.dart';
-import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
-import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
-import 'package:scout_obd/shared/domain/entities/mode_entity.dart';
 
-import '../../../shared/enums/mode_enum.dart';
+import '../../../shared/domain/entities/heartbeat_entity.dart';
+import '../../../shared/domain/entities/link_status_entity.dart';
+import '../../../shared/domain/entities/system_time_entity.dart';
+import '../../../shared/domain/entities/time_sync_entity.dart';
+import '../../system/domain/entities/compute_comm_info_entity.dart';
+import '../../system/domain/entities/system_info_entity.dart';
+import '../domain/entities/battery_info_entity.dart';
+import '../domain/entities/e_stop_info_entity.dart';
+import '../domain/entities/mode_entity.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 
@@ -14,32 +17,52 @@ class DashboardState {
     this.linkStatus,
     this.heartbeat,
     this.timeSync,
+    this.globalTime,
     this.systemTime,
     this.mode,
+    this.battery,
+    this.eStopInfo,
+    this.systemInfo,
+    this.computeCommInfo,
     this.selectedIndex = 0,
   });
 
   final LinkStatusEntity? linkStatus;
   final HeartbeatEntity? heartbeat;
   final TimeSyncEntity? timeSync;
+  final DateTime? globalTime;
   final SystemTimeEntity? systemTime;
   final ModeEntity? mode;
+  final BatteryInfoEntity? battery;
+  final EStopInfoEntity? eStopInfo;
+  final SystemInfoEntity? systemInfo;
+  final ComputeCommInfoEntity? computeCommInfo;
   final int selectedIndex;
 
   DashboardState copyWith({
     LinkStatusEntity? linkStatus,
     HeartbeatEntity? heartbeat,
     TimeSyncEntity? timeSync,
+    DateTime? globalTime,
     SystemTimeEntity? systemTime,
     ModeEntity? mode,
+    BatteryInfoEntity? battery,
+    EStopInfoEntity? eStopInfo,
+    SystemInfoEntity? systemInfo,
+    ComputeCommInfoEntity? computeCommInfo,
     int? selectedIndex,
   }) {
     return DashboardState(
       linkStatus: linkStatus ?? this.linkStatus,
       heartbeat: heartbeat ?? this.heartbeat,
       timeSync: timeSync ?? this.timeSync,
+      globalTime: globalTime ?? this.globalTime,
       systemTime: systemTime ?? this.systemTime,
       mode: mode ?? this.mode,
+      battery: battery ?? this.battery,
+      eStopInfo: eStopInfo ?? this.eStopInfo,
+      systemInfo: systemInfo ?? this.systemInfo,
+      computeCommInfo: computeCommInfo ?? this.computeCommInfo,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -70,33 +93,29 @@ class DashboardState {
   };
 
   String get systemTimeFormatted {
-    final now = timeSync?.correctedNow ?? DateTime.now();
-    return '${now.day.toString().padLeft(2,'0')}-'
-        '${now.month.toString().padLeft(2,'0')}-'
-        '${now.year} ${now.hour.toString().padLeft(2,'0')}:'
-        '${now.minute.toString().padLeft(2,'0')}:'
-        '${now.second.toString().padLeft(2,'0')}';
+    // If we have synced CAN time, we use the repository's latest current time
+    // instead of just the last emitted stream value. This ensures the clock
+    // feels smooth even if the stream emission has slight jitter.
+    final now = globalTime ?? timeSync?.correctedNow ?? DateTime.now();
+
+    return '${now.day.toString().padLeft(2, '0')}-'
+        '${now.month.toString().padLeft(2, '0')}-'
+        '${now.year} ${now.hour.toString().padLeft(2, '0')}:'
+        '${now.minute.toString().padLeft(2, '0')}:'
+        '${now.second.toString().padLeft(2, '0')}';
   }
 
   String get rttLabel => timeSync == null || timeSync!.isStale
       ? '--- ms'
       : '${timeSync!.roundTripMs} ms';
 
-  String get modeName {
-    final m = mode;
-    if (m == null) return "NULL";
-    if (m.mainMode == MainMode.modeA) return 'MODE A';
-    if (m.mainMode == MainMode.modeB) return 'MODE B';
-    return "UNKNOWN";
-  }
+  String get modeName => mode?.mainMode.label ?? 'UNKNOWN';
 
-  String get subModeName {
-    final m = mode;
-    if (m == null) return 'N/A';
-    if (m.subMode == SubMode.none) return 'NONE';
-    if (m.subMode == SubMode.hold) return 'HOLD';
-    return 'UNKNOWN';
-  }
+  String get subModeName => mode?.subMode.label ?? 'N/A';
+
+  String get driveModeName => mode?.driveMode.label ?? 'UNKNOWN';
+
+  String get speedModeName => mode?.speedMode.label ?? 'UNKNOWN';
 
   String get uptimeFormatted {
     final bootSeconds = systemTime?.currentUpTimeSeconds;

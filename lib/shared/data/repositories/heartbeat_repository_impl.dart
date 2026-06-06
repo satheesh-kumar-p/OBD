@@ -77,20 +77,6 @@ class HeartbeatRepositoryImpl implements HeartbeatRepository {
     _logger.info('Heartbeat service stopped');
   }
 
-  void _sendHeartbeat(String linkId) {
-    _commManager.send(
-      linkId: linkId,
-      message: Heartbeat(
-        type: _kTypeOsd,
-        autopilot: _kAutopilotInvalid,
-        baseMode: 0,
-        customMode: 0,
-        systemStatus: _kStateActive,
-        mavlinkVersion: _kMavlinkVersion,
-      ),
-    ).catchError((Object err) => _logger.error("Heartbeat send failed", error: err));
-  }
-
   void _handleHeartbeat(MavlinkFrame frame) {
     final msg = frame.message as Heartbeat;
 
