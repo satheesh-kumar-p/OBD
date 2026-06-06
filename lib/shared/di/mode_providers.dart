@@ -4,7 +4,7 @@ import '../../core/di/injection_container.dart';
 import '../../core/logger/logger.dart';
 import '../application/use_cases/watch_ugv_mode_use_case.dart';
 import '../data/repositories/ugv_system_info_repository_impl.dart';
-import '../domain/entities/ugv_mode_entity.dart';
+import '../domain/entities/mode_entity.dart';
 import '../domain/repositories/ugv_system_info_repository.dart';
 
 final ugvModeLoggerProvider = Provider<Logger>((ref) => Logger('UGV_MODE'));
@@ -24,7 +24,7 @@ final watchUgvModeUseCaseProvider = Provider<WatchUgvModeUseCase>((ref) {
   return WatchUgvModeUseCase(repo);
 });
 
-final ugvModeProvider = StreamProvider.family<UgvModeEntity, String>((ref, linkId) {
+final modeProvider = StreamProvider<ModeEntity>((ref) {
   final useCase = ref.watch(watchUgvModeUseCaseProvider);
-  return useCase(linkId);
+  return useCase();
 });

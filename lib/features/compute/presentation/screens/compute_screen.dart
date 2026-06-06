@@ -5,8 +5,8 @@ import '../../data/models/ugv_subsystem_version_model.dart';
 import '../../di/ugv_subsystem_providers.dart';
 import '../../enums/firmware_version_type.dart';
 
-class UgvComputeScreen extends ConsumerWidget {
-  const UgvComputeScreen({super.key});
+class ComputeScreen extends ConsumerWidget {
+  const ComputeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

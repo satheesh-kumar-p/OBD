@@ -6,12 +6,13 @@ import 'package:mavlink_module/mavlink_frame.dart';
 import '../../../core/comm/comm_manager.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/logger/logger.dart';
-import '../../domain/entities/ugv_mode_entity.dart';
-import '../../../features/system/domain/entities/ugv_system_entity.dart';
+import '../../../features/drive/data/mappers/drive_information_mapper.dart';
+import '../../../features/drive/domain/entities/drive_information_entity.dart';
+import '../../../features/system/data/mappers/health_info_mapper.dart';
+import '../../../features/system/domain/entities/health_status_entity.dart';
+import '../../domain/entities/mode_entity.dart';
 import '../../domain/repositories/ugv_system_info_repository.dart';
-import '../models/ugv_system_info_model.dart';
-
-const int _kMsgIdUgvSystemInfo = 50001;
+import '../mappers/mode_mapper.dart';
 
 class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
   final CommManager _commManager;
@@ -19,29 +20,37 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
 
   StreamSubscription<MavlinkFrame>? _ugvSystemInfoSub;
 
+  final _mavlinkMessageCtrl = StreamController<MavlinkFrame>.broadcast();
+
   /// Stream for UGV mode changes.
-  final _modeCtrl = StreamController<UgvModeEntity>.broadcast();
+  final _modeCtrl = StreamController<ModeEntity>.broadcast();
 
   /// Stream for UGV telemetry / health changes.
-  final _telemetryCtrl = StreamController<UgvSystemEntity>.broadcast();
+  final _healthCtrl = StreamController<HealthStatusEntity>.broadcast();
+
+  /// Stream for Drive Information
+  final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
 
   UgvSystemInfoRepositoryImpl({
     required CommManager commManager,
     required Logger logger,
-  })   : _commManager = commManager,
-        _logger = logger;
+  }) : _commManager = commManager,
+       _logger = logger;
 
   @override
-  void startUgvSystemInfo(String linkId) {
+  void startUgvSystemInfo() {
     if (_ugvSystemInfoSub != null) return;
 
     _ugvSystemInfoSub = _commManager
         .watchMessage(
-      linkId: linkId,
-      messageId: _kMsgIdUgvSystemInfo,
-    )
+          linkId: AppConstants.primaryLinkId,
+          messageId: UgvSystemInfo.kMavlinkMessageId,
+        )
         .where((frame) => frame.systemId == AppConstants.ugvSystemId)
-        .listen(_handleUgvSystemInfo);
+        .listen(
+          (msg) => _mavlinkMessageCtrl.add(msg),
+          onError: (e) => _logger.error("Mavlink Stream Error $e"),
+        );
   }
 
   @override
@@ -50,52 +59,58 @@ class UgvSystemInfoRepositoryImpl implements UgvSystemInfoRepository {
     _ugvSystemInfoSub = null;
 
     await _modeCtrl.close();
-    await _telemetryCtrl.close();
+    await _healthCtrl.close();
+    await _driveCtrl.close();
   }
 
   @override
-  Stream<UgvModeEntity> watchUgvMode(String linkId) => _modeCtrl.stream;
+  Stream<ModeEntity> watchUgvMode() {
+    return _mavlinkMessageCtrl.stream
+        .map((msg) {
+          final data = ModeMapper.toModeEntity(msg.message as UgvSystemInfo);
+          _logger.debug("Main Mode ${data.mainMode}, Sub Mode: ${data.subMode}");
+          return data;
+        })
+        .handleError(
+          (e, st) => _logger.error(
+            "Mode information mapping failed",
+            context: {"error": e.toString()},
+            stack: st,
+          ),
+        );
+  }
 
   @override
-  Stream<UgvSystemEntity> watchUgvHealth(String linkId) => _telemetryCtrl.stream;
+  Stream<HealthStatusEntity> watchUgvHealth() {
+    return _mavlinkMessageCtrl.stream
+        .map(
+          (msg) => HealthInfoMapper.toHealthStatusEntity(
+            msg.message as UgvSystemInfo,
+          ),
+        )
+        .handleError(
+          (e, st) => _logger.error(
+            "Health information mapping failed",
+            context: {"error": e.toString()},
+            stack: st,
+          ),
+        );
+  }
 
-  void _handleUgvSystemInfo(MavlinkFrame frame) {
-    final msg = frame.message as UgvSystemInfo;
-
-    final model = UgvSystemInfoModel(
-      ugvSubsystemPresent: msg.ugvSubsystemPresent,
-      ugvSubsystemEnabled: msg.ugvSubsystemEnabled,
-      ugvSubsystemHealth: msg.ugvSubsystemHealth,
-      computeLoad: msg.computeLoad,
-      mainVoltage: msg.mainVoltage,
-      mainCurrent: msg.mainCurrent,
-      vcuFaultErrors: msg.vcuFaultErrors,
-      dropRateComm: msg.dropRateComm,
-      leftMotorErrors: msg.leftMotorErrors,
-      rightMotorErrors: msg.rightMotorErrors,
-      sensorBusErrors: msg.sensorBusErrors,
-      batteryRemaining: msg.batteryRemaining,
-      mainMode: msg.mainMode,
-      subMode: msg.subMode,
-      intendedMainMode: msg.intendedMainMode,
-      intendedSubMode: msg.intendedSubMode,
-      modeChangeReason: msg.modeChangeReason,
-    );
-
-    final modeEntity = model.toModeEntity();
-    final telemetryEntity = model.toSystemEntity();
-
-    _modeCtrl.add(modeEntity);
-    _telemetryCtrl.add(telemetryEntity);
-
-    _logger.debug(
-      'UGV_SYSTEM_INFO rx',
-      context: {
-        'mainMode': modeEntity.mainMode.name,
-        'subMode': modeEntity.subMode.name,
-        'batteryRemaining': telemetryEntity.batteryRemaining,
-        'mainCurrent': telemetryEntity.mainCurrent,
-      },
-    );
+  @override
+  Stream<DriveInformationEntity> watchDriveInformation() {
+    return _mavlinkMessageCtrl.stream
+        .map(
+          (msg) => DriveInformationMapper.toDriveInfoEntity(
+            msg.message as UgvSystemInfo,
+          ),
+        )
+        .handleError(
+          (e, st) => _logger.error(
+            "Drive information mapping failed",
+            context: {"error": e.toString()},
+            stack: st,
+          ),
+        );
   }
 }

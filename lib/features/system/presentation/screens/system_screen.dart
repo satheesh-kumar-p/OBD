@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../domain/entities/ugv_system_entity.dart';
-import '../../../../shared/enums/ugv_sub_system.dart';
 import '../../di/ugv_health_providers.dart';
+import '../../domain/entities/health_status_entity.dart';
+import '../../enums/subsystem_status_enum.dart';
 
-class UgvSystemScreen extends ConsumerWidget {
-  const UgvSystemScreen({super.key});
+class SystemScreen extends ConsumerWidget {
+  const SystemScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final healthDataAsync = ref.watch(ugvHealthDataProvider(AppConstants.primaryLinkId));
-    
+    final healthDataAsync = ref.watch(ugvHealthDataProvider);
+
     return healthDataAsync.when(
       data: (data) => _buildSubsystemTable(data),
-      loading: () => Center(
-        child: Text(
-          'LOADING...', 
-          style: TextStyle(
-            color: Colors.white24, 
-            fontSize: 32.sp,
-            fontFamily: 'monospace',
-          ),
-        ),
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(
         child: Text(
-          'ERROR: $err', 
+          'ERROR: $err',
           style: TextStyle(
-            color: Colors.red, 
+            color: Colors.red,
             fontSize: 32.sp,
             fontFamily: 'monospace',
           ),
@@ -38,27 +28,27 @@ class UgvSystemScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSubsystemTable(UgvSystemEntity data) {
+  Widget _buildSubsystemTable(HealthStatusEntity data) {
     final textStyle = TextStyle(
-      color: Colors.white, 
-      fontSize: 36.sp, 
-      height: 1.5, 
+      color: Colors.white,
+      fontSize: 36.sp,
+      height: 1.5,
       fontFamily: 'monospace',
       fontWeight: FontWeight.w500,
     );
     final headerStyle = TextStyle(
-      color: Colors.cyanAccent, 
+      color: Colors.cyanAccent,
       fontSize: 36.sp,
-      fontWeight: FontWeight.bold, 
+      fontWeight: FontWeight.bold,
       height: 2.2,
       letterSpacing: 1.1,
     );
 
     return SingleChildScrollView(
       padding: EdgeInsets.only(
-        left: 256.w, 
+        left: 256.w,
         top: 80.h,
-        right: 60.w, 
+        right: 60.w,
         bottom: 60.h,
       ),
       child: Column(
@@ -76,7 +66,7 @@ class UgvSystemScreen extends ConsumerWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 24.h, right: 60.w),
                     child: Text(
-                      'SUB SYSTEM', 
+                      'SUB SYSTEM',
                       style: headerStyle,
                     ),
                   ),
@@ -84,24 +74,28 @@ class UgvSystemScreen extends ConsumerWidget {
                     padding: EdgeInsets.only(bottom: 24.h),
                     child: Center(
                       child: Text(
-                        'STATUS', 
+                        'STATUS',
                         style: headerStyle,
                       ),
                     ),
                   ),
                 ],
               ),
-              ...UgvSubsystem.values.map((sub) {
-                final isPresent = data.subsystems.present.contains(sub);
-                final isHealthy = data.subsystems.healthy.contains(sub);
+              ...data.subsystemHealthMap.entries.map((entry) {
+                final name = entry.key;
+                final status = entry.value;
 
                 Color dotColor;
-                if (!isPresent) {
-                  dotColor = Colors.white;
-                } else if (isHealthy) {
-                  dotColor = Colors.green; // Green
-                } else {
-                  dotColor = Colors.red;
+                switch (status) {
+                  case SubsystemStatus.healthy:
+                    dotColor = Colors.green;
+                    break;
+                  case SubsystemStatus.unhealthy:
+                    dotColor = Colors.red;
+                    break;
+                  case SubsystemStatus.noCommunication:
+                    dotColor = Colors.white;
+                    break;
                 }
 
                 return TableRow(
@@ -109,7 +103,7 @@ class UgvSystemScreen extends ConsumerWidget {
                     Padding(
                       padding: EdgeInsets.only(right: 60.w, bottom: 20.h),
                       child: Text(
-                        sub.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
+                        name.toUpperCase(),
                         style: textStyle
                       ),
                     ),

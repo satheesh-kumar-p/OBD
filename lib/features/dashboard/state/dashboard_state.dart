@@ -3,9 +3,9 @@ import 'package:scout_obd/shared/domain/entities/heartbeat_entity.dart';
 import 'package:scout_obd/shared/domain/entities/link_status_entity.dart';
 import 'package:scout_obd/shared/domain/entities/system_time_entity.dart';
 import 'package:scout_obd/shared/domain/entities/time_sync_entity.dart';
-import 'package:scout_obd/shared/domain/entities/ugv_mode_entity.dart';
+import 'package:scout_obd/shared/domain/entities/mode_entity.dart';
 
-import '../../../shared/enums/ugv_mode.dart';
+import '../../../shared/enums/mode_enum.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 
@@ -23,7 +23,7 @@ class DashboardState {
   final HeartbeatEntity? heartbeat;
   final TimeSyncEntity? timeSync;
   final SystemTimeEntity? systemTime;
-  final UgvModeEntity? mode;
+  final ModeEntity? mode;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -31,7 +31,7 @@ class DashboardState {
     HeartbeatEntity? heartbeat,
     TimeSyncEntity? timeSync,
     SystemTimeEntity? systemTime,
-    UgvModeEntity? mode,
+    ModeEntity? mode,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -85,14 +85,16 @@ class DashboardState {
   String get modeName {
     final m = mode;
     if (m == null) return "NULL";
-    return m.mainMode == UgvMainMode.modeA ? 'MODE A' : 'MODE B';
+    if (m.mainMode == MainMode.modeA) return 'MODE A';
+    if (m.mainMode == MainMode.modeB) return 'MODE B';
+    return "UNKNOWN";
   }
 
   String get subModeName {
     final m = mode;
     if (m == null) return 'N/A';
-    if (m.subMode == UgvSubMode.none) return 'NONE';
-    if (m.subMode == UgvSubMode.hold) return 'HOLD';
+    if (m.subMode == SubMode.none) return 'NONE';
+    if (m.subMode == SubMode.hold) return 'HOLD';
     return 'UNKNOWN';
   }
 
