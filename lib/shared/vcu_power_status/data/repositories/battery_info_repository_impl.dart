@@ -6,7 +6,7 @@ import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../mappers/battery_info_mapper.dart';
 import '../../domain/entities/battery_info_entity.dart';
 
-class BatteryInfoRepository implements ICanDataRepository<BatteryInfoEntity> {
+class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity> {
   final CanCommManager _canManager;
   final Logger _logger;
 
@@ -14,7 +14,7 @@ class BatteryInfoRepository implements ICanDataRepository<BatteryInfoEntity> {
   final _mapper = BatteryInfoMapper();
   StreamSubscription? _batterySub;
 
-  BatteryInfoRepository({
+  BatteryInfoRepositoryImpl({
     required CanCommManager canManager,
     required Logger logger,
   }) : _canManager = canManager,
