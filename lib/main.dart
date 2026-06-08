@@ -5,13 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/constants/app_constants.dart';
 import 'core/di/injection_container.dart';
-import 'features/dashboard/di/battery_info_providers.dart';
-import 'features/dashboard/di/e_stop_info_providers.dart';
+import 'shared/vcu_power_status/di/battery_info_providers.dart';
+import 'shared/vcu_estop_status/di/e_stop_info_providers.dart';
 import 'features/dashboard/di/mode_info_providers.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
 import 'features/system/di/system_info_providers.dart';
-import 'shared/di/global_time_info_providers.dart';
+import 'shared/comp_global_time_info/di/global_time_info_providers.dart';
 import 'features/debug/di/debug_providers.dart';
 
 Future<void> main() async {
