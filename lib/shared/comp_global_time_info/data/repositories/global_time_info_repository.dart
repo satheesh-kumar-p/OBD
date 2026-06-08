@@ -1,7 +1,7 @@
 import 'dart:async';
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
-import '../../../../core/logger/logger.dart';
-import '../mappers/comp_time_sync_mapper.dart';
+import '../../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../../core/logger/logger.dart';
+import '../../../data/mappers/comp_time_sync_mapper.dart';
 import '../mappers/global_time_info_mapper.dart';
 
 class GlobalTimeInfoRepository {

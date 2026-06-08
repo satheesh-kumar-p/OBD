@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/di/injection_container.dart';
-import '../../core/logger/logger.dart';
+import '../../../core/di/injection_container.dart';
+import '../../../core/logger/logger.dart';
 import '../data/repositories/global_time_info_repository.dart';
 
 final globalTimeLoggerProvider = Provider<Logger>((ref) => Logger('TIME_SYNC'));
