@@ -1,4 +1,5 @@
-import '../../../../shared/data/can_field.dart';
+import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/mode_entity.dart';
 import '../../enums/mode_enum.dart';
 
