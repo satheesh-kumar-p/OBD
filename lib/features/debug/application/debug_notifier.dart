@@ -1,17 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/comm/can_bus/can_frame.dart';
-import '../../../../shared/data/can_field.dart';
+import '../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../dashboard/di/dashboard_providers.dart';
 import '../domain/entities/debug_message.dart';
-import '../../../shared/di/global_time_info_providers.dart';
+import '../../../shared/comp_global_time_info/di/global_time_info_providers.dart';
 
 // Import all mappers
-import '../../dashboard/data/mappers/battery_info_mapper.dart';
+import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
 import '../../system/data/mappers/system_info_mapper.dart';
 import '../../drive/data/mappers/drive_info_mapper.dart';
 import '../../dashboard/data/mappers/mode_info_mapper.dart';
-import '../../../shared/data/mappers/global_time_info_mapper.dart';
+import '../../../shared/comp_global_time_info/data/mappers/global_time_info_mapper.dart';
 import '../../../shared/data/mappers/comp_time_sync_mapper.dart';
 import '../../system/data/mappers/compute_comm_info_mapper.dart';
 

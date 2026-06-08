@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../core/di/injection_container.dart';
-import '../../../shared/di/global_time_info_providers.dart';
+import '../../../shared/comp_global_time_info/di/global_time_info_providers.dart';
 import '../../system/di/system_info_providers.dart';
 import '../state/dashboard_state.dart';
-import 'battery_info_providers.dart';
-import 'e_stop_info_providers.dart';
+import '../../../shared/vcu_power_status/di/battery_info_providers.dart';
+import '../../../shared/vcu_estop_status/di/e_stop_info_providers.dart';
 import 'mode_info_providers.dart';
 
 /// Provides the raw CAN frame stream for debugging.

@@ -1,4 +1,5 @@
-import '../../../../shared/data/can_field.dart';
+import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/compute_comm_info_entity.dart';
 import '../../enums/subsystem_status_enum.dart';
 

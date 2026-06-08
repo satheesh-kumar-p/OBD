@@ -1,5 +1,6 @@
+import '../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/comp_time_sync_entity.dart';
-import '../can_field.dart';
 
 class CompTimeSyncMapper extends CanExtractionStrategy<CompTimeSyncEntity> {
   static const int id = 0x206;
