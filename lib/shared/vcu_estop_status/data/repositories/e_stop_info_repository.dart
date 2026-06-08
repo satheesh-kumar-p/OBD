@@ -3,7 +3,7 @@ import 'dart:async';
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
-import '../mappers/e_stop_info_mapper.dart';
+import '../mapper/e_stop_info_mapper.dart';
 import '../../domain/entities/e_stop_info_entity.dart';
 
 class EStopInfoRepository implements ICanDataRepository<EStopInfoEntity> {
