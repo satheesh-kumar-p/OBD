@@ -23,7 +23,6 @@ class Dashboard extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SCOUT UGV OBD'),
         backgroundColor: Colors.black,
         toolbarHeight: 60.h,
         centerTitle: true,

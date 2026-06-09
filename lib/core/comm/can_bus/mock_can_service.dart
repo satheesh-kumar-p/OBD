@@ -51,6 +51,7 @@ class MockCanService implements ICanService {
       _emitGlobalTimeInfo();
       _emitCompTimeSync();
       _emitComputeCommInfo();
+      _emitEStopInfo();
     });
   }
 
@@ -154,6 +155,17 @@ class MockCanService implements ICanService {
 
     _frameCtrl.add(CanFrame(
       id: 0x204,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitEStopInfo() {
+    final data = Uint8List(8);
+    _setBits(data, 17, 1, 1);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x201,
       idType: CanIdType.standard,
       data: data,
     ));

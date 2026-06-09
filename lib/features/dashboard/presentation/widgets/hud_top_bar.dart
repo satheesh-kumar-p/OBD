@@ -6,8 +6,8 @@ import '../../state/dashboard_state.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
 import 'hud_handctrlStatus.dart';
-import 'hud_e_stop_status.dart';
 import 'hud_mode_label.dart';
+import '../../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
 class HudTopBar extends ConsumerWidget {
   const HudTopBar({
@@ -37,7 +37,7 @@ class HudTopBar extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       decoration: BoxDecoration(
         color: Colors.black,
-        border: Border(
+        border: const Border(
           bottom: BorderSide(color: Colors.white10, width: 1),
         ),
         gradient: LinearGradient(
@@ -51,37 +51,32 @@ class HudTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          // --- GROUP 1: MISSION CONTROL ---
-          _HudGroup(
-            label: 'MISSION',
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                HudModeLabel(
-                  mainText: state.modeName,
-                  subText: state.subModeName,
-                  armed: state.mode?.armed ?? false,
-                  height: 56.h,
-                  maxWidth: maxWidth,
-                ),
-                SizedBox(width: 8.w),
-                HudModeLabel(
-                  mainText: state.driveModeName,
-                  subText: state.speedModeName,
-                  height: 56.h,
-                  maxWidth: maxWidth / 1.5,
-                ),
-              ],
-            ),
+          // --- MISSION CONTROLS ---
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HudModeLabel(
+                mainText: state.modeName,
+                subText: state.subModeName,
+                armed: state.mode?.armed ?? false,
+                height: 56.h,
+                maxWidth: maxWidth,
+              ),
+              SizedBox(width: 8.w),
+              HudModeLabel(
+                mainText: state.driveModeName,
+                subText: state.speedModeName,
+                height: 56.h,
+                maxWidth: maxWidth / 1.5,
+              ),
+            ],
           ),
 
           _buildDivider(),
 
-          // --- GROUP 2: SYSTEM CHRONO ---
+          // --- SYSTEM CHRONO (Expanded to Center) ---
           Expanded(
-            child: _HudGroup(
-              label: 'SYSTEM CHRONO',
-              alignment: Alignment.center,
+            child: Center(
               child: HudDateTimeLabel(
                 height: labelH,
                 systemTime: systemTime,
@@ -91,50 +86,44 @@ class HudTopBar extends ConsumerWidget {
 
           _buildDivider(),
 
-          // --- GROUP 3: TELEMETRY & STATUS ---
-          _HudGroup(
-            label: 'STATUS',
-            alignment: Alignment.centerRight,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  HudEStopStatus(
-                    height: labelH,
-                    color: handCtrlColor,
-                    size: 44.r,
-                    gapAfter: 16.w,
-                    status: state.eStopInfo?.status,
+          // --- TELEMETRY & STATUS ---
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _VehicleSafetyIndicator(
+                  status: state.eStopInfo?.status,
+                  size: 44.r,
+                ),
+                SizedBox(width: 16.w),
+                HudHandctrlStatus(
+                  height: labelH,
+                  color: handCtrlColor,
+                  size: 44.r,
+                  gapAfter: 16.w,
+                  status: state.computeCommInfo?.uhfRadio,
+                ),
+                HudBatteryStatusIcon(
+                  size: 38.r,
+                  hvBatterySoc: batteryData?.hvBatterySoc ?? 0,
+                  lvBatterySoc: batteryData?.lvBatterySoc ?? 0,
+                ),
+                if (state.mode != null) ...[
+                  SizedBox(width: 20.w),
+                  _buildIndicatorTile(
+                    icon: Icons.light_mode_rounded,
+                    isOn: state.mode!.headlightsOn,
+                    label: 'HL',
                   ),
-                  HudHandctrlStatus(
-                    height: labelH,
-                    color: handCtrlColor,
-                    size: 44.r,
-                    gapAfter: 16.w,
-                    status: state.computeCommInfo?.uhfRadio,
+                  SizedBox(width: 8.w),
+                  _buildIndicatorTile(
+                    icon: Icons.wb_twilight_rounded,
+                    isOn: state.mode!.frontFogLightsOn,
+                    label: 'FOG',
                   ),
-                  HudBatteryStatusIcon(
-                    size: 38.r,
-                    hvBatterySoc: batteryData?.hvBatterySoc ?? 0,
-                    lvBatterySoc: batteryData?.lvBatterySoc ?? 0,
-                  ),
-                  if (state.mode != null) ...[
-                    SizedBox(width: 20.w),
-                    _buildIndicatorTile(
-                      icon: Icons.light_mode_rounded,
-                      isOn: state.mode!.headlightsOn,
-                      label: 'HL',
-                    ),
-                    SizedBox(width: 8.w),
-                    _buildIndicatorTile(
-                      icon: Icons.wb_twilight_rounded,
-                      isOn: state.mode!.frontFogLightsOn,
-                      label: 'FOG',
-                    ),
-                  ],
                 ],
-              ),
+              ],
             ),
           ),
         ],
@@ -196,39 +185,52 @@ class HudTopBar extends ConsumerWidget {
   }
 }
 
-class _HudGroup extends StatelessWidget {
-  final String label;
-  final Widget child;
-  final Alignment alignment;
+class _VehicleSafetyIndicator extends StatelessWidget {
+  final EStopStatus? status;
+  final double size;
 
-  const _HudGroup({
-    required this.label,
-    required this.child,
-    this.alignment = Alignment.centerLeft,
+  const _VehicleSafetyIndicator({
+    this.status,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: alignment == Alignment.center
-          ? CrossAxisAlignment.center
-          : alignment == Alignment.centerRight
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          label,
+    final isEngaged = status == EStopStatus.engaged;
+    
+    // Background circle color based on status
+    final circleColor = switch (status) {
+      EStopStatus.engaged => const Color(0xFFFF3B3B),
+      EStopStatus.released => const Color(0xFF00FF66).withOpacity(0.4),
+      EStopStatus.unknown || null => Colors.white12,
+    };
+
+    // Text color is always white, but duller when not engaged
+    final textColor = isEngaged ? Colors.white : Colors.white.withOpacity(0.6);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: isEngaged ? circleColor : circleColor.withOpacity(0.08),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isEngaged ? circleColor : circleColor.withOpacity(0.2),
+          width: 1.5.r,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          'STOP',
+          textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white24,
-            fontSize: 9.sp,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
+            color: textColor,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
           ),
         ),
-        SizedBox(height: 4.h),
-        child,
-      ],
+      ),
     );
   }
 }
