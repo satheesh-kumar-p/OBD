@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
-import '../../../dashboard/di/dashboard_providers.dart';
-import '../../di/system_info_providers.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../di/system_providers.dart';
 import '../state/system_screen_state.dart';
-import '../../enums/subsystem_status_enum.dart';
 
 class SystemScreen extends ConsumerWidget {
   const SystemScreen({super.key});
@@ -36,7 +36,10 @@ class SystemScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(systemScreenStateProvider);
+    // OPTIMIZATION: Only rebuild the entire screen if the statuses actually change.
+    // Riverpod's select prevents redundant 1Hz rebuilds caused by the ticker in the controller.
+    final statusMap = ref.watch(systemScreenStateProvider.select((s) => s.subsystemStatuses));
+    final lastUpdateTime = ref.watch(systemScreenStateProvider.select((s) => s.lastUpdateTime));
 
     return Stack(
       children: [
@@ -45,11 +48,11 @@ class SystemScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildStageSection('STAGE 1: IDLE', _stage1, state),
+              _buildStageSection('STAGE 1: IDLE', _stage1, statusMap),
               SizedBox(height: 16.h),
-              _buildStageSection('STAGE 2: KEY ON', _stage2, state),
+              _buildStageSection('STAGE 2: KEY ON', _stage2, statusMap),
               SizedBox(height: 16.h),
-              _buildStageSection('STAGE 3: DRIVE ON', _stage3, state),
+              _buildStageSection('STAGE 3: DRIVE ON', _stage3, statusMap),
               SizedBox(height: 8.h),
             ],
           ),
@@ -57,15 +60,13 @@ class SystemScreen extends ConsumerWidget {
         Positioned(
           top: 10.h,
           right: 20.w,
-          child: _LastUpdatedIndicator(lastUpdate: state.lastUpdateTime),
+          child: _LastUpdatedIndicator(lastUpdate: lastUpdateTime),
         ),
       ],
     );
   }
 
-  Widget _buildStageSection(String title, List<Subsystem> items, SystemScreenState state) {
-    final statusMap = state.subsystemStatuses;
-
+  Widget _buildStageSection(String title, List<Subsystem> items, Map<Subsystem, SubsystemStatus> statusMap) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

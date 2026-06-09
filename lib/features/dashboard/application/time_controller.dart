@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/comp_global_time_info/di/global_time_info_providers.dart';
 import '../../../shared/comp_time_sync/di/comp_time_sync_providers.dart';
 
-class TimeServiceNotifier extends Notifier<DateTime> {
+class TimeController extends Notifier<DateTime> {
   Timer? _localIncrementTimer;
 
   @override
@@ -31,8 +31,8 @@ class TimeServiceNotifier extends Notifier<DateTime> {
     });
 
     _localIncrementTimer?.cancel();
-    _localIncrementTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      state = state.add(const Duration(milliseconds: 10));
+    _localIncrementTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      state = state.add(const Duration(milliseconds: 100));
     });
 
     ref.onDispose(() {
@@ -43,4 +43,4 @@ class TimeServiceNotifier extends Notifier<DateTime> {
   }
 }
 
-final timeServiceProvider = NotifierProvider<TimeServiceNotifier, DateTime>(TimeServiceNotifier.new);
+final timeControllerProvider = NotifierProvider<TimeController, DateTime>(TimeController.new);

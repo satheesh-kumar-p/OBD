@@ -1,4 +1,4 @@
-import '../../../enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_status_enum.dart';
 
 class ComputeCommInfoEntity {
   final SubsystemStatus uhfRadio;

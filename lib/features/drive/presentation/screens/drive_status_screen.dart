@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../di/drive_info_providers.dart';
-import '../../domain/entities/drive_information_entity.dart';
-import '../../domain/entities/status.dart';
+import '../../di/drive_providers.dart';
+import '../../../../shared/vcu_drive_health/domain/entities/drive_information_entity.dart';
+import '../../../../shared/vcu_drive_health/domain/entities/status.dart';
 
 class DriveScreen extends ConsumerWidget {
   const DriveScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final driveDataAsync = ref.watch(driveInfoProvider);
+    final driveDataAsync = ref.watch(driveStateProvider);
 
     return driveDataAsync.when(
       data: (data) => _buildBody(data),

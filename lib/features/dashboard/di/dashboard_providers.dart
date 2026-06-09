@@ -1,62 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-
-import '../../../../core/comm/can_bus/can_frame.dart';
-import '../../../core/di/injection_container.dart';
-import '../../../shared/comp_global_time_info/di/global_time_info_providers.dart';
-import '../../system/di/system_info_providers.dart';
+import '../application/dashboard_controller.dart';
+import '../application/time_controller.dart';
 import '../state/dashboard_state.dart';
-import '../../../shared/vcu_power_status/di/battery_info_providers.dart';
-import '../../../shared/vcu_estop_status/di/e_stop_info_providers.dart';
-import 'mode_info_providers.dart';
-
-/// Provides the raw CAN frame stream for debugging.
-final canFrameStreamProvider = StreamProvider<CanFrame>((ref) {
-  final manager = ref.watch(canManagerProvider);
-  return manager.frameStream;
-});
-
-/// Provides a ticker that emits every second to refresh time-dependent UI.
-final clockTickerProvider = StreamProvider<int>((ref) {
-  return Stream.periodic(const Duration(seconds: 1), (tick) => tick);
-});
 
 /// Manages the currently selected tab in the dashboard.
 final dashboardIndexProvider = StateProvider<int>((ref) => 0);
 
 /// Aggregates all data required for the Dashboard UI.
-/// This provider handles the dependency between the Transport Connection and Data Services.
+/// This provider now just watches the controller and combines it with the local index.
 final dashboardStateProvider = Provider<DashboardState>((ref) {
-  // 1. Watch the CAN connection state instead of MAVLink
-  final connectionAsync = ref.watch(canConnectionProvider);
-
-  // 2. If we aren't connected yet, return a default/disconnected state 
-  if (connectionAsync.asData == null) {
-    return DashboardState(
-      selectedIndex: ref.watch(dashboardIndexProvider),
-    );
-  }
-
-  // 3. For now, only CAN-based features are active.
+  final state = ref.watch(dashboardControllerProvider);
   final selectedIndex = ref.watch(dashboardIndexProvider);
-  final modeAsync = ref.watch(modeInfoProvider);
-  final batteryAsync = ref.watch(batteryInfoProvider);
-  final eStopAsync = ref.watch(eStopInfoProvider);
-  final systemAsync = ref.watch(systemInfoProvider);
-  final computeCommAsync = ref.watch(computeCommInfoProvider);
-  final globalTimeAsync = ref.watch(globalTimeProvider);
-
-  // 4. Force a UI refresh every second even if data doesn't change
-  // (e.g. to keep the internal clock ticking visually)
-  ref.watch(clockTickerProvider);
-
-  return DashboardState(
-    selectedIndex: selectedIndex,
-    mode: modeAsync.asData?.value,
-    battery: batteryAsync.asData?.value,
-    eStopInfo: eStopAsync.asData?.value,
-    systemInfo: systemAsync.asData?.value,
-    computeCommInfo: computeCommAsync.asData?.value,
-    globalTime: globalTimeAsync.asData?.value,
-  );
+  
+  return state.copyWith(selectedIndex: selectedIndex);
 });
+
+/// Export the time controller provider if needed by other features (though core ticker is preferred)
+final timeServiceProvider = timeControllerProvider;

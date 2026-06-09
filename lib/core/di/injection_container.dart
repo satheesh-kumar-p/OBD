@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../comm/can_bus/can_bus.dart';
 import '../comm/can_bus/can_dispatch_configs.dart';
 import '../comm/can_bus/can_dispatcher.dart';
+import '../comm/can_bus/can_frame.dart';
 import '../constants/app_constants.dart';
 import '../logger/logger.dart';
 
@@ -57,4 +58,15 @@ final canConnectionProvider = FutureProvider<void>((ref) async {
     logger.error('Failed to establish CAN connection', error: e, stack: st);
     rethrow;
   }
+});
+
+/// Provides the raw CAN frame stream for debugging.
+final canFrameStreamProvider = StreamProvider<CanFrame>((ref) {
+  final manager = ref.watch(canManagerProvider);
+  return manager.frameStream;
+});
+
+/// Provides a ticker that emits every second to refresh time-dependent UI.
+final clockTickerProvider = StreamProvider<int>((ref) {
+  return Stream.periodic(const Duration(seconds: 1), (tick) => tick);
 });

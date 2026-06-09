@@ -1,8 +1,8 @@
-import '../../system/domain/entities/compute_comm_info_entity.dart';
-import '../../system/domain/entities/system_info_entity.dart';
+import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
+import '../../../shared/comp_radio_state/domain/entities/compute_radio_state_entity.dart';
+import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
 import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
-import '../domain/entities/mode_entity.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 

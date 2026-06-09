@@ -1,6 +1,6 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../../enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_status_enum.dart';
 import '../../domain/entities/system_info_entity.dart';
 
 /// Parser for CAN Message 0x203 - Subsystem State

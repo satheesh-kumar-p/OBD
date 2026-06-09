@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../di/dashboard_providers.dart';
 import '../../state/dashboard_state.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
@@ -11,7 +12,7 @@ import 'hud_mode_label.dart';
 class HudTopBar extends ConsumerWidget {
   const HudTopBar({
     super.key,
-    required this.state,
+    required this.state, // Kept for other properties, but we will watch time separately
     required this.height,
     required this.horizontalPadding,
   });
@@ -27,6 +28,9 @@ class HudTopBar extends ConsumerWidget {
     final labelH = height;
     final maxWidth = 576.w;
     final batteryData = state.battery;
+
+    // OPTIMIZATION: Only rebuild this part of the row when the second changes
+    final systemTime = ref.watch(dashboardStateProvider.select((s) => s.systemTimeFormatted));
 
     return Container(
       height: labelH,
@@ -80,7 +84,7 @@ class HudTopBar extends ConsumerWidget {
               alignment: Alignment.center,
               child: HudDateTimeLabel(
                 height: labelH,
-                systemTime: state.systemTimeFormatted,
+                systemTime: systemTime,
               ),
             ),
           ),

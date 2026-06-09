@@ -1,7 +1,7 @@
 import '../../../../core/constants/subsystem_list_constants.dart';
-import '../../domain/entities/system_info_entity.dart';
-import '../../domain/entities/compute_comm_info_entity.dart';
-import '../../enums/subsystem_status_enum.dart';
+import '../../../../shared/comp_radio_state/domain/entities/compute_radio_state_entity.dart';
+import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 
 class SystemScreenState {
   final SystemInfoEntity? systemInfo;

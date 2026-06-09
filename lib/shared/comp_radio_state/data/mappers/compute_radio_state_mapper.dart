@@ -1,9 +1,9 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../../enums/subsystem_status_enum.dart';
-import '../../domain/entities/compute_comm_info_entity.dart';
+import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../domain/entities/compute_radio_state_entity.dart';
 
-class ComputeCommInfoMapper extends CanExtractionStrategy<ComputeCommInfoEntity> {
+class ComputeRadioStateMapper extends CanExtractionStrategy<ComputeCommInfoEntity> {
   static const int id = 0x20C;
 
   @override

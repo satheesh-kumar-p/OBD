@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import '../../../system/enums/subsystem_status_enum.dart';
+
+import '../../../../core/enums/subsystem_status_enum.dart';
 
 class HudHandctrlStatus extends StatelessWidget {
   const HudHandctrlStatus({

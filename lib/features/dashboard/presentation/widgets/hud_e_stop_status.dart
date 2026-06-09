@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../enums/e_stop_status_enum.dart';
+import '../../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
 class HudEStopStatus extends StatelessWidget {
   const HudEStopStatus({

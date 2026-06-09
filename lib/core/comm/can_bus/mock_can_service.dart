@@ -259,7 +259,7 @@ class MockCanService implements ICanService {
     _setBits(data, 17, 10, now.millisecond);
 
     _frameCtrl.add(CanFrame(
-      id: 0x105,
+      id: 0x206,
       idType: CanIdType.standard,
       data: data,
     ));

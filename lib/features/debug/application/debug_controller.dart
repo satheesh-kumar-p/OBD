@@ -1,19 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/comm/can_bus/can_frame.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../core/comm/can_bus/can_extraction_strategy.dart';
-import '../../dashboard/di/dashboard_providers.dart';
+import '../../../shared/comp_radio_state/data/mappers/compute_radio_state_mapper.dart';
+import '../../dashboard/application/time_controller.dart';
 import '../domain/entities/debug_message.dart';
-import '../../../shared/comp_global_time_info/di/global_time_info_providers.dart';
 
 // Import all mappers
+import '../../../shared/comp_mode_status/data/mappers/mode_info_mapper.dart';
+import '../../../shared/comp_time_sync/data/mappers/comp_time_sync_mapper.dart';
+import '../../../shared/vcu_drive_health/data/mappers/drive_info_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
-import '../../system/data/mappers/system_info_mapper.dart';
-import '../../drive/data/mappers/drive_info_mapper.dart';
-import '../../dashboard/data/mappers/mode_info_mapper.dart';
+import '../../../shared/vcu_subsystem_state/data/mapper/system_info_mapper.dart';
 import '../../../shared/comp_global_time_info/data/mappers/global_time_info_mapper.dart';
-import '../../../shared/data/mappers/comp_time_sync_mapper.dart';
-import '../../system/data/mappers/compute_comm_info_mapper.dart';
 
 class DebugState {
   final Map<int, List<DebugMessage>> messagesById;
@@ -35,7 +35,7 @@ class DebugState {
   }
 }
 
-class DebugNotifier extends Notifier<DebugState> {
+class DebugController extends Notifier<DebugState> {
   final Map<int, CanExtractionStrategy> _mappers = {};
   static const int _maxLogsPerId = 200;
 
@@ -62,7 +62,7 @@ class DebugNotifier extends Notifier<DebugState> {
       ModeInfoMapper(),
       GlobalTimeInfoMapper(),
       CompTimeSyncMapper(),
-      ComputeCommInfoMapper(),
+      ComputeRadioStateMapper(),
     ];
 
     for (final strategy in mappersList) {
@@ -83,7 +83,8 @@ class DebugNotifier extends Notifier<DebugState> {
       }
     }
 
-    final syncTime = ref.read(globalTimeRepositoryProvider).currentTime;
+    // Use the global time provider to get current time
+    final syncTime = ref.read(timeControllerProvider);
 
     final newMessage = DebugMessage(
       timestamp: syncTime,
@@ -93,7 +94,6 @@ class DebugNotifier extends Notifier<DebugState> {
     );
 
     // Update state: Append to end (latest at highest index)
-    // Works with DebugLogList using reverse:true to anchor bottom and grow top.
     final currentLogs = List<DebugMessage>.from(state.messagesById[frame.id] ?? []);
     currentLogs.add(newMessage);
 
@@ -116,3 +116,5 @@ class DebugNotifier extends Notifier<DebugState> {
     );
   }
 }
+
+final debugControllerProvider = NotifierProvider<DebugController, DebugState>(DebugController.new);

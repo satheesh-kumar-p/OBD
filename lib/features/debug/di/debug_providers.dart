@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../application/debug_notifier.dart';
+import '../application/debug_controller.dart';
 
-final debugNotifierProvider = NotifierProvider<DebugNotifier, DebugState>(DebugNotifier.new);
+final debugStateProvider = debugControllerProvider;
+final debugNotifierProvider = debugControllerProvider;

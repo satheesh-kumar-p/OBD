@@ -1,7 +1,7 @@
 import 'package:scout_obd/shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../../../features/dashboard/enums/e_stop_status_enum.dart';
+import '../../enums/e_stop_status_enum.dart';
 
 class EStopInfoMapper extends CanExtractionStrategy<EStopInfoEntity> {
   static final int id = 0x201;
