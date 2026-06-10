@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HudBatteryStatusIcon extends StatelessWidget {
   const HudBatteryStatusIcon({
@@ -15,28 +16,53 @@ class HudBatteryStatusIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final h = size;
-    final unit = h / 20.0;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // LV Battery (Small Battery Style)
-        _BatteryWidget(
-          soc: lvBatterySoc,
-          height: h * 0.8,
-          color: _getBatteryColor(lvBatterySoc),
-          isCarBattery: false,
-          label: 'LV',
+        // LV Battery
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _BatteryWidget(
+              soc: lvBatterySoc,
+              height: h,
+              color: _getBatteryColor(lvBatterySoc),
+              label: 'LV',
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              'LV',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        SizedBox(width: 12 * unit),
-        // HV Battery (Car Battery Style)
-        _BatteryWidget(
-          soc: hvBatterySoc,
-          height: h,
-          color: _getBatteryColor(hvBatterySoc),
-          isCarBattery: true,
-          label: 'HV',
+        SizedBox(width: 16.w),
+        // HV Battery
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _BatteryWidget(
+              soc: hvBatterySoc,
+              height: h,
+              color: _getBatteryColor(hvBatterySoc),
+              label: 'HV',
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              'HV',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -53,28 +79,22 @@ class _BatteryWidget extends StatelessWidget {
   final int soc;
   final double height;
   final Color color;
-  final bool isCarBattery;
   final String label;
 
   const _BatteryWidget({
     required this.soc,
     required this.height,
     required this.color,
-    required this.isCarBattery,
     required this.label,
   });
 
   @override
   Widget build(BuildContext context) {
     final unit = height / 20.0;
-    final double width = isCarBattery ? 40.0 * unit : 34.0 * unit;
+    final double width = 34.0 * unit;
     final clampedLevel = (soc / 100.0).clamp(0.0, 1.0);
 
-    if (isCarBattery) {
-      return _buildCarBattery(unit, width, height, clampedLevel);
-    } else {
-      return _buildStandardBattery(unit, width, height, clampedLevel);
-    }
+    return _buildStandardBattery(unit, width, height, clampedLevel);
   }
 
   Widget _buildStandardBattery(double unit, double w, double h, double level) {
@@ -132,76 +152,6 @@ class _BatteryWidget extends StatelessWidget {
               topRight: Radius.circular(1.5 * unit),
               bottomRight: Radius.circular(1.5 * unit),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCarBattery(double unit, double w, double h, double level) {
-    final borderW = 1.5 * unit;
-    final bodyH = h - 3 * unit; // Leave space for terminals on top
-    final terminalW = 6.0 * unit;
-    final terminalH = 3.0 * unit;
-    final inset = 1.0 * unit;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Terminals on top
-        SizedBox(
-          width: w,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: terminalW,
-                height: terminalH,
-                color: Colors.white,
-              ),
-              Container(
-                width: terminalW,
-                height: terminalH,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        ),
-        // Body
-        Container(
-          width: w,
-          height: bodyH,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white, width: borderW),
-            borderRadius: BorderRadius.circular(1.0 * unit),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                left: inset,
-                right: inset,
-                bottom: inset,
-                child: Container(
-                  height: (bodyH - 2 * inset - borderW) * level,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(0.5 * unit),
-                  ),
-                ),
-              ),
-              Center(
-                child: Text(
-                  '$soc%',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: bodyH * 0.6,
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'monospace',
-                    height: 1.0,
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ],
