@@ -66,13 +66,4 @@ class SystemScreenState {
       Subsystem.compute: !computeStale ? computeCommInfo!.compute : SubsystemStatus.unknown,
     };
   }
-
-  /// Helper to get the most recent update time across all entities
-  DateTime? get lastUpdateTime {
-    if (systemInfoLastUpdate == null) return computeInfoLastUpdate;
-    if (computeInfoLastUpdate == null) return systemInfoLastUpdate;
-    return systemInfoLastUpdate!.isAfter(computeInfoLastUpdate!) 
-        ? systemInfoLastUpdate 
-        : computeInfoLastUpdate;
-  }
 }

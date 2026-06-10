@@ -70,3 +70,8 @@ final canFrameStreamProvider = StreamProvider<CanFrame>((ref) {
 final clockTickerProvider = StreamProvider<int>((ref) {
   return Stream.periodic(const Duration(seconds: 1), (tick) => tick);
 });
+
+/// Provides a ticker that emits every 5 seconds for efficiency-minded staleness checks.
+final stalenessTickerProvider = StreamProvider<int>((ref) {
+  return Stream.periodic(const Duration(seconds: 5), (tick) => tick);
+});

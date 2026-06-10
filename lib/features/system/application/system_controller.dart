@@ -30,9 +30,9 @@ class SystemController extends Notifier<SystemScreenState> {
       }
     });
 
-    // 3. Listen to the global clock ticker (1Hz)
-    // This forces the state to "pulse" every second.
-    ref.listen(clockTickerProvider, (_, __) {
+    // 3. Listen to the staleness ticker (5s)
+    // This ensures staleness is detected even if data stops flowing.
+    ref.listen(stalenessTickerProvider, (_, __) {
       state = state.copyWith(now: DateTime.now()); 
     });
 
