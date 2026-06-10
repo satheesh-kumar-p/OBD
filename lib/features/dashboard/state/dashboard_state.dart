@@ -60,7 +60,7 @@ class DashboardState {
 
   String get modeName => mode?.mainMode.label ?? 'UNKNOWN';
 
-  String get subModeName => mode?.subMode.label ?? 'N/A';
+  String get subModeName => mode?.holdSubMode.label ?? 'N/A';
 
   String get driveModeName => mode?.driveMode.label ?? 'UNKNOWN';
 

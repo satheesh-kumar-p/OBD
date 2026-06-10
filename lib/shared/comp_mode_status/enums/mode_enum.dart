@@ -8,12 +8,12 @@ enum MainMode {
   final String label;
 }
 
-enum SubMode {
+enum HoldSubMode {
   unknown(-1, 'UNKNOWN'),
-  none(0, 'NONE'),
-  hold(10, 'HOLD');
+  disabled(1, 'DISABLED'),
+  enabled(2, 'ENABLED');
 
-  const SubMode(this.value, this.label);
+  const HoldSubMode(this.value, this.label);
   final int value;
   final String label;
 }

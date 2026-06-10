@@ -29,7 +29,6 @@ class HudTopBar extends ConsumerWidget {
     final maxWidth = 576.w;
     final batteryData = state.battery;
 
-    // OPTIMIZATION: Only rebuild this part of the row when the second changes
     final systemTime = ref.watch(dashboardStateProvider.select((s) => s.systemTimeFormatted));
 
     return Container(

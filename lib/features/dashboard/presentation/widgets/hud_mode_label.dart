@@ -36,7 +36,25 @@ class HudModeLabel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (armed) ...[
-              Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 24.r),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.redAccent,
+                    size: 24.r,
+                  ),
+                  Text(
+                    'ARMED',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5.w,
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(width: 10.w),
             ],
             Column(

@@ -35,8 +35,8 @@ class ModeInfoRepository implements ICanDataRepository<ModeEntity> {
               _modeCtrl.add(modeInfo);
 
               _logger.debug('Mode data received', context: {
-                'main': modeInfo.mainMode.label,
-                'sub': modeInfo.subMode.label,
+                'main mode': modeInfo.mainMode.label,
+                'hold sub mode': modeInfo.holdSubMode.label,
                 'speed': modeInfo.speedMode,
                 'drive': modeInfo.driveMode.name,
                 'armed': modeInfo.armed,

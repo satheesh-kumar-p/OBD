@@ -2,7 +2,7 @@ import '../../enums/mode_enum.dart';
 
 class ModeEntity {
   final MainMode mainMode;
-  final SubMode subMode;
+  final HoldSubMode holdSubMode;
 
   final SpeedMode speedMode;
   final DriveMode driveMode;
@@ -14,7 +14,7 @@ class ModeEntity {
 
   ModeEntity({
     required this.mainMode,
-    required this.subMode,
+    required this.holdSubMode,
     required this.speedMode,
     required this.driveMode,
     required this.armed,
@@ -26,7 +26,7 @@ class ModeEntity {
   @override
   String toString() {
     return 'Mode(Main Mode: ${mainMode.label}, '
-        'Sub Mode: ${subMode.label}, '
+        'Hold Sub Mode: ${holdSubMode.label}, '
         'Drive Mode: $driveMode, '
         'Speed Mode: $speedMode, '
         'Armed: $armed, '

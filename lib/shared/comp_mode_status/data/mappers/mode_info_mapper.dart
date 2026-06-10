@@ -21,13 +21,13 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
       ),
     ),
 
-    CanField<SubMode>(
-      name: 'subMode',
+    CanField<HoldSubMode>(
+      name: 'holdSubMode',
       startBit: 21,
       endBit: 24,
-      transformer: (value) => SubMode.values.firstWhere(
+      transformer: (value) => HoldSubMode.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => SubMode.unknown,
+        orElse: () => HoldSubMode.unknown,
       ),
     ),
 
@@ -84,7 +84,7 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
   ModeEntity build(Map<String, dynamic> parsedValues) {
     return ModeEntity(
       mainMode: parsedValues['mainMode'],
-      subMode: parsedValues['subMode'],
+      holdSubMode: parsedValues['holdSubMode'],
       speedMode: parsedValues['speedMode'],
       driveMode: parsedValues['driveMode'],
       armed: parsedValues['armed'],
