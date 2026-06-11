@@ -10,12 +10,12 @@ class GlobalTimeInfoMapper extends CanExtractionStrategy<GlobalTimeInfoEntity> {
 
   @override
   List<CanField<dynamic>> get fields => [
-    const CanField<int>(name: 'year', startBit: 0, endBit: 6),
-    const CanField<int>(name: 'month', startBit: 7, endBit: 10),
-    const CanField<int>(name: 'date', startBit: 11, endBit: 15),
-    const CanField<int>(name: 'hour', startBit: 16, endBit: 20),
-    const CanField<int>(name: 'minute', startBit: 21, endBit: 26),
-    const CanField<int>(name: 'second', startBit: 27, endBit: 32),
+    const CanField<int>(name: 'year', startBit: 56, endBit: 63),
+    const CanField<int>(name: 'month', startBit: 48, endBit: 55),
+    const CanField<int>(name: 'date', startBit: 40, endBit: 47),
+    const CanField<int>(name: 'hour', startBit: 32, endBit: 39),
+    const CanField<int>(name: 'minute', startBit: 24, endBit: 31),
+    const CanField<int>(name: 'second', startBit: 16, endBit: 23),
   ];
 
   @override
