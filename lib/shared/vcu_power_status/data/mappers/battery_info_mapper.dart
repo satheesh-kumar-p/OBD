@@ -13,13 +13,13 @@ class BatteryInfoMapper extends CanExtractionStrategy<BatteryInfoEntity> {
     // Battery fields
     const CanField<int>(
       name: 'hvBatterySoc',
-      startBit: 17,
-      endBit: 24,
+      startBit: 32,
+      endBit: 39,
     ),
     CanField<int>(
       name: 'lvBatterySoc',
-      startBit: 25,
-      endBit: 32,
+      startBit: 24,
+      endBit: 31,
     ),
   ];
 
