@@ -13,8 +13,8 @@ class EStopInfoMapper extends CanExtractionStrategy<EStopInfoEntity> {
   List<CanField<dynamic>> get fields => [
     const CanField<int>(
       name: 'eStopStatus',
-      startBit: 17,
-      endBit: 17,
+      startBit: 46,
+      endBit: 46,
     ),
   ];
 
