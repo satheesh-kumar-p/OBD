@@ -13,10 +13,10 @@ class CompTimeSyncMapper extends CanExtractionStrategy<CompTimeSyncEntity> {
 
   @override
   List<CanField<dynamic>> get fields => [
-    const CanField<int>(name: 'hour', startBit: 0, endBit: 4),
-    const CanField<int>(name: 'minute', startBit: 5, endBit: 10),
-    const CanField<int>(name: 'second', startBit: 11, endBit: 16),
-    const CanField<int>(name: 'millisecond', startBit: 17, endBit: 26),
+    const CanField<int>(name: 'hour', startBit: 56, endBit: 63),
+    const CanField<int>(name: 'minute', startBit: 48, endBit: 55),
+    const CanField<int>(name: 'second', startBit: 40, endBit: 47),
+    const CanField<int>(name: 'millisecond', startBit: 30, endBit: 39),
   ];
 
   @override
