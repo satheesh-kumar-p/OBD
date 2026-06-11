@@ -41,7 +41,7 @@ class MockCanService implements ICanService {
     _connectionCtrl.add(true);
     _logger.info('MockCanService: Connected.');
 
-    // Start emitting fake robot data (e.g. System Info 0x203, Drive Info 0x204)
+    // Start emitting fake robot data
     _periodicTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (!_connected) return;
       _emitSystemInfo();
@@ -52,6 +52,7 @@ class MockCanService implements ICanService {
       _emitCompTimeSync();
       _emitComputeCommInfo();
       _emitEStopInfo();
+      _emitMcTempVolt();
     });
   }
 
@@ -76,20 +77,16 @@ class MockCanService implements ICanService {
     _connectionCtrl.close();
   }
 
-  /// Helper to set bits in a payload (Big Endian - MSB at Bit 0)
+  /// Helper to set bits in a payload
   void _setBits(Uint8List data, int startBit, int length, int value) {
     for (int i = 0; i < length; i++) {
       int bitPos = startBit + i;
       int byteIdx = bitPos ~/ 8;
-      // MSB at bit 0 means index 0 is bit 7 in standard shifting
-      int bitIdx = 7 - (bitPos % 8);
-
+      int bitIdx = bitPos % 8;
       if (byteIdx >= data.length) break;
 
-      // Clear the bit
       data[byteIdx] &= ~(1 << bitIdx);
-      // Set the bit if value has it at corresponding significance (startBit is MSB)
-      if (((value >> (length - 1 - i)) & 0x01) == 1) {
+      if (((value >> i) & 0x01) == 1) {
         data[byteIdx] |= (1 << bitIdx);
       }
     }
@@ -98,37 +95,20 @@ class MockCanService implements ICanService {
   void _emitSystemInfo() {
     final data = Uint8List(8);
     
-    // Time fields (0-16) - set to some dummy time 12:34:56
-    _setBits(data, 0, 5, 12);  // hour
-    _setBits(data, 5, 6, 34);  // minute
-    _setBits(data, 11, 6, 56); // second
-
-    // User requirements:
-    // motor controllers: 1 (no communication)
-    _setBits(data, 17, 2, 1); // rear MC
-    _setBits(data, 19, 2, 1); // front MC
-
-    // hv battery: healthy (2)
-    _setBits(data, 21, 2, 2);
-
-    // lv battery: unhealthy (3)
-    _setBits(data, 23, 2, 3);
-
-    // dc48: healthy (2)
-    _setBits(data, 27, 2, 2);
-
-    // dc12: unhealthy (3)
-    _setBits(data, 29, 2, 3);
-
-    // VCU: unhealthy (3)
-    _setBits(data, 31, 2, 3);
-
-    // Others: healthy (2)
-    _setBits(data, 25, 2, 2); // LV PDU
-    _setBits(data, 33, 2, 2); // FL Motor
-    _setBits(data, 35, 2, 2); // RL Motor
-    _setBits(data, 37, 2, 2); // FR Motor
-    _setBits(data, 39, 2, 2); // RR Motor
+    // Status values: 2=Healthy, 3=Unhealthy, 1=No Comm
+    _setBits(data, 38, 2, 2); // rear MC
+    _setBits(data, 36, 2, 2); // front MC
+    _setBits(data, 34, 2, 2); // hv battery
+    _setBits(data, 32, 2, 2); // lv battery
+    _setBits(data, 30, 2, 2); // lv pdu
+    _setBits(data, 28, 2, 2); // dcDc48v12v
+    _setBits(data, 26, 2, 2); // dcDc12v5v
+    _setBits(data, 24, 2, 2); // vcu
+    _setBits(data, 22, 2, 2); // frontLeftMotor
+    _setBits(data, 20, 2, 2); // rearLeftMotor
+    _setBits(data, 18, 2, 2); // frontRightMotor
+    _setBits(data, 16, 2, 2); // rearRightMotor
+    _setBits(data, 14, 2, 2); // compute
 
     _frameCtrl.add(CanFrame(
       id: 0x203,
@@ -140,18 +120,15 @@ class MockCanService implements ICanService {
   void _emitDriveInfo() {
     final data = Uint8List(8);
 
-    // Dummy time
-    _setBits(data, 0, 5, 12);
-    _setBits(data, 5, 6, 34);
-    _setBits(data, 11, 6, 56);
+    // Motor Faults (8 bits each, 0 = Healthy)
+    _setBits(data, 39, 8, 0); // RL
+    _setBits(data, 31, 8, 0); // RR
+    _setBits(data, 23, 8, 0); // FL
+    _setBits(data, 15, 8, 0); // FR
 
-    // Front Left Motor: bits 33-40 -> 33 (overSpeed(1) | overTemp(32))
-    _setBits(data, 33, 8, 33);
-
-    // Left MC: bits 56-61 -> 2 (overCurrent(2))
-    _setBits(data, 56, 6, 2);
-
-    // All others 0 (Healthy)
+    // MC Faults (6 bits each)
+    _setBits(data, 9, 6, 0); // Rear MC
+    _setBits(data, 3, 6, 0); // Front MC
 
     _frameCtrl.add(CanFrame(
       id: 0x204,
@@ -174,16 +151,9 @@ class MockCanService implements ICanService {
   void _emitBatteryInfo() {
     final data = Uint8List(8);
 
-    // Dummy time
-    _setBits(data, 0, 5, 12);
-    _setBits(data, 5, 6, 34);
-    _setBits(data, 11, 6, 56);
-
     // SOC: 85% (bits 17-24)
     _setBits(data, 17, 8, 85);
-
-    // Voltage: 24.5V -> 24 (bits 25-32)
-    // 8 bits max is 255. 24 results in 24V with ~/10 transformer.
+    // LV SOC: 92% (bits 25-32)
     _setBits(data, 25, 8, 24);
 
     _frameCtrl.add(CanFrame(
@@ -196,34 +166,14 @@ class MockCanService implements ICanService {
   void _emitModeInfo() {
     final data = Uint8List(8);
 
-    // Dummy time (0-16)
-    _setBits(data, 0, 5, 12);
-    _setBits(data, 5, 6, 34);
-    _setBits(data, 11, 6, 56);
-
-    // MainMode: modeA (1) bits 17-20
-    _setBits(data, 17, 4, 1);
-
-    // SubMode: none (0) bits 21-24
-    _setBits(data, 21, 4, 0);
-
-    // SpeedMode: medium (2) bits 25-28
-    _setBits(data, 25, 4, 2);
-
-    // DriveMode: speed (1) bits 29-32
-    _setBits(data, 29, 4, 1);
-
-    // Armed: true (1) bit 33
-    _setBits(data, 33, 1, 1);
-
-    // Headlights: true (1) bit 34
-    _setBits(data, 34, 1, 1);
-
-    // FogLights: false (0) bit 35
-    _setBits(data, 35, 1, 0);
-
-    // BrakeLights: false (0) bit 36
-    _setBits(data, 36, 1, 0);
+    _setBits(data, 36, 4, 1); // MainMode: 1
+    _setBits(data, 32, 4, 0); // SubMode: 0
+    _setBits(data, 28, 4, 2); // SpeedMode: 2
+    _setBits(data, 24, 4, 1); // DriveMode: 1
+    _setBits(data, 23, 1, 1); // Armed: true
+    _setBits(data, 22, 1, 1); // Headlights: true
+    _setBits(data, 21, 1, 0); // FogLights: false
+    _setBits(data, 20, 1, 0); // BrakeLights: false
 
     _frameCtrl.add(CanFrame(
       id: 0x20B,
@@ -236,18 +186,12 @@ class MockCanService implements ICanService {
     final data = Uint8List(8);
     final now = DateTime.now();
 
-    // Year offset from 2000 (0-6)
-    _setBits(data, 0, 7, now.year - 2000);
-    // Month (7-10)
-    _setBits(data, 7, 4, now.month);
-    // Date (11-15)
-    _setBits(data, 11, 5, now.day);
-    // Hour (16-20)
-    _setBits(data, 16, 5, now.hour);
-    // Minute (21-26)
-    _setBits(data, 21, 6, now.minute);
-    // Second (27-32)
-    _setBits(data, 27, 6, now.second);
+    _setBits(data, 56, 8, now.year - 2000);
+    _setBits(data, 48, 8, now.month);
+    _setBits(data, 40, 8, now.day);
+    _setBits(data, 32, 8, now.hour);
+    _setBits(data, 24, 8, now.minute);
+    _setBits(data, 16, 8, now.second);
 
     _frameCtrl.add(CanFrame(
       id: 0x202,
@@ -258,17 +202,12 @@ class MockCanService implements ICanService {
 
   void _emitCompTimeSync() {
     final data = Uint8List(8);
-    // Send time 1 hour ahead
-    final now = DateTime.now().add(const Duration(hours: 1));
+    final now = DateTime.now();
 
-    // Hour (0-4)
-    _setBits(data, 0, 5, now.hour);
-    // Minute (5-10)
-    _setBits(data, 5, 6, now.minute);
-    // Second (11-16)
-    _setBits(data, 11, 6, now.second);
-    // Millisecond (17-26)
-    _setBits(data, 17, 10, now.millisecond);
+    _setBits(data, 56, 8, now.hour);
+    _setBits(data, 48, 8, now.minute);
+    _setBits(data, 40, 8, now.second);
+    _setBits(data, 30, 10, now.millisecond);
 
     _frameCtrl.add(CanFrame(
       id: 0x206,
@@ -280,19 +219,32 @@ class MockCanService implements ICanService {
   void _emitComputeCommInfo() {
     final data = Uint8List(8);
 
-    // Dummy time (0-16)
-    _setBits(data, 0, 5, 12);
-    _setBits(data, 5, 6, 34);
-    _setBits(data, 11, 6, 56);
-
-    // UHF Radio State: Healthy (2) bits 17-18
-    _setBits(data, 17, 2, 2);
-
-    // Compute State: Unhealthy/Fault (3) bits 21-22
-    _setBits(data, 21, 2, 3);
+    // UHF Radio State: Healthy (2) bits 38-39
+    _setBits(data, 38, 2, 2);
+    // L-Band Radio State: Healthy (2) bits 36-37
+    _setBits(data, 36, 2, 2);
 
     _frameCtrl.add(CanFrame(
       id: 0x20C,
+      idType: CanIdType.standard,
+      data: data,
+    ));
+  }
+
+  void _emitMcTempVolt() {
+    final data = Uint8List(8);
+
+    // 37-46: Rear MC Voltage (Scale: 0.1V) -> 48.0V
+    _setBits(data, 37, 10, 480);
+    // 27-36: Front MC Voltage (Scale: 0.1V) -> 47.5V
+    _setBits(data, 27, 10, 475);
+    // 16-23: Rear MC Temp -> 35 C
+    _setBits(data, 16, 8, 35);
+    // 8-15: Front MC Temp -> 32 C
+    _setBits(data, 8, 8, 32);
+
+    _frameCtrl.add(CanFrame(
+      id: 0x211,
       idType: CanIdType.standard,
       data: data,
     ));
