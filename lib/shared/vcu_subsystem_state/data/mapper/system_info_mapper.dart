@@ -48,7 +48,7 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
     const CanField<int>(
       name: 'dcDc12vTo5v',
       startBit: 26,
-      endBit: 37,
+      endBit: 27,
     ),
     const CanField<int>(
       name: 'vcu',
