@@ -14,70 +14,73 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
   @override
   List<CanField<dynamic>> get fields => [
 
-    // Motor Controller States (ICD bits 28-31 → actual bits 17-20)
     const CanField<int>(
       name: 'rearMotorController',
-      startBit: 17,  // 28 - 11 = 17
-      endBit: 18,    // 29 - 11 = 18
+      startBit: 38,
+      endBit: 39,
     ),
     const CanField<int>(
       name: 'frontMotorController',
-      startBit: 19,  // 30 - 11 = 19
-      endBit: 20,    // 31 - 11 = 20
+      startBit: 36,
+      endBit: 37,
     ),
 
-    // Component States (ICD bits 32-43 → actual bits 21-32)
     const CanField<int>(
       name: 'hvBattery',
-      startBit: 21,  // 32 - 11 = 21
-      endBit: 22,    // 33 - 11 = 22
+      startBit: 34,
+      endBit: 35,
     ),
     const CanField<int>(
       name: 'lvBattery',
-      startBit: 23,  // 34 - 11 = 23
-      endBit: 24,    // 35 - 11 = 24
+      startBit: 32,
+      endBit: 33,
     ),
     const CanField<int>(
       name: 'lvPdu',
-      startBit: 25,  // 36 - 11 = 25
-      endBit: 26,    // 37 - 11 = 26
+      startBit: 30,
+      endBit: 31,
     ),
     const CanField<int>(
       name: 'dcDc48vTo12v',
-      startBit: 27,  // 38 - 11 = 27
-      endBit: 28,    // 39 - 11 = 28
+      startBit: 28,
+      endBit: 29,
     ),
     const CanField<int>(
       name: 'dcDc12vTo5v',
-      startBit: 29,  // 40 - 11 = 29
-      endBit: 30,    // 41 - 11 = 30
+      startBit: 26,
+      endBit: 37,
     ),
     const CanField<int>(
       name: 'vcu',
-      startBit: 31,  // 42 - 11 = 31
-      endBit: 32,    // 43 - 11 = 32
+      startBit: 24,
+      endBit: 25,
     ),
 
     // Motor States (ICD bits 44-51 → actual bits 33-40)
     const CanField<int>(
       name: 'frontLeftMotor',
-      startBit: 33,  // 44 - 11 = 33
-      endBit: 34,    // 45 - 11 = 34
+      startBit: 22,
+      endBit: 23,
     ),
     const CanField<int>(
       name: 'rearLeftMotor',
-      startBit: 35,  // 46 - 11 = 35
-      endBit: 36,    // 47 - 11 = 36
+      startBit: 20,
+      endBit: 21,
     ),
     const CanField<int>(
       name: 'frontRightMotor',
-      startBit: 37,  // 48 - 11 = 37
-      endBit: 38,    // 49 - 11 = 38
+      startBit: 18,
+      endBit: 19,
     ),
     const CanField<int>(
       name: 'rearRightMotor',
-      startBit: 39,  // 50 - 11 = 39
-      endBit: 40,    // 51 - 11 = 40
+      startBit: 16,
+      endBit: 17,
+    ),
+    const CanField<int>(
+      name: 'compute',
+      startBit: 14,
+      endBit: 15,
     ),
   ];
 
@@ -95,6 +98,7 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       dcDc48v12v: _toStatus(values['dcDc48vTo12v']),
       dcDc12v5v: _toStatus(values['dcDc12vTo5v']),
       vcu: _toStatus(values['vcu']),
+      compute: _toStatus(values['rearRightMotor']),
 
       // Individual motors
       frontLeftMotor: _toStatus(values['frontLeftMotor']),

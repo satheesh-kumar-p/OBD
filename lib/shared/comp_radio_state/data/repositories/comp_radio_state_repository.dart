@@ -2,18 +2,18 @@ import 'dart:async';
 import '../../../../core/comm/can_bus/can_comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
-import '../../domain/entities/compute_radio_state_entity.dart';
-import '../mappers/compute_radio_state_mapper.dart';
+import '../../domain/entities/comp_radio_state_entity.dart';
+import '../mappers/comp_radio_state_mapper.dart';
 
-class ComputeRadioStateRepository implements ICanDataRepository<ComputeCommInfoEntity> {
+class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   final CanCommManager _canManager;
   final Logger _logger;
 
-  final _ctrl = StreamController<ComputeCommInfoEntity>.broadcast();
+  final _ctrl = StreamController<CompRadioState>.broadcast();
   final _mapper = ComputeRadioStateMapper();
   StreamSubscription? _sub;
 
-  ComputeRadioStateRepository({
+  CompRadioStateRepository({
     required CanCommManager canManager,
     required Logger logger,
   }) : _canManager = canManager,
@@ -28,10 +28,6 @@ class ComputeRadioStateRepository implements ICanDataRepository<ComputeCommInfoE
       try {
         final entity = _mapper.parse(frame.data);
         _ctrl.add(entity);
-        _logger.debug('Compute & Comm data received', context: {
-          'uhf': entity.uhfRadio,
-          'compute': entity.compute,
-        });
       } catch (e, st) {
         _logger.error('Failed to parse Compute & Comm frame', error: e, stack: st);
       }
@@ -49,5 +45,5 @@ class ComputeRadioStateRepository implements ICanDataRepository<ComputeCommInfoE
   }
 
   @override
-  Stream<ComputeCommInfoEntity> watchCanData() => _ctrl.stream;
+  Stream<CompRadioState> watchCanData() => _ctrl.stream;
 }

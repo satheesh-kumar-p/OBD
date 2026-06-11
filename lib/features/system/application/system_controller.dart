@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection_container.dart';
-import '../../../shared/comp_radio_state/di/compute_radio_state_providers.dart';
+import '../../../shared/comp_radio_state/di/comp_radio_state_providers.dart';
 import '../../../shared/vcu_subsystem_state/di/system_info_providers.dart';
 import '../presentation/state/system_screen_state.dart';
 
@@ -20,7 +20,7 @@ class SystemController extends Notifier<SystemScreenState> {
     });
 
     // 2. Listen for Compute data (0x20C)
-    ref.listen(computeRadioStateProvider, (previous, next) {
+    ref.listen(compRadioStateProvider, (previous, next) {
       if (next.hasValue) {
         state = state.copyWith(
           computeCommInfo: next.value,

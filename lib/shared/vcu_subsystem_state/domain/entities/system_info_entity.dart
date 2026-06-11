@@ -13,6 +13,7 @@ class SystemInfoEntity {
   final SubsystemStatus rearLeftMotor;
   final SubsystemStatus frontRightMotor;
   final SubsystemStatus rearRightMotor;
+  final SubsystemStatus compute;
 
   const SystemInfoEntity({
     required this.frontMotorController,
@@ -27,6 +28,7 @@ class SystemInfoEntity {
     required this.rearLeftMotor,
     required this.frontRightMotor,
     required this.rearRightMotor,
+    required this.compute,
   });
 
   @override
@@ -43,7 +45,8 @@ class SystemInfoEntity {
         '  frontLeftMotor: $frontLeftMotor,\n'
         '  rearLeftMotor: $rearLeftMotor,\n'
         '  frontRightMotor: $frontRightMotor,\n'
-        '  rearRightMotor: $rearRightMotor\n'
+        '  rearRightMotor: $rearRightMotor,\n'
+        '  compute: $compute\n'
         ')';
   }
 }

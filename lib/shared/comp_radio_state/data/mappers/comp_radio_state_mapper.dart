@@ -1,9 +1,9 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../../../core/enums/subsystem_status_enum.dart';
-import '../../domain/entities/compute_radio_state_entity.dart';
+import '../../domain/entities/comp_radio_state_entity.dart';
 
-class ComputeRadioStateMapper extends CanExtractionStrategy<ComputeCommInfoEntity> {
+class ComputeRadioStateMapper extends CanExtractionStrategy<CompRadioState> {
   static const int id = 0x20C;
 
   @override
@@ -11,17 +11,15 @@ class ComputeRadioStateMapper extends CanExtractionStrategy<ComputeCommInfoEntit
 
   @override
   List<CanField<dynamic>> get fields => [
-    const CanField<int>(name: 'uhfRadio', startBit: 17, endBit: 18),
-    const CanField<int>(name: 'lBandRadio', startBit: 19, endBit: 20),
-    const CanField<int>(name: 'compute', startBit: 21, endBit: 22),
+    const CanField<int>(name: 'uhfRadio', startBit: 38, endBit: 39),
+    const CanField<int>(name: 'lBandRadio', startBit: 36, endBit: 37),
   ];
 
   @override
-  ComputeCommInfoEntity build(Map<String, dynamic> parsedValues) {
-    return ComputeCommInfoEntity(
+  CompRadioState build(Map<String, dynamic> parsedValues) {
+    return CompRadioState(
       uhfRadio: _toStatus(parsedValues['uhfRadio']),
       lBandRadio: _toStatus(parsedValues['lBandRadio']),
-      compute: _toStatus(parsedValues['compute']),
     );
   }
 

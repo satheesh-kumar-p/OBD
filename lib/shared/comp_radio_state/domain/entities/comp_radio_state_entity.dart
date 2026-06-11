@@ -1,18 +1,16 @@
 import '../../../../core/enums/subsystem_status_enum.dart';
 
-class ComputeCommInfoEntity {
+class CompRadioState {
   final SubsystemStatus uhfRadio;
   final SubsystemStatus lBandRadio;
-  final SubsystemStatus compute;
 
-  ComputeCommInfoEntity({
+  CompRadioState({
     required this.uhfRadio,
     required this.lBandRadio,
-    required this.compute,
   });
 
   @override
   String toString() {
-    return 'ComputeCommInfo(uhf: $uhfRadio, lBand: $lBandRadio, compute: $compute)';
+    return 'ComputeCommInfo(uhf: $uhfRadio, lBand: $lBandRadio)';
   }
 }

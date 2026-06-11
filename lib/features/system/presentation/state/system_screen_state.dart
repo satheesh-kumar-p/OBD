@@ -1,5 +1,5 @@
 import '../../../../core/constants/subsystem_list_constants.dart';
-import '../../../../shared/comp_radio_state/domain/entities/compute_radio_state_entity.dart';
+import '../../../../shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 import '../../../../core/enums/subsystem_status_enum.dart';
 import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 
@@ -7,7 +7,7 @@ class SystemScreenState {
   final SystemInfoEntity? systemInfo;
   final DateTime? systemInfoLastUpdate;
   
-  final ComputeCommInfoEntity? computeCommInfo;
+  final CompRadioState? computeCommInfo;
   final DateTime? computeInfoLastUpdate;
   
   /// The reference time for staleness calculations in this state frame.
@@ -24,7 +24,7 @@ class SystemScreenState {
   SystemScreenState copyWith({
     SystemInfoEntity? systemInfo,
     DateTime? systemInfoLastUpdate,
-    ComputeCommInfoEntity? computeCommInfo,
+    CompRadioState? computeCommInfo,
     DateTime? computeInfoLastUpdate,
     DateTime? now,
   }) {
@@ -61,9 +61,9 @@ class SystemScreenState {
       Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemStatus.unknown,
       Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemStatus.unknown,
       Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemStatus.unknown,
+      Subsystem.compute: !computeStale ? systemInfo!.compute : SubsystemStatus.unknown,
       Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemStatus.unknown,
       Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemStatus.unknown,
-      Subsystem.compute: !computeStale ? computeCommInfo!.compute : SubsystemStatus.unknown,
     };
   }
 }
