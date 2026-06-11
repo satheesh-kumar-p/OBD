@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../core/comm/can_bus/can_extraction_strategy.dart';
-import '../../../shared/comp_radio_state/data/mappers/compute_radio_state_mapper.dart';
+import '../../../shared/comp_radio_state/data/mappers/comp_radio_state_mapper.dart';
 import '../../dashboard/application/time_controller.dart';
 import '../domain/entities/debug_message.dart';
 
@@ -62,7 +62,7 @@ class DebugController extends Notifier<DebugState> {
       ModeInfoMapper(),
       GlobalTimeInfoMapper(),
       CompTimeSyncMapper(),
-      ComputeRadioStateMapper(),
+      CompRadioStateMapper(),
     ];
 
     for (final strategy in mappersList) {

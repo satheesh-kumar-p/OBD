@@ -101,7 +101,7 @@ class HudTopBar extends ConsumerWidget {
                   color: handCtrlColor,
                   size: 44.r,
                   gapAfter: 16.w,
-                  status: state.computeCommInfo?.uhfRadio,
+                  status: state.compRadioInfo?.uhfRadio,
                 ),
                 HudBatteryStatusIcon(
                   size: 38.r,

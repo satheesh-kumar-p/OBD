@@ -3,7 +3,7 @@ import '../../../../core/comm/can_bus/can_field.dart';
 import '../../../../core/enums/subsystem_status_enum.dart';
 import '../../domain/entities/comp_radio_state_entity.dart';
 
-class ComputeRadioStateMapper extends CanExtractionStrategy<CompRadioState> {
+class CompRadioStateMapper extends CanExtractionStrategy<CompRadioState> {
   static const int id = 0x20C;
 
   @override

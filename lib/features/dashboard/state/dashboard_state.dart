@@ -1,5 +1,6 @@
+import 'package:scout_obd/shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
+
 import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
-import '../../../shared/comp_radio_state/domain/entities/compute_radio_state_entity.dart';
 import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
 import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
@@ -13,7 +14,7 @@ class DashboardState {
     this.battery,
     this.eStopInfo,
     this.systemInfo,
-    this.computeCommInfo,
+    this.compRadioInfo,
     this.selectedIndex = 0,
   });
 
@@ -22,7 +23,7 @@ class DashboardState {
   final BatteryInfoEntity? battery;
   final EStopInfoEntity? eStopInfo;
   final SystemInfoEntity? systemInfo;
-  final ComputeCommInfoEntity? computeCommInfo;
+  final CompRadioState? compRadioInfo;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -31,7 +32,7 @@ class DashboardState {
     BatteryInfoEntity? battery,
     EStopInfoEntity? eStopInfo,
     SystemInfoEntity? systemInfo,
-    ComputeCommInfoEntity? computeCommInfo,
+    CompRadioState? compRadioInfo,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -40,7 +41,7 @@ class DashboardState {
       battery: battery ?? this.battery,
       eStopInfo: eStopInfo ?? this.eStopInfo,
       systemInfo: systemInfo ?? this.systemInfo,
-      computeCommInfo: computeCommInfo ?? this.computeCommInfo,
+      compRadioInfo: compRadioInfo ?? this.compRadioInfo,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }

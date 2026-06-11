@@ -10,7 +10,7 @@ class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   final Logger _logger;
 
   final _ctrl = StreamController<CompRadioState>.broadcast();
-  final _mapper = ComputeRadioStateMapper();
+  final _mapper = CompRadioStateMapper();
   StreamSubscription? _sub;
 
   CompRadioStateRepository({
@@ -22,9 +22,9 @@ class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   @override
   void startCanData() {
     if (_sub != null) return;
-    _logger.info('Starting Compute & Comm Info data stream (CAN ID: 0x${ComputeRadioStateMapper.id.toRadixString(16).toUpperCase()})');
+    _logger.info('Starting Compute & Comm Info data stream (CAN ID: 0x${CompRadioStateMapper.id.toRadixString(16).toUpperCase()})');
 
-    _sub = _canManager.watchMessage(ComputeRadioStateMapper.id).listen((frame) {
+    _sub = _canManager.watchMessage(CompRadioStateMapper.id).listen((frame) {
       try {
         final entity = _mapper.parse(frame.data);
         _ctrl.add(entity);
