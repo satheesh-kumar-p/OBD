@@ -13,8 +13,8 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
   List<CanField<dynamic>> get fields => [
     CanField<MainMode>(
       name: 'mainMode',
-      startBit: 17,
-      endBit: 20,
+      startBit: 36,
+      endBit: 39,
       transformer: (value) => MainMode.values.firstWhere(
             (e) => e.value == value,
         orElse: () => MainMode.unknown,
@@ -23,8 +23,8 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
 
     CanField<HoldSubMode>(
       name: 'holdSubMode',
-      startBit: 21,
-      endBit: 24,
+      startBit: 32,
+      endBit: 35,
       transformer: (value) => HoldSubMode.values.firstWhere(
             (e) => e.value == value,
         orElse: () => HoldSubMode.unknown,
@@ -33,8 +33,8 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
 
     CanField<SpeedMode>(
       name: 'speedMode',
-      startBit: 25,
-      endBit: 28,
+      startBit: 28,
+      endBit: 31,
       transformer: (value) => SpeedMode.values.firstWhere(
             (e) => e.value == value,
         orElse: () => SpeedMode.unknown,
@@ -43,8 +43,8 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
 
     CanField<DriveMode>(
       name: 'driveMode',
-      startBit: 29,
-      endBit: 32,
+      startBit: 24,
+      endBit: 27,
       transformer: (value) => DriveMode.values.firstWhere(
             (e) => e.value == value,
         orElse: () => DriveMode.unknown,
@@ -53,29 +53,29 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
 
     CanField<bool>(
       name: 'armed',
-      startBit: 33,
-      endBit: 33,
+      startBit: 23,
+      endBit: 23,
       transformer: (value) => value == 1,
     ),
 
     CanField<bool>(
       name: 'headlightsOn',
-      startBit: 34,
-      endBit: 34,
+      startBit: 22,
+      endBit: 22,
       transformer: (value) => value == 1,
     ),
 
     CanField<bool>(
       name: 'frontFogLightsOn',
-      startBit: 35,
-      endBit: 35,
+      startBit: 21,
+      endBit: 21,
       transformer: (value) => value == 1,
     ),
 
     CanField<bool>(
       name: 'rearBrakeLightsOn',
-      startBit: 36,
-      endBit: 36,
+      startBit: 20,
+      endBit: 20,
       transformer: (value) => value == 1,
     ),
   ];
