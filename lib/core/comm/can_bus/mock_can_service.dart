@@ -81,9 +81,9 @@ class MockCanService implements ICanService {
   void _setBits(Uint8List data, int startBit, int length, int value) {
     for (int i = 0; i < length; i++) {
       int bitPos = startBit + i;
-      int byteIdx = bitPos ~/ 8;
+      int byteIdx = 7 - (bitPos ~/ 8);
       int bitIdx = bitPos % 8;
-      if (byteIdx >= data.length) break;
+      if (byteIdx < 0 || byteIdx >= data.length) break;
 
       data[byteIdx] &= ~(1 << bitIdx);
       if (((value >> i) & 0x01) == 1) {
@@ -151,10 +151,8 @@ class MockCanService implements ICanService {
   void _emitBatteryInfo() {
     final data = Uint8List(8);
 
-    // SOC: 85% (bits 17-24)
-    _setBits(data, 17, 8, 85);
-    // LV SOC: 92% (bits 25-32)
-    _setBits(data, 25, 8, 24);
+    _setBits(data, 24, 8, 85);
+    _setBits(data, 32, 8, 24);
 
     _frameCtrl.add(CanFrame(
       id: 0x200,
