@@ -1,43 +1,45 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../di/dashboard_providers.dart';
 import '../../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
-class HudEStopStatus extends StatelessWidget {
-  const HudEStopStatus({
-    super.key,
-    required this.height,
-    required this.color,
-    this.size,
-    this.gapAfter = 12.0,
-    this.status,
-  });
-
-  final double height;
-  final Color color;
-  final double? size;
-  final double gapAfter;
-  final EStopStatus? status;
+class HudEStopStatus extends ConsumerWidget {
+  const HudEStopStatus({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final iconSize = size ?? (height * 0.55).clamp(14.0, 32.0).toDouble();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(dashboardStateProvider.select((s) => s.eStopInfo?.status));
+    final color = ref.watch(dashboardStateProvider.select((s) => s.eStopColor));
+    
+    final isEngaged = status == EStopStatus.engaged;
+    final textColor = isEngaged ? Colors.white : Colors.white.withOpacity(0.6);
 
-    final statusColor = switch (status) {
-      EStopStatus.engaged => const Color(0xFFFF3B3B),
-      EStopStatus.released => const Color(0xFF00FF66),
-      EStopStatus.unknown || null => color.withOpacity(0.3),
-    };
+    final size = 44.r;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.dangerous_outlined,
-          size: iconSize,
-          color: statusColor,
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: isEngaged ? color : color.withOpacity(0.08),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isEngaged ? color : color.withOpacity(0.2),
+          width: 1.5.r,
         ),
-        SizedBox(width: gapAfter),
-      ],
+      ),
+      child: Center(
+        child: Text(
+          'STOP',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
     );
   }
 }

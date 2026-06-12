@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../di/dashboard_providers.dart';
 
-class HudDateTimeLabel extends StatelessWidget {
-  const HudDateTimeLabel({super.key, required this.height, required this.systemTime});
-
-  final double height;
-  final String systemTime;
+class HudDateTimeLabel extends ConsumerWidget {
+  const HudDateTimeLabel({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final systemTime = ref.watch(dashboardStateProvider.select((s) => s.systemTimeFormatted));
+
     return FittedBox(
       fit: BoxFit.scaleDown,
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: Text(
         systemTime,
         maxLines: 1,

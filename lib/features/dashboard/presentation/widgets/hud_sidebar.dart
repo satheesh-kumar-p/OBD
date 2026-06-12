@@ -7,18 +7,15 @@ class HudSidebar extends StatelessWidget {
     required this.items,
     required this.selectedIndex,
     required this.onSelect,
-    required this.width,
   });
 
   final List<String> items;
   final int selectedIndex;
   final ValueChanged<int> onSelect;
-  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
       decoration: const BoxDecoration(
         color: Colors.black,
         border: Border(
@@ -83,35 +80,29 @@ class _HudSidebarItem extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: enabled ? onTap : null,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final radius = 10.r;
-
-            return Container(
-              decoration: BoxDecoration(
-                color: bg,
-                borderRadius: BorderRadius.circular(radius),
-                border: Border.all(
-                  color: border,
-                  width: 2.5.w,
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: border,
+              width: 2.5.w,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 20.sp,
+                letterSpacing: 0.5.w,
+                fontWeight: FontWeight.bold,
               ),
-              child: Center(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 20.sp,
-                    letterSpacing: 0.5.w,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

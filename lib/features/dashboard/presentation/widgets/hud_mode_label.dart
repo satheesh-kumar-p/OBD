@@ -6,15 +6,11 @@ class HudModeLabel extends StatelessWidget {
     super.key,
     required this.mainText,
     required this.subText,
-    required this.height,
-    required this.maxWidth,
     this.armed = false,
   });
 
   final String mainText;
   final String subText;
-  final double height;
-  final double maxWidth;
   final bool armed;
 
   @override
@@ -24,8 +20,6 @@ class HudModeLabel extends StatelessWidget {
 
     return IntrinsicWidth(
       child: Container(
-        height: height,
-        constraints: BoxConstraints(maxWidth: maxWidth),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(12.r),
