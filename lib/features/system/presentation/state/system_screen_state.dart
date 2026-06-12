@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../../../shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 import '../../../../core/enums/subsystem_status_enum.dart';
@@ -65,5 +66,64 @@ class SystemScreenState {
       Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemStatus.unknown,
       Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemStatus.unknown,
     };
+  }
+
+  // --- UI Transformation Getters & Methods ---
+
+  String getLabel(Subsystem subsystem) {
+    return switch (subsystem) {
+      Subsystem.frontMotorController => 'FRONT MOTOR\nCONTROLLER',
+      Subsystem.rearMotorController => 'REAR MOTOR\nCONTROLLER',
+      Subsystem.hvBattery => 'HV BATTERY',
+      Subsystem.lvBattery => 'LV BATTERY',
+      Subsystem.lvPdu => 'LV PDU',
+      Subsystem.dcDc48v12v => 'DC-DC\n48V-12V',
+      Subsystem.dcDc12v5v => 'DC-DC\n12V-5V',
+      Subsystem.vcu => 'VCU',
+      Subsystem.frontLeftMotor => 'FORWARD LEFT\nMOTOR',
+      Subsystem.rearLeftMotor => 'REAR LEFT\nMOTOR',
+      Subsystem.frontRightMotor => 'FORWARD RIGHT\nMOTOR',
+      Subsystem.rearRightMotor => 'REAR RIGHT\nMOTOR',
+      Subsystem.uhfRadio => 'UHF RADIO',
+      Subsystem.lBandRadio => 'L BAND RADIO',
+      Subsystem.compute => 'COMPUTE',
+    };
+  }
+
+  IconData getIcon(Subsystem subsystem) {
+    return switch (subsystem) {
+      Subsystem.frontLeftMotor ||
+      Subsystem.frontRightMotor ||
+      Subsystem.rearLeftMotor ||
+      Subsystem.rearRightMotor =>
+        Icons.settings_suggest,
+      Subsystem.vcu => Icons.developer_board,
+      Subsystem.lvPdu => Icons.power,
+      Subsystem.hvBattery => Icons.battery_charging_full,
+      Subsystem.lvBattery => Icons.battery_std,
+      Subsystem.frontMotorController ||
+      Subsystem.rearMotorController =>
+        Icons.settings_outlined,
+      Subsystem.dcDc48v12v => Icons.ev_station,
+      Subsystem.dcDc12v5v => Icons.bolt,
+      Subsystem.compute => Icons.computer,
+      Subsystem.uhfRadio => Icons.settings_input_antenna,
+      Subsystem.lBandRadio => Icons.radar,
+    };
+  }
+
+  (Color, String) getVisuals(Subsystem subsystem) {
+    final status = subsystemStatuses[subsystem] ?? SubsystemStatus.unknown;
+    return switch (status) {
+      SubsystemStatus.healthy => (const Color(0xFF00FF66), 'Healthy'),
+      SubsystemStatus.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
+      SubsystemStatus.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
+      SubsystemStatus.unknown => (Colors.white24, 'Unknown'),
+    };
+  }
+
+  bool isStatusActive(Subsystem subsystem) {
+    final status = subsystemStatuses[subsystem] ?? SubsystemStatus.unknown;
+    return status == SubsystemStatus.healthy || status == SubsystemStatus.unhealthy;
   }
 }

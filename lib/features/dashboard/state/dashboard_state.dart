@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:scout_obd/shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 
+import '../../../core/enums/subsystem_status_enum.dart';
 import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
 import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
 import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
+import '../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 
@@ -66,6 +69,43 @@ class DashboardState {
   String get driveModeName => mode?.driveMode.label ?? 'UNKNOWN';
 
   String get speedModeName => mode?.speedMode.label ?? 'UNKNOWN';
+
+  // --- UI Transformation Get Getters ---
+
+  Color get hvBatteryColor {
+    final soc = battery?.hvBatterySoc ?? 0;
+    if (soc < 20) return const Color(0xFFFF3B3B);
+    if (soc < 50) return Colors.orangeAccent;
+    return const Color(0xFF00FF66);
+  }
+
+  Color get lvBatteryColor {
+    final soc = battery?.lvBatterySoc ?? 0;
+    if (soc < 20) return const Color(0xFFFF3B3B);
+    if (soc < 50) return Colors.orangeAccent;
+    return const Color(0xFF00FF66);
+  }
+
+  Color get eStopColor {
+    return switch (eStopInfo?.status) {
+      EStopStatus.engaged => const Color(0xFFFF3B3B),
+      EStopStatus.released => const Color(0xFF00FF66),
+      EStopStatus.unknown || null => Colors.white12,
+    };
+  }
+
+  Color get handCtrlColor {
+    final status = compRadioInfo?.uhfRadio;
+    return switch (status) {
+      SubsystemStatus.healthy => const Color(0xFF00FF66),
+      SubsystemStatus.unhealthy => const Color(0xFFFF3B3B),
+      SubsystemStatus.noCommunication || SubsystemStatus.unknown || null => Colors.white38,
+    };
+  }
+
+  Color get headlightsColor => (mode?.headlightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
+
+  Color get fogLightsColor => (mode?.frontFogLightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
 
   double get batteryLevel => 1.0;
 }
