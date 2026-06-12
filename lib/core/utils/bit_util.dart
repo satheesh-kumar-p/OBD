@@ -11,10 +11,10 @@ class BitUtil {
     int value = 0;
     for (int i = 0; i < length; i++) {
       int bitPos = startBit + i;
-      int byteIdx = bitPos ~/ 8;
+      int byteIdx = 7 - (bitPos ~/ 8);
       int bitIdx = bitPos % 8;
 
-      if (byteIdx >= data.length) break;
+      if (byteIdx < 0 || byteIdx >= data.length) break;
 
       int bit = (data[byteIdx] >> bitIdx) & 0x01;
       value |= (bit << i);
