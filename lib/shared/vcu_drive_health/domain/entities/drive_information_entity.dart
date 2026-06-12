@@ -9,16 +9,16 @@ class DriveInformationEntity {
   final MotorInformation rearRightMotor;
 
   // Motor Controller
-  final MotorControllerInformation leftMotorController;
-  final MotorControllerInformation rightMotorController;
+  final MotorControllerInformation frontMotorController;
+  final MotorControllerInformation rearMotorController;
 
   const DriveInformationEntity({
     required this.frontLeftMotor,
     required this.frontRightMotor,
     required this.rearLeftMotor,
     required this.rearRightMotor,
-    required this.leftMotorController,
-    required this.rightMotorController,
+    required this.frontMotorController,
+    required this.rearMotorController,
   });
 
   @override
@@ -28,8 +28,8 @@ class DriveInformationEntity {
         '  frontRight: $frontRightMotor,\n'
         '  rearLeft: $rearLeftMotor,\n'
         '  rearRight: $rearRightMotor,\n'
-        '  leftMC: $leftMotorController,\n'
-        '  rightMC: $rightMotorController\n'
+        '  frontMC: $frontMotorController,\n'
+        '  rearMC: $rearMotorController\n'
         ')';
   }
 }
