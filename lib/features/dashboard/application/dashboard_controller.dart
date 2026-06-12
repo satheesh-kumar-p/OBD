@@ -12,16 +12,8 @@ import 'time_controller.dart';
 class DashboardController extends Notifier<DashboardState> {
   @override
   DashboardState build() {
-    // 1. Watch the CAN connection state
     final connectionAsync = ref.watch(canConnectionProvider);
 
-    // 2. Watch local UI state
-    // Note: dashboardIndexProvider should be moved to this controller's state if we want full encapsulation,
-    // but for now we can still watch it if it's in dashboard_providers.
-    // However, the rule says "DI should import only what is being provided by the controller".
-    // So let's keep it simple for now as per the "old architecture" where dashboardIndexProvider was separate.
-
-    // 3. Watch all shared providers
     final modeAsync = ref.watch(modeInfoProvider);
     final batteryAsync = ref.watch(batteryInfoProvider);
     final eStopAsync = ref.watch(eStopInfoProvider);
@@ -29,10 +21,9 @@ class DashboardController extends Notifier<DashboardState> {
     final computeCommAsync = ref.watch(compRadioStateProvider);
     final globalTime = ref.watch(timeControllerProvider);
 
-    // 4. Watch core ticker for UI updates
     ref.watch(clockTickerProvider);
 
-    // If we aren't connected yet, return a default/disconnected state 
+    // If we aren't connected yet, return a default/disconnected state
     if (connectionAsync.asData == null) {
       return const DashboardState();
     }
@@ -47,9 +38,4 @@ class DashboardController extends Notifier<DashboardState> {
     );
   }
 
-  void updateSelectedIndex(int index) {
-    // This logic could be moved here from the UI if we want the controller to handle all dashboard events.
-  }
 }
-
-final dashboardControllerProvider = NotifierProvider<DashboardController, DashboardState>(DashboardController.new);
