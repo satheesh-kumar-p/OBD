@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scout_obd/shared/vcu_estop_status/data/mapper/e_stop_info_mapper.dart';
 
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
@@ -63,6 +64,7 @@ class DebugController extends Notifier<DebugState> {
       GlobalTimeInfoMapper(),
       CompTimeSyncMapper(),
       CompRadioStateMapper(),
+      EStopInfoMapper(),
     ];
 
     for (final strategy in mappersList) {
