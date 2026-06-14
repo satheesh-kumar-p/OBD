@@ -2,34 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../di/drive_providers.dart';
-import '../../../../shared/vcu_drive_health/domain/entities/drive_information_entity.dart';
-import '../../../../shared/vcu_drive_health/domain/entities/status.dart';
+import '../../drive_providers.dart';
+import '../../state/drive_state.dart';
 
 class DriveScreen extends ConsumerWidget {
   const DriveScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final driveDataAsync = ref.watch(driveStateProvider);
+    final state = ref.watch(driveStateProvider);
 
-    return driveDataAsync.when(
-      data: (data) => _buildBody(data),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(
-        child: Text(
-          'ERROR: $err',
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 32.sp,
-            fontFamily: 'monospace',
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody(DriveInformationEntity data) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       padding: EdgeInsets.symmetric(
@@ -39,15 +21,14 @@ class DriveScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildMotorStatusWidget(data),
-          SizedBox(height: 40.h),
-          _buildMotorControllerStatusWidget(data),
+          _buildMotorStatusTable(state.motorRows),
+          _buildMotorControllerStatusTable(state.controllerRows),
         ],
       ),
     );
   }
 
-  Widget _buildMotorStatusWidget(DriveInformationEntity data) {
+  Widget _buildMotorStatusTable(List<MotorStatusRowData> rows) {
     final headerStyle = TextStyle(
       color: Colors.cyanAccent,
       fontSize: 20.sp,
@@ -60,13 +41,6 @@ class DriveScreen extends ConsumerWidget {
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
-
-    final motors = {
-      'FRONT LEFT MOTOR': data.frontLeftMotor,
-      'FRONT RIGHT MOTOR': data.frontRightMotor,
-      'REAR LEFT MOTOR': data.rearLeftMotor,
-      'REAR RIGHT MOTOR': data.rearRightMotor,
-    };
 
     final columns = [
       'OVER SPEED',
@@ -96,30 +70,20 @@ class DriveScreen extends ConsumerWidget {
           ],
         ),
         // Data Rows
-        ...motors.entries.map((entry) {
-          final motor = entry.value;
-          return TableRow(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
-                child: Text(entry.key, style: rowHeaderStyle),
-              ),
-              _buildStatusDot(motor.overSpeed),
-              _buildStatusDot(motor.overload),
-              _buildStatusDot(motor.phaseLoss),
-              _buildStatusDot(motor.brake),
-              _buildStatusDot(motor.encoderFault),
-              _buildStatusDot(motor.overTemp),
-              _buildStatusDot(motor.hallFault),
-              _buildStatusDot(motor.stalled),
-            ],
-          );
-        }),
+        ...rows.map((row) => TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                  child: Text(row.name, style: rowHeaderStyle),
+                ),
+                ...row.colors.map((color) => _buildStatusDot(color)),
+              ],
+            )),
       ],
     );
   }
 
-  Widget _buildMotorControllerStatusWidget(DriveInformationEntity data) {
+  Widget _buildMotorControllerStatusTable(List<ControllerStatusRowData> rows) {
     final headerStyle = TextStyle(
       color: Colors.cyanAccent,
       fontSize: 20.sp,
@@ -138,11 +102,6 @@ class DriveScreen extends ConsumerWidget {
       fontFamily: 'monospace',
     );
 
-    final controllers = {
-      'LEFT MOTOR CTRL': data.leftMotorController,
-      'RIGHT MOTOR CTRL': data.rightMotorController,
-    };
-
     final columns = [
       'DRIVE',
       'OVER CURRENT',
@@ -150,8 +109,8 @@ class DriveScreen extends ConsumerWidget {
       'UNDER VOLTAGE',
       'OVER TEMP',
       'CAN COMM',
-      // 'BATT VOLT',
-      // 'TEMP'
+      'VOLT',
+      'TEMP'
     ];
 
     return Table(
@@ -171,32 +130,32 @@ class DriveScreen extends ConsumerWidget {
           ],
         ),
         // Data Rows
-        ...controllers.entries.map((entry) {
-          final ctrl = entry.value;
-          return TableRow(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
-                child: Text(entry.key, style: rowHeaderStyle),
-              ),
-              _buildStatusDot(ctrl.drive),
-              _buildStatusDot(ctrl.overCurrent),
-              _buildStatusDot(ctrl.underPressure),
-              _buildStatusDot(ctrl.underVoltage),
-              _buildStatusDot(ctrl.overTemperature),
-              _buildStatusDot(ctrl.canCommunication),
-              // TODO: MAVLINK
-              // Center(child: Text('${ctrl.voltage} V', style: valueStyle)),
-              // Center(child: Text('${ctrl.temperature} C', style: valueStyle)),
-            ],
-          );
-        }),
+        ...rows.map((row) => TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                  child: Text(row.name, style: rowHeaderStyle),
+                ),
+                ...row.colors.map((color) => _buildStatusDot(color)),
+                Center(
+                  child: Text(
+                    row.voltage,
+                    style: valueStyle,
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    row.temp,
+                    style: valueStyle,
+                  ),
+                ),
+              ],
+            )),
       ],
     );
   }
 
-  Widget _buildStatusDot(Status status) {
-    final color = status == Status.healthy ? const Color(0xFF74FF9F) : Colors.red;
+  Widget _buildStatusDot(Color color) {
     return Center(
       child: Container(
         width: 16.w,
