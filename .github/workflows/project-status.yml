@@ -1,0 +1,174 @@
+name: Update Project Status Automatically
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - closed
+
+env:
+  ORGANIZATION: newspaceresearch-ugv        # ← REPLACE with your GitHub org name
+  PROJECT_NUMBER: 5                  # ← REPLACE with your Project number
+  GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+
+jobs:
+  update-project-status:
+    runs-on: ubuntu-latest
+    name: Update Project Status
+
+    steps:
+
+      # ─────────────────────────────────────────────
+      # STEP 1: Get Project ID, Status Field ID,
+      #         and all Status Option IDs
+      # ─────────────────────────────────────────────
+      - name: Get Project & Status Field Info
+        run: |
+          gh api graphql -f query='
+            query {
+              organization(login: "${{ env.ORGANIZATION }}") {
+                projectV2(number: ${{ env.PROJECT_NUMBER }}) {
+                  id
+                  fields(first: 20) {
+                    nodes {
+                      ... on ProjectV2SingleSelectField {
+                        id
+                        name
+                        options {
+                          id
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' > project_data.json
+
+          echo "PROJECT_ID=$(jq -r '.data.organization.projectV2.id' project_data.json)" >> $GITHUB_ENV
+          echo "STATUS_FIELD_ID=$(jq -r '.data.organization.projectV2.fields.nodes[] | select(.name=="Status") | .id' project_data.json)" >> $GITHUB_ENV
+          echo "STATUS_READY=$(jq -r '.data.organization.projectV2.fields.nodes[] | select(.name=="Status") | .options[] | select(.name=="Ready for Review") | .id' project_data.json)" >> $GITHUB_ENV
+          echo "STATUS_REWORK=$(jq -r '.data.organization.projectV2.fields.nodes[] | select(.name=="Status") | .options[] | select(.name=="Review done & Rework In progress") | .id' project_data.json)" >> $GITHUB_ENV
+          echo "STATUS_CLOSED=$(jq -r '.data.organization.projectV2.fields.nodes[] | select(.name=="Status") | .options[] | select(.name=="Closed") | .id' project_data.json)" >> $GITHUB_ENV
+
+      # ─────────────────────────────────────────────
+      # STEP 2: Get the Project Item ID for the PR's
+      #         linked issue
+      # ─────────────────────────────────────────────
+      - name: Get Project Item ID for Linked Issue
+        run: |
+          ISSUE_NUMBER=$(gh api graphql -f query='
+            query {
+              repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
+                pullRequest(number: ${{ github.event.pull_request.number }}) {
+                  closingIssuesReferences(first: 1) {
+                    nodes {
+                      number
+                    }
+                  }
+                }
+              }
+            }
+          ' | jq -r '.data.repository.pullRequest.closingIssuesReferences.nodes[0].number')
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              organization(login: "${{ env.ORGANIZATION }}") {
+                projectV2(number: ${{ env.PROJECT_NUMBER }}) {
+                  items(first: 100) {
+                    nodes {
+                      id
+                      content {
+                        ... on Issue {
+                          number
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' | jq -r --arg NUM "$ISSUE_NUMBER" '.data.organization.projectV2.items.nodes[] | select(.content.number == ($NUM | tonumber)) | .id')
+
+          echo "ITEM_ID=$ITEM_ID" >> $GITHUB_ENV
+
+      # ─────────────────────────────────────────────
+      # STEP 3A: PR opened or ready for review
+      #          → Set status to "Ready for Review"
+      # ─────────────────────────────────────────────
+      - name: Set status to Ready for Review
+        if: |
+          github.event.action == 'opened' ||
+          github.event.action == 'ready_for_review'
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(
+                input: {
+                  projectId: "${{ env.PROJECT_ID }}"
+                  itemId: "${{ env.ITEM_ID }}"
+                  fieldId: "${{ env.STATUS_FIELD_ID }}"
+                  value: {
+                    singleSelectOptionId: "${{ env.STATUS_READY }}"
+                  }
+                }
+              ) {
+                projectV2Item { id }
+              }
+            }
+          '
+
+      # ─────────────────────────────────────────────
+      # STEP 3B: PR merged → Set status to "Closed"
+      # ─────────────────────────────────────────────
+      - name: Set status to Closed (PR merged)
+        if: |
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == true
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(
+                input: {
+                  projectId: "${{ env.PROJECT_ID }}"
+                  itemId: "${{ env.ITEM_ID }}"
+                  fieldId: "${{ env.STATUS_FIELD_ID }}"
+                  value: {
+                    singleSelectOptionId: "${{ env.STATUS_CLOSED }}"
+                  }
+                }
+              ) {
+                projectV2Item { id }
+              }
+            }
+          '
+
+      # ─────────────────────────────────────────────
+      # STEP 3C: PR closed WITHOUT merge
+      #          → Set status to "Rework"
+      # ─────────────────────────────────────────────
+      - name: Set status to Rework (PR closed without merge)
+        if: |
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == false
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(
+                input: {
+                  projectId: "${{ env.PROJECT_ID }}"
+                  itemId: "${{ env.ITEM_ID }}"
+                  fieldId: "${{ env.STATUS_FIELD_ID }}"
+                  value: {
+                    singleSelectOptionId: "${{ env.STATUS_REWORK }}"
+                  }
+                }
+              ) {
+                projectV2Item { id }
+              }
+            }
+          '
