@@ -6,15 +6,11 @@ class HudModeLabel extends StatelessWidget {
     super.key,
     required this.mainText,
     required this.subText,
-    required this.height,
-    required this.maxWidth,
     this.armed = false,
   });
 
   final String mainText;
   final String subText;
-  final double height;
-  final double maxWidth;
   final bool armed;
 
   @override
@@ -24,8 +20,6 @@ class HudModeLabel extends StatelessWidget {
 
     return IntrinsicWidth(
       child: Container(
-        height: height,
-        constraints: BoxConstraints(maxWidth: maxWidth),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(12.r),
@@ -36,7 +30,25 @@ class HudModeLabel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (armed) ...[
-              Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 24.r),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.redAccent,
+                    size: 24.r,
+                  ),
+                  Text(
+                    'ARMED',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5.w,
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(width: 10.w),
             ],
             Column(

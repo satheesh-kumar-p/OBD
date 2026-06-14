@@ -1,102 +1,59 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:scout_obd/shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 
-import '../../../shared/domain/entities/heartbeat_entity.dart';
-import '../../../shared/domain/entities/link_status_entity.dart';
-import '../../../shared/domain/entities/system_time_entity.dart';
-import '../../../shared/domain/entities/time_sync_entity.dart';
-import '../../system/domain/entities/compute_comm_info_entity.dart';
-import '../../system/domain/entities/system_info_entity.dart';
-import '../domain/entities/battery_info_entity.dart';
-import '../domain/entities/e_stop_info_entity.dart';
-import '../domain/entities/mode_entity.dart';
+import '../../../core/enums/subsystem_status_enum.dart';
+import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
+import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
+import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
+import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
+import '../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
 enum HealthLevel { connected, noHeartbeat, disconnected }
 
 class DashboardState {
   const DashboardState({
-    this.linkStatus,
-    this.heartbeat,
-    this.timeSync,
     this.globalTime,
-    this.systemTime,
     this.mode,
     this.battery,
     this.eStopInfo,
     this.systemInfo,
-    this.computeCommInfo,
+    this.compRadioInfo,
     this.selectedIndex = 0,
   });
 
-  final LinkStatusEntity? linkStatus;
-  final HeartbeatEntity? heartbeat;
-  final TimeSyncEntity? timeSync;
   final DateTime? globalTime;
-  final SystemTimeEntity? systemTime;
   final ModeEntity? mode;
   final BatteryInfoEntity? battery;
   final EStopInfoEntity? eStopInfo;
   final SystemInfoEntity? systemInfo;
-  final ComputeCommInfoEntity? computeCommInfo;
+  final CompRadioState? compRadioInfo;
   final int selectedIndex;
 
   DashboardState copyWith({
-    LinkStatusEntity? linkStatus,
-    HeartbeatEntity? heartbeat,
-    TimeSyncEntity? timeSync,
     DateTime? globalTime,
-    SystemTimeEntity? systemTime,
     ModeEntity? mode,
     BatteryInfoEntity? battery,
     EStopInfoEntity? eStopInfo,
     SystemInfoEntity? systemInfo,
-    ComputeCommInfoEntity? computeCommInfo,
+    CompRadioState? compRadioInfo,
     int? selectedIndex,
   }) {
     return DashboardState(
-      linkStatus: linkStatus ?? this.linkStatus,
-      heartbeat: heartbeat ?? this.heartbeat,
-      timeSync: timeSync ?? this.timeSync,
       globalTime: globalTime ?? this.globalTime,
-      systemTime: systemTime ?? this.systemTime,
       mode: mode ?? this.mode,
       battery: battery ?? this.battery,
       eStopInfo: eStopInfo ?? this.eStopInfo,
       systemInfo: systemInfo ?? this.systemInfo,
-      computeCommInfo: computeCommInfo ?? this.computeCommInfo,
+      compRadioInfo: compRadioInfo ?? this.compRadioInfo,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
-
-  /// Pure transport connection status.
-  bool get isSocketConnected => linkStatus?.isConnected ?? false;
-  
-  /// Pure application heartbeat status.
-  bool get isVehicleAlive => heartbeat != null && !heartbeat!.isStale;
-
-  /// Combined health logic.
-  HealthLevel get healthLevel {
-    if (!isSocketConnected) return HealthLevel.disconnected;
-    if (!isVehicleAlive) return HealthLevel.noHeartbeat;
-    return HealthLevel.connected;
-  }
-
-  String get linkLabel => switch (healthLevel) {
-    HealthLevel.connected => 'CONNECTED',
-    HealthLevel.noHeartbeat => 'NO HEARTBEAT',
-    HealthLevel.disconnected => 'DISCONNECTED',
-  };
-
-  Color get linkColor => switch (healthLevel) {
-    HealthLevel.connected => const Color(0xFF74FF9F),   // Green
-    HealthLevel.noHeartbeat => const Color(0xFFFFB347), // Orange
-    HealthLevel.disconnected => const Color(0xFFFF5C5C), // Red
-  };
 
   String get systemTimeFormatted {
     // If we have synced CAN time, we use the repository's latest current time
     // instead of just the last emitted stream value. This ensures the clock
     // feels smooth even if the stream emission has slight jitter.
-    final now = globalTime ?? timeSync?.correctedNow ?? DateTime.now();
+    final now = globalTime ?? DateTime.now();
 
     return '${now.day.toString().padLeft(2, '0')}-'
         '${now.month.toString().padLeft(2, '0')}-'
@@ -105,28 +62,50 @@ class DashboardState {
         '${now.second.toString().padLeft(2, '0')}';
   }
 
-  String get rttLabel => timeSync == null || timeSync!.isStale
-      ? '--- ms'
-      : '${timeSync!.roundTripMs} ms';
-
   String get modeName => mode?.mainMode.label ?? 'UNKNOWN';
 
-  String get subModeName => mode?.subMode.label ?? 'N/A';
+  String get subModeName => mode?.holdSubMode.label ?? 'N/A';
 
   String get driveModeName => mode?.driveMode.label ?? 'UNKNOWN';
 
   String get speedModeName => mode?.speedMode.label ?? 'UNKNOWN';
 
-  String get uptimeFormatted {
-    final bootSeconds = systemTime?.currentUpTimeSeconds;
-    if (bootSeconds == null) return 'AWAITING';
-    final hours = bootSeconds ~/ 3600;
-    final minutes = (bootSeconds % 3600) ~/ 60;
-    final seconds = bootSeconds % 60;
-    return '${hours.toString().padLeft(2, '0')}:'
-        '${minutes.toString().padLeft(2, '0')}:'
-        '${seconds.toString().padLeft(2, '0')}';
+  // --- UI Transformation Get Getters ---
+
+  Color get hvBatteryColor {
+    final soc = battery?.hvBatterySoc ?? 0;
+    if (soc < 20) return const Color(0xFFFF3B3B);
+    if (soc < 50) return Colors.orangeAccent;
+    return const Color(0xFF00FF66);
   }
+
+  Color get lvBatteryColor {
+    final soc = battery?.lvBatterySoc ?? 0;
+    if (soc < 20) return const Color(0xFFFF3B3B);
+    if (soc < 50) return Colors.orangeAccent;
+    return const Color(0xFF00FF66);
+  }
+
+  Color get eStopColor {
+    return switch (eStopInfo?.status) {
+      EStopStatus.engaged => const Color(0xFFFF3B3B),
+      EStopStatus.released => const Color(0xFF00FF66),
+      EStopStatus.unknown || null => Colors.white12,
+    };
+  }
+
+  Color get handCtrlColor {
+    final status = compRadioInfo?.uhfRadio;
+    return switch (status) {
+      SubsystemStatus.healthy => const Color(0xFF00FF66),
+      SubsystemStatus.unhealthy => const Color(0xFFFF3B3B),
+      SubsystemStatus.noCommunication || SubsystemStatus.unknown || null => Colors.white38,
+    };
+  }
+
+  Color get headlightsColor => (mode?.headlightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
+
+  Color get fogLightsColor => (mode?.frontFogLightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
 
   double get batteryLevel => 1.0;
 }

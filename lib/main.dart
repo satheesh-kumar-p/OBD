@@ -3,16 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/application/core_controller.dart';
 import 'core/constants/app_constants.dart';
 import 'core/di/injection_container.dart';
-import 'features/dashboard/di/battery_info_providers.dart';
-import 'features/dashboard/di/e_stop_info_providers.dart';
-import 'features/dashboard/di/mode_info_providers.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
-import 'features/system/di/system_info_providers.dart';
-import 'shared/di/global_time_info_providers.dart';
-import 'features/debug/di/debug_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,14 +56,7 @@ class _AppBootstrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Start background services immediately
-    ref.watch(canConnectionProvider);
-    ref.watch(systemScreenStateProvider);
-    ref.watch(modeInfoProvider);
-    ref.watch(batteryInfoProvider);
-    ref.watch(eStopInfoProvider);
-    ref.watch(globalTimeProvider);
-    ref.watch(debugNotifierProvider);
+    ref.watch(coreControllerProvider);
 
     return const Dashboard();
   }

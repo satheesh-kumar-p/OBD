@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../state/dashboard_state.dart';
+import '../../di/dashboard_providers.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
 import 'hud_handctrlStatus.dart';
-import 'hud_e_stop_status.dart';
 import 'hud_mode_label.dart';
+import 'hud_e_stop_status.dart';
+import 'hud_indicator_tile.dart';
 
 class HudTopBar extends ConsumerWidget {
-  const HudTopBar({
-    super.key,
-    required this.state,
-    required this.height,
-    required this.horizontalPadding,
-  });
-
-  final DashboardState state;
-  final double height;
-  final double horizontalPadding;
+  const HudTopBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const handCtrlColor = Colors.white70;
-
-    final labelH = height;
-    final maxWidth = 576.w;
-    final batteryData = state.battery;
+    final state = ref.watch(dashboardStateProvider);
 
     return Container(
-      height: labelH,
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
         color: Colors.black,
-        border: Border(
+        border: const Border(
           bottom: BorderSide(color: Colors.white10, width: 1),
         ),
         gradient: LinearGradient(
@@ -47,90 +34,60 @@ class HudTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          // --- GROUP 1: MISSION CONTROL ---
-          _HudGroup(
-            label: 'MISSION',
+          // --- MISSION CONTROLS ---
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HudModeLabel(
+                mainText: state.modeName,
+                subText: state.subModeName,
+                armed: state.mode?.armed ?? false,
+              ),
+              SizedBox(width: 8.w),
+              HudModeLabel(
+                mainText: state.driveModeName,
+                subText: state.speedModeName,
+              ),
+            ],
+          ),
+
+          _buildDivider(),
+
+          // --- SYSTEM CHRONO (Expanded to Center) ---
+          const Expanded(
+            child: HudDateTimeLabel(),
+          ),
+
+          _buildDivider(),
+
+          // --- TELEMETRY & STATUS ---
+          FittedBox(
+            fit: BoxFit.scaleDown,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                HudModeLabel(
-                  mainText: state.modeName,
-                  subText: state.subModeName,
-                  armed: state.mode?.armed ?? false,
-                  height: 56.h,
-                  maxWidth: maxWidth,
-                ),
-                SizedBox(width: 8.w),
-                HudModeLabel(
-                  mainText: state.driveModeName,
-                  subText: state.speedModeName,
-                  height: 56.h,
-                  maxWidth: maxWidth / 1.5,
-                ),
-              ],
-            ),
-          ),
-
-          _buildDivider(),
-
-          // --- GROUP 2: SYSTEM CHRONO ---
-          Expanded(
-            child: _HudGroup(
-              label: 'SYSTEM CHRONO',
-              alignment: Alignment.center,
-              child: HudDateTimeLabel(
-                height: labelH,
-                systemTime: state.systemTimeFormatted,
-              ),
-            ),
-          ),
-
-          _buildDivider(),
-
-          // --- GROUP 3: TELEMETRY & STATUS ---
-          _HudGroup(
-            label: 'STATUS',
-            alignment: Alignment.centerRight,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  HudEStopStatus(
-                    height: labelH,
-                    color: handCtrlColor,
-                    size: 44.r,
-                    gapAfter: 16.w,
-                    status: state.eStopInfo?.status,
+                const HudEStopStatus(),
+                SizedBox(width: 16.w),
+                const HudHandctrlStatus(),
+                SizedBox(width: 16.w),
+                const HudBatteryStatusIcon(),
+                if (state.mode != null) ...[
+                  SizedBox(width: 20.w),
+                  HudIndicatorTile(
+                    icon: Icons.light_mode_rounded,
+                    color: state.headlightsColor,
+                    label: 'HL',
+                    isActive: state.mode!.headlightsOn,
                   ),
-                  HudHandctrlStatus(
-                    height: labelH,
-                    color: handCtrlColor,
-                    size: 44.r,
-                    gapAfter: 16.w,
-                    status: state.computeCommInfo?.uhfRadio,
+                  SizedBox(width: 8.w),
+                  HudIndicatorTile(
+                    icon: Icons.wb_twilight_rounded,
+                    color: state.fogLightsColor,
+                    label: 'FOG',
+                    isActive: state.mode!.frontFogLightsOn,
                   ),
-                  HudBatteryStatusIcon(
-                    size: 38.r,
-                    hvBatterySoc: batteryData?.hvBatterySoc ?? 0,
-                    lvBatterySoc: batteryData?.lvBatterySoc ?? 0,
-                  ),
-                  if (state.mode != null) ...[
-                    SizedBox(width: 20.w),
-                    _buildIndicatorTile(
-                      icon: Icons.light_mode_rounded,
-                      isOn: state.mode!.headlightsOn,
-                      label: 'HL',
-                    ),
-                    SizedBox(width: 8.w),
-                    _buildIndicatorTile(
-                      icon: Icons.wb_twilight_rounded,
-                      isOn: state.mode!.frontFogLightsOn,
-                      label: 'FOG',
-                    ),
-                  ],
                 ],
-              ),
+              ],
             ),
           ),
         ],
@@ -138,13 +95,12 @@ class HudTopBar extends ConsumerWidget {
     );
   }
 
-
   Widget _buildDivider() {
     return Container(
       width: 1,
       height: 40.h,
       margin: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -156,75 +112,6 @@ class HudTopBar extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildIndicatorTile({
-    required IconData icon,
-    required bool isOn,
-    required String label,
-  }) {
-    final activeColor = Colors.orangeAccent;
-    final color = isOn ? activeColor : Colors.white10;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: isOn ? activeColor.withOpacity(0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20.r, color: color),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 8.sp,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HudGroup extends StatelessWidget {
-  final String label;
-  final Widget child;
-  final Alignment alignment;
-
-  const _HudGroup({
-    required this.label,
-    required this.child,
-    this.alignment = Alignment.centerLeft,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: alignment == Alignment.center
-          ? CrossAxisAlignment.center
-          : alignment == Alignment.centerRight
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white24,
-            fontSize: 9.sp,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        child,
-      ],
     );
   }
 }

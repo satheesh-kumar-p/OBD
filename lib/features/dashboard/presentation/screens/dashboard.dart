@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_obd/features/dashboard/di/dashboard_providers.dart';
-import 'package:scout_obd/features/dashboard/presentation/widgets/hud_sidebar.dart';
-import 'package:scout_obd/features/dashboard/presentation/widgets/hud_top_bar.dart';
-import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
-import 'package:scout_obd/features/drive/presentation/screens/drive_status_screen.dart';
-import 'package:scout_obd/features/debug/presentation/screens/debug_screen.dart';
 
-import 'package:scout_obd/features/system/presentation/screens/system_screen.dart';
+import '../../../debug/presentation/screens/debug_screen.dart';
+import '../../../drive/presentation/screens/drive_status_screen.dart';
+import '../../../system/presentation/screens/system_screen.dart';
+import '../../di/dashboard_providers.dart';
+import '../../state/dashboard_state.dart';
+import '../widgets/hud_sidebar.dart';
+import '../widgets/hud_top_bar.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -17,13 +17,8 @@ class Dashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardStateProvider);
 
-    final topBarHeight = 80.h;
-    final sidebarWidth = 180.w;
-    final horizontalMargin = 20.w;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SCOUT UGV OBD'),
         backgroundColor: Colors.black,
         toolbarHeight: 60.h,
         centerTitle: true,
@@ -32,11 +27,9 @@ class Dashboard extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Top Status Bar
-            HudTopBar(
-              state: dashboardState,
-              height: topBarHeight,
-              horizontalPadding: horizontalMargin,
+            SizedBox(
+              height: 60.h,
+              child: const HudTopBar(),
             ),
 
             // 2. Main Area (Sidebar + Content)
@@ -44,16 +37,17 @@ class Dashboard extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Sidebar
-                  HudSidebar(
-                    items: const [
-                      'SYSTEM', 'DRIVE', 'DEBUG',
-                    ],
-                    selectedIndex: dashboardState.selectedIndex,
-                    width: sidebarWidth,
-                    onSelect: (index) {
-                      ref.read(dashboardIndexProvider.notifier).state = index;
-                    },
+                  SizedBox(
+                    width: 180.w,
+                    child: HudSidebar(
+                      items: const [
+                        'SYSTEM', 'DRIVE', 'DEBUG',
+                      ],
+                      selectedIndex: dashboardState.selectedIndex,
+                      onSelect: (index) {
+                        ref.read(dashboardIndexProvider.notifier).state = index;
+                      },
+                    ),
                   ),
 
                   // Page Content
