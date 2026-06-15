@@ -1,9 +1,31 @@
 import 'package:scout_obd/core/enums/can_enums.dart';
+import '../enums/transport_type.dart';
+import '../dispatcher/message_config.dart';
 
 abstract final class AppConstants {
-
-  static const bool useMockBackends = true;
-
+  // CAN (Legacy Serial)
   static const String canPortName = '/dev/can';
   static const CanBaudRate canBaudRate = CanBaudRate.bps500k;
+
+  // Communication Layer
+  static const TransportType transportType = TransportType.udp;
+
+  // UDP Configuration
+  static const int listenPort = 5000;
+  static const String sendAddress = '192.168.1.10';
+  static const int sendPort = 5001;
+
+  // TCP Configuration
+  static const String tcpHost = '192.168.1.10';
+  static const int tcpPort = 5002;
+
+
+  // Centralized Message Dispatch Rules
+  static const List<MessageConfig> dispatchConfigs = [
+    // Global Time Info (0x202) - Pass-through (Low frequency)
+    MessageConfig.passThrough(0x202),
+
+    // Time Sync (0x206) - 10Hz for smooth clock
+    MessageConfig.sample(0x206, 2.0),
+  ];
 }

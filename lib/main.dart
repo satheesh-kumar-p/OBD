@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          debugShowCheckedModeBanner: AppConstants.useMockBackends,
+          debugShowCheckedModeBanner: false,
           title: 'Scout Display',
           theme: ThemeData(
             useMaterial3: true,
