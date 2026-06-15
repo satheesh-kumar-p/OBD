@@ -1,4 +1,4 @@
-/// [SerialPortTransport] — concrete [ISerialTransport] implementation backed by
+/// [SerialPortTransportImpl] — concrete [ISerialTransport] implementation backed by
 /// `flutter_libserialport` (supports Android, Windows, and Linux).
 library;
 
@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 import '../../logger/logger.dart';
-import './can_exception.dart';
+import '../can_bus/can_exception.dart';
 import 'i_serial_transport.dart';
 
 export 'i_serial_transport.dart';
@@ -27,7 +27,7 @@ export 'i_serial_transport.dart';
 /// await transport.write(someFrame);
 /// await transport.disconnect();
 /// ```
-class SerialPortTransport implements ISerialTransport {
+class SerialPortTransportImpl implements ISerialTransport {
   final Logger _logger;
   SerialPort? _port;
   SerialPortReader? _reader;
@@ -39,7 +39,7 @@ class SerialPortTransport implements ISerialTransport {
   // truly finished its last native read call.
   Completer<void>? _readerClosed;
 
-  SerialPortTransport({required Logger logger}) : _logger = logger;
+  SerialPortTransportImpl({required Logger logger}) : _logger = logger;
 
   @override
   bool get isConnected => _port?.isOpen ?? false;

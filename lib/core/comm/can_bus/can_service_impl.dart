@@ -5,7 +5,7 @@ import '../../logger/logger.dart';
 import 'can_frame.dart';
 import 'can_frame_parser.dart';
 import 'i_can_service.dart';
-import 'i_serial_transport.dart';
+import '../serial/i_serial_transport.dart';
 import 'can_config.dart';
 
 /// Waveshare-specific implementation of [ICanService].

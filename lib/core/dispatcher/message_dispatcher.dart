@@ -105,7 +105,7 @@ class MessageDispatcher {
         _scheduler.add(task);
       } else {
         // NO NEW DATA: The bus has been quiet for this ID.
-        // We stop the sampling cycle for this ID to save CPU.
+        // We stop the throttling for this ID to save CPU.
         // It will restart automatically when the next frame for this ID arrives.
         _activeInQueue.remove(task.messageId);
       }
