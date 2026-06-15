@@ -3,7 +3,7 @@ description: Scout OBD Application
 
 publish_to: 'none' 
 
-version: 0.0.1-alpha.1
+version: 0.0.1
 
 environment:
   sdk: ^3.11.4
