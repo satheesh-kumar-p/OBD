@@ -8,7 +8,7 @@ final eStopLoggerProvider = Provider<Logger>((ref) => Logger('E_STOP_INFO'));
 
 final eStopInfoRepoProvider = Provider<EStopInfoRepository>((ref) {
   final logger = ref.read(eStopLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
 
   return EStopInfoRepository(
     canManager: canManager,
