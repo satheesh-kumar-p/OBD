@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import '../../dispatcher/message_dispatcher.dart';
 import '../../logger/logger.dart';
 import 'can_config.dart';
-import 'can_dispatcher.dart';
 import 'can_frame.dart';
 import 'i_can_service.dart';
 
@@ -12,10 +12,10 @@ class CanCommManager {
   CanCommManager({
     required ICanService service,
     required Logger logger,
-    CanMessageDispatcher? dispatcher,
+    MessageDispatcher? dispatcher,
   })  : _service = service,
         _logger = logger,
-        _dispatcher = dispatcher ?? CanMessageDispatcher() {
+        _dispatcher = dispatcher ?? MessageDispatcher() {
     _service.connectionStream.listen((connected) {
       _logger.info('CAN Connection Status: ${connected ? "CONNECTED" : "DISCONNECTED"}');
     });
@@ -23,7 +23,7 @@ class CanCommManager {
 
   final Logger _logger;
   final ICanService _service;
-  final CanMessageDispatcher _dispatcher;
+  final MessageDispatcher _dispatcher;
   StreamSubscription<CanFrame>? _frameSub;
 
   // A persistent controller so listeners can subscribe before connection
