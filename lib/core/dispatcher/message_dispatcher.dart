@@ -1,37 +1,9 @@
 import 'dart:async';
 import 'package:collection/collection.dart';
-import 'can_frame.dart';
 
-/// Strategy for handling incoming CAN messages.
-enum DispatchStrategy {
-  /// Emit frames as soon as they arrive.
-  passThrough,
-
-  /// Emit only the latest frame at a fixed frequency.
-  sample,
-}
-
-/// Configuration for a specific CAN message ID.
-class MessageConfig {
-  final int messageId;
-  final DispatchStrategy strategy;
-  final double frequencyHz;
-
-  const MessageConfig({
-    required this.messageId,
-    this.strategy = DispatchStrategy.passThrough,
-    this.frequencyHz = 0,
-  });
-
-  const MessageConfig.sample(this.messageId, this.frequencyHz)
-      : strategy = DispatchStrategy.sample;
-
-  const MessageConfig.passThrough(this.messageId)
-      : strategy = DispatchStrategy.passThrough,
-        frequencyHz = 0;
-
-  int get intervalMs => frequencyHz > 0 ? (1000 / frequencyHz).round() : 0;
-}
+import '../comm/can_bus/can_frame.dart';
+import '../enums/dispatch_strategy_enum.dart';
+import 'message_config.dart';
 
 /// Internal task for the priority queue.
 class _ScheduledTask {
@@ -42,10 +14,9 @@ class _ScheduledTask {
 }
 
 /// Dispatches CAN frames based on per-message configurations.
-/// 
 /// Uses a Priority Queue (Min-Heap) for efficient scheduling, a watchdog
 /// for resource cleanup, and drift-correction for stable telemetry frequency.
-class CanMessageDispatcher {
+class MessageDispatcher {
   final Map<int, MessageConfig> _configs;
   final StreamController<CanFrame> _outputController = StreamController<CanFrame>.broadcast();
   
@@ -66,7 +37,7 @@ class CanMessageDispatcher {
   Timer? _masterTicker;
   Timer? _watchdogTimer;
 
-  CanMessageDispatcher({
+  MessageDispatcher({
     List<MessageConfig> configs = const [],
     Duration tickInterval = const Duration(milliseconds: 10),
   }) : _configs = {for (var c in configs) c.messageId: c} {
@@ -90,7 +61,7 @@ class CanMessageDispatcher {
       return;
     }
 
-    if (config.strategy == DispatchStrategy.sample) {
+    if (config.strategy == DispatchStrategy.throttle) {
       _latestFrames[frame.id] = frame;
       
       // If not already in schedule, start the sampling cycle
