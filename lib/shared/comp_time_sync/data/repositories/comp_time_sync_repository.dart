@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/comp_time_sync_entity.dart';
 import '../mappers/comp_time_sync_mapper.dart';
 
 class CompTimeSyncRepository implements ICanDataRepository<CompTimeSyncEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _controller = StreamController<CompTimeSyncEntity>.broadcast();
@@ -15,7 +15,7 @@ class CompTimeSyncRepository implements ICanDataRepository<CompTimeSyncEntity> {
   StreamSubscription? _subscription;
 
   CompTimeSyncRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
         _logger = logger;
