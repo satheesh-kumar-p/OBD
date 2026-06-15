@@ -12,7 +12,7 @@ import 'time_controller.dart';
 class DashboardController extends Notifier<DashboardState> {
   @override
   DashboardState build() {
-    final connectionAsync = ref.watch(canConnectionProvider);
+    final connectionAsync = ref.watch(commConnectionProvider);
 
     final modeAsync = ref.watch(modeInfoProvider);
     final batteryAsync = ref.watch(batteryInfoProvider);

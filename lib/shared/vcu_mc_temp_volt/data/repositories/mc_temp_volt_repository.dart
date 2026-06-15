@@ -2,12 +2,12 @@ import 'dart:async';
 
 import '../mappers/mc_temp_volt_mapper.dart';
 import '../../domain/entities/mc_temp_volt_entity.dart';
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 
 class McTempVoltRepository implements ICanDataRepository<McTempVoltEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _streamCtrl = StreamController<McTempVoltEntity>.broadcast();
@@ -16,7 +16,7 @@ class McTempVoltRepository implements ICanDataRepository<McTempVoltEntity> {
   StreamSubscription? _subscription;
 
   McTempVoltRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
         _logger = logger;

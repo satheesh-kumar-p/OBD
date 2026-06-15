@@ -10,7 +10,7 @@ Provider<Logger>((ref) => Logger('MC_TEMP_VOLT'));
 final mcTempVoltRepoProvider =
 Provider<McTempVoltRepository>((ref) {
   final logger = ref.read(mcTempVoltLoggerProvider);
-  final commManager = ref.watch(canManagerProvider);
+  final commManager = ref.watch(commManagerProvider);
 
   return McTempVoltRepository(
     canManager: commManager,
