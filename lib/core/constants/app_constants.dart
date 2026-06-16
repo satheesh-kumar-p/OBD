@@ -1,4 +1,3 @@
-import 'package:scout_obd/core/enums/can_enums.dart';
 import '../enums/transport_type.dart';
 import '../dispatcher/message_config.dart';
 
