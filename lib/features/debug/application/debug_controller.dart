@@ -44,8 +44,7 @@ class DebugController extends Notifier<DebugState> {
   DebugState build() {
     _registerMappers();
 
-    // Listen to CAN frame stream
-    ref.listen(canFrameStreamProvider, (previous, next) {
+    ref.listen(commFrameStreamProvider, (previous, next) {
       final frame = next.asData?.value;
       if (frame != null) {
         addFrame(frame);

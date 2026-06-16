@@ -8,7 +8,7 @@ final compTimeSyncLoggerProvider = Provider<Logger>((ref) => Logger('COMP_TIME_S
 
 final compTimeSyncRepoProvider = Provider<CompTimeSyncRepository>((ref) {
   final logger = ref.read(compTimeSyncLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
 
   return CompTimeSyncRepository(
     canManager: canManager,

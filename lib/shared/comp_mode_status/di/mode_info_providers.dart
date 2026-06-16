@@ -8,7 +8,7 @@ final modeLoggerProvider = Provider<Logger>((ref) => Logger('MODE_INFO'));
 
 final modeInfoRepoProvider = Provider<ModeInfoRepository>((ref) {
   final logger = ref.read(modeLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
 
   return ModeInfoRepository(
     canManager: canManager,

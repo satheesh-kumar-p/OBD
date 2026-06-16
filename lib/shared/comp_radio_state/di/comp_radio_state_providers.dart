@@ -8,7 +8,7 @@ final computeCommLoggerProvider = Provider<Logger>((ref) => Logger('COMP_COMM_IN
 
 final compRadioRepoProvider = Provider<CompRadioStateRepository>((ref) {
   final logger = ref.read(computeCommLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
   return CompRadioStateRepository(canManager: canManager, logger: logger);
 });
 

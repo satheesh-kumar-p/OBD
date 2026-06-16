@@ -10,7 +10,7 @@ class CoreController extends Notifier<void> {
   void build() {
     // These watches ensure the providers are initialized and stay alive 
     // for the lifetime of the application.
-    ref.watch(canConnectionProvider);
+    ref.watch(commConnectionProvider);
     ref.watch(systemScreenStateProvider);
     ref.watch(debugNotifierProvider);
     

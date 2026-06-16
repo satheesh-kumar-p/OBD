@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../mappers/battery_info_mapper.dart';
 import '../../domain/entities/battery_info_entity.dart';
 
 class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _batteryCtrl = StreamController<BatteryInfoEntity>.broadcast();
@@ -15,7 +15,7 @@ class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity>
   StreamSubscription? _batterySub;
 
   BatteryInfoRepositoryImpl({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   }) : _canManager = canManager,
        _logger = logger;

@@ -10,7 +10,7 @@ Provider<Logger>((ref) => Logger('DRIVE'));
 final driveInfoRepoProvider =
 Provider<DriveInfoRepository>((ref) {
   final logger = ref.read(driveLoggerProvider);
-  final commManager = ref.watch(canManagerProvider);
+  final commManager = ref.watch(commManagerProvider);
 
   return DriveInfoRepository(
     canManager: commManager,

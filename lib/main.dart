@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/application/core_controller.dart';
-import 'core/constants/app_constants.dart';
-import 'core/di/injection_container.dart';
 import 'features/dashboard/presentation/screens/dashboard.dart';
 import 'features/dashboard/presentation/widgets/app_background.dart';
 
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          debugShowCheckedModeBanner: AppConstants.useMockBackends,
+          debugShowCheckedModeBanner: false,
           title: 'Scout Display',
           theme: ThemeData(
             useMaterial3: true,

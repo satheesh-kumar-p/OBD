@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/global_time_info_entity.dart';
 import '../mappers/global_time_info_mapper.dart';
 
 class GlobalTimeInfoRepository implements ICanDataRepository<GlobalTimeInfoEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _controller = StreamController<GlobalTimeInfoEntity>.broadcast();
@@ -15,7 +15,7 @@ class GlobalTimeInfoRepository implements ICanDataRepository<GlobalTimeInfoEntit
   StreamSubscription? _subscription;
 
   GlobalTimeInfoRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
         _logger = logger;

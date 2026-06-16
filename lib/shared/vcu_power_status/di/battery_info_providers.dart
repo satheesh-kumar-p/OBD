@@ -8,7 +8,7 @@ final batteryLoggerProvider = Provider<Logger>((ref) => Logger('BATTERY_INFO'));
 
 final batteryInfoRepoProvider = Provider<BatteryInfoRepositoryImpl>((ref) {
   final logger = ref.read(batteryLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
 
   return BatteryInfoRepositoryImpl(
     canManager: canManager,

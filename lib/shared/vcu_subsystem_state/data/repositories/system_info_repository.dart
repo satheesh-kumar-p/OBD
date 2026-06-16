@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../mapper/system_info_mapper.dart';
 import '../../domain/entities/system_info_entity.dart';
 
 class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _healthCtrl =
@@ -18,7 +18,7 @@ class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity> {
   StreamSubscription? _healthSub;
 
   SystemInfoRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
         _logger = logger;

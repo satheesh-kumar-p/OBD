@@ -2,12 +2,12 @@ import 'dart:async';
 
 import '../mappers/drive_info_mapper.dart';
 import '../../domain/entities/drive_information_entity.dart';
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 
 class DriveInfoRepository implements ICanDataRepository<DriveInformationEntity> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
@@ -17,7 +17,7 @@ class DriveInfoRepository implements ICanDataRepository<DriveInformationEntity> 
   StreamSubscription? _driveSub;
 
   DriveInfoRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
         _logger = logger;

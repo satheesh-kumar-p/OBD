@@ -10,7 +10,7 @@ Provider<Logger>((ref) => Logger('HEALTH'));
 final systemInfoRepoProvider =
 Provider<SystemInfoRepository>((ref) {
   final logger = ref.read(systemLoggerProvider);
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
 
   return SystemInfoRepository(
     canManager: canManager,

@@ -7,7 +7,7 @@ import '../domain/entities/global_time_info_entity.dart';
 final globalTimeLoggerProvider = Provider<Logger>((ref) => Logger('GLOBAL_TIME'));
 
 final globalTimeInfoRepoProvider = Provider<GlobalTimeInfoRepository>((ref) {
-  final canManager = ref.watch(canManagerProvider);
+  final canManager = ref.watch(commManagerProvider);
   final logger = ref.read(globalTimeLoggerProvider);
   
   return GlobalTimeInfoRepository(

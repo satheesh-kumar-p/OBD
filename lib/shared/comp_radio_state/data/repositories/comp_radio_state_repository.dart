@@ -1,12 +1,12 @@
 import 'dart:async';
-import '../../../../core/comm/can_bus/can_comm_manager.dart';
+import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../domain/entities/comp_radio_state_entity.dart';
 import '../mappers/comp_radio_state_mapper.dart';
 
 class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
-  final CanCommManager _canManager;
+  final CommManager _canManager;
   final Logger _logger;
 
   final _ctrl = StreamController<CompRadioState>.broadcast();
@@ -14,7 +14,7 @@ class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   StreamSubscription? _sub;
 
   CompRadioStateRepository({
-    required CanCommManager canManager,
+    required CommManager canManager,
     required Logger logger,
   }) : _canManager = canManager,
         _logger = logger;
