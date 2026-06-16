@@ -62,7 +62,7 @@ class SystemScreenState {
       Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemStatus.unknown,
       Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemStatus.unknown,
       Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemStatus.unknown,
-      Subsystem.compute: !computeStale ? systemInfo!.compute : SubsystemStatus.unknown,
+      Subsystem.compute: !systemStale ? systemInfo!.compute : SubsystemStatus.unknown,
       Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemStatus.unknown,
       Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemStatus.unknown,
     };
