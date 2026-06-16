@@ -1,12 +1,12 @@
 enum MotorErrors {
-  overSpeed(1),
-  overload(2),
-  phaseLoss(4),
-  brake(8),
-  encoderFault(16),
-  overTemp(32),
-  hallFault(64),
-  stalled(128);
+  overSpeed(128),
+  overload(64),
+  phaseLoss(32),
+  brake(16),
+  encoderFault(8),
+  overTemp(4),
+  hallFault(2),
+  stalled(1);
 
   const MotorErrors(this.bit);
   final int bit;
