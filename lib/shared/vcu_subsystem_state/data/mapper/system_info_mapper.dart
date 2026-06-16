@@ -98,7 +98,7 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       dcDc48v12v: _toStatus(values['dcDc48vTo12v']),
       dcDc12v5v: _toStatus(values['dcDc12vTo5v']),
       vcu: _toStatus(values['vcu']),
-      compute: _toStatus(values['rearRightMotor']),
+      compute: _toStatus(values['compute']),
 
       // Individual motors
       frontLeftMotor: _toStatus(values['frontLeftMotor']),
