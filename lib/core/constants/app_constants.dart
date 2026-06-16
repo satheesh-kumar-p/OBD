@@ -3,16 +3,12 @@ import '../enums/transport_type.dart';
 import '../dispatcher/message_config.dart';
 
 abstract final class AppConstants {
-  // CAN (Legacy Serial)
-  static const String canPortName = '/dev/can';
-  static const CanBaudRate canBaudRate = CanBaudRate.bps500k;
-
   // Communication Layer
   static const TransportType transportType = TransportType.udp;
 
   // UDP Configuration
-  static const int listenPort = 5000;
-  static const String sendAddress = '192.168.1.10';
+  static const int listenPort = 5005;
+  static const String sendAddress = '10.10.60.91';
   static const int sendPort = 5001;
 
   // TCP Configuration
