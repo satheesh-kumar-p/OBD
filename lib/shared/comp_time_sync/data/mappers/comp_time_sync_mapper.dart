@@ -2,9 +2,6 @@ import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/comp_time_sync_entity.dart';
 
-// TODO: Write a repo for this separately instead of using comp_global_time_info.
-// Any merging of messages gets done in features. Like dashboard in features will take care of combining both repositories
-// and in the feature, logic gets handled on what to do with each repository, later the ultimate data is going to be consumed into UI.
 class CompTimeSyncMapper extends CanExtractionStrategy<CompTimeSyncEntity> {
   static const int id = 0x206;
 
