@@ -55,6 +55,18 @@ class DriveInfoMapper extends CanExtractionStrategy<DriveInformationEntity> {
       startBit: 3,
       endBit: 8,
     ),
+
+    const CanField<int>(
+      name: 'rearMotorControllerDataValid',
+      startBit: 2,
+      endBit: 2
+    ),
+
+    const CanField<int>(
+      name: 'frontMotorControllerDataValid',
+      startBit: 1,
+      endBit: 1
+    ),
   ];
 
   @override
@@ -73,6 +85,8 @@ class DriveInfoMapper extends CanExtractionStrategy<DriveInformationEntity> {
       rearMotorController: _buildMotorControllerInfo(
         rawValue: values['rearMotorControllerFaults'],
       ),
+      isFrontValid: values['frontMotorControllerDataValid'] == 0,
+      isRearValid: values['rearMotorControllerDataValid'] == 0,
     );
   }
 

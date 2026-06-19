@@ -12,6 +12,10 @@ class DriveInformationEntity {
   final MotorControllerInformation frontMotorController;
   final MotorControllerInformation rearMotorController;
 
+  // Validation flags
+  final bool isFrontValid;
+  final bool isRearValid;
+
   const DriveInformationEntity({
     required this.frontLeftMotor,
     required this.frontRightMotor,
@@ -19,6 +23,8 @@ class DriveInformationEntity {
     required this.rearRightMotor,
     required this.frontMotorController,
     required this.rearMotorController,
+    required this.isFrontValid,
+    required this.isRearValid,
   });
 
   @override
@@ -29,7 +35,9 @@ class DriveInformationEntity {
         '  rearLeft: $rearLeftMotor,\n'
         '  rearRight: $rearRightMotor,\n'
         '  frontMC: $frontMotorController,\n'
-        '  rearMC: $rearMotorController\n'
+        '  rearMC: $rearMotorController,\n'
+        '  isFrontValid: $isFrontValid,\n'
+        '  isRearValid: $isRearValid\n'
         ')';
   }
 }
