@@ -21,13 +21,22 @@ class BatteryInfoMapper extends CanExtractionStrategy<BatteryInfoEntity> {
       startBit: 24,
       endBit: 31,
     ),
+    CanField<double>(
+      name: 'lvBatteryVoltage',
+      startBit: 16,
+      endBit: 23,
+      transformer: _scaleVoltage,
+    ),
   ];
+
+  static double _scaleVoltage(int rawValue) => rawValue * 0.1;
 
   @override
   BatteryInfoEntity build(Map<String, dynamic> parsedValues) {
     return BatteryInfoEntity(
       hvBatterySoc: parsedValues['hvBatterySoc'],
       lvBatterySoc: parsedValues['lvBatterySoc'],
+      lvBatteryVoltage: parsedValues['lvBatteryVoltage'],
     );
   }
 }
