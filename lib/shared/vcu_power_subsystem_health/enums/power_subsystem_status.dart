@@ -1,0 +1,1 @@
+enum PowerSubsystemStatus { healthy, fault }
