@@ -29,7 +29,7 @@ class BatteryInfoMapper extends CanExtractionStrategy<BatteryInfoEntity> {
     ),
   ];
 
-  static double _scaleVoltage(int rawValue) => rawValue * 0.1;
+  static double _scaleVoltage(int rawValue) => rawValue / 10;
 
   @override
   BatteryInfoEntity build(Map<String, dynamic> parsedValues) {
