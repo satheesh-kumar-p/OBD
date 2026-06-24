@@ -3,14 +3,14 @@ import 'dart:async';
 import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
+import '../../domain/entities/power_health_entity.dart';
 import '../mappers/vcu_power_subsystem_health_mapper.dart';
-import '../../domain/entities/hv_battery_health_entity.dart';
 
-class VcuPowerSubsystemHealthRepository implements ICanDataRepository<HvBatteryHealthEntity> {
+class VcuPowerSubsystemHealthRepository implements ICanDataRepository<PowerHealthEntity> {
   final CommManager _canManager;
   final Logger _logger;
 
-  final _healthCtrl = StreamController<HvBatteryHealthEntity>.broadcast();
+  final _healthCtrl = StreamController<PowerHealthEntity>.broadcast();
   final _mapper = VcuPowerSubsystemHealthMapper();
   StreamSubscription? _healthSub;
 
@@ -53,7 +53,7 @@ class VcuPowerSubsystemHealthRepository implements ICanDataRepository<HvBatteryH
   }
 
   @override
-  Stream<HvBatteryHealthEntity> watchCanData() {
+  Stream<PowerHealthEntity> watchCanData() {
     return _healthCtrl.stream;
   }
 }
