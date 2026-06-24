@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scout_obd/shared/vcu_power_subsystem_health/domain/entities/power_health_entity.dart';
+import '../../../shared/vcu_power_subsystem_health/domain/entities/power_health_entity.dart';
 import '../../../shared/vcu_contactor_state/domain/entities/vcu_contactor_state_entity.dart';
 import '../../../shared/vcu_pdu_status/domain/entities/vcu_pdu_status_entity.dart';
 import '../../../shared/vcu_power_subsystem_health/domain/entities/lv_pdu_health_entity.dart';
@@ -103,14 +103,17 @@ class PowerState {
 
   List<LargeValueDisplayData> get lvBatteryRows {
     final info = batteryInfo;
+    final statusColor = info == null ? Colors.grey : const Color(0xFF74FF9F);
     return [
       LargeValueDisplayData(
         label: 'VOLTAGE',
         value: info == null ? '--' : '${info.lvBatteryVoltage.toStringAsFixed(1)} V',
+        color: statusColor,
       ),
       LargeValueDisplayData(
         label: 'SOC',
-        value: info == null ? '--' : '${info.lvBatterySoc}%',
+        value: info == null ? '--' : '${info.lvBatterySoc} %',
+        color: statusColor,
       ),
     ];
   }
@@ -142,8 +145,8 @@ class ContactorDisplayData {
   ContactorDisplayData({required this.name, String? stateText})
       : state = stateText ?? '--',
         color = stateText == null
-            ? Colors.white
-            : (stateText == 'CLOSED' ? Colors.green : Colors.red);
+            ? Colors.grey
+            : (stateText == 'CLOSED' ? const Color(0xFF74FF9F) : Colors.red);
 }
 
 class PduChannelDisplayData {
@@ -159,8 +162,8 @@ class PduChannelDisplayData {
     double? current,
     required this.healthColors,
   })  : statusText = isOn == null ? '--' : (isOn ? 'ON' : 'OFF'),
-        currentText = current == null ? '--' : '${current.toStringAsFixed(1)}A',
-        statusColor = isOn == null ? Colors.white : (isOn ? Colors.green : Colors.red);
+        currentText = current == null ? '--' : '${current.toStringAsFixed(1)} A',
+        statusColor = isOn == null ? Colors.grey : (isOn ? const Color(0xFF74FF9F) : Colors.red);
 }
 
 class BatteryFaultDisplayData {
@@ -169,18 +172,23 @@ class BatteryFaultDisplayData {
 
   BatteryFaultDisplayData({required this.name, PowerSubsystemStatus? status})
       : color = status == null
-            ? Colors.white
-            : (status == PowerSubsystemStatus.healthy ? Colors.green : Colors.red);
+            ? Colors.grey
+            : (status == PowerSubsystemStatus.healthy ? const Color(0xFF74FF9F) : Colors.red);
 }
 
 class LargeValueDisplayData {
   final String label;
   final String value;
+  final Color color;
 
-  const LargeValueDisplayData({required this.label, required this.value});
+  const LargeValueDisplayData({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 }
 
 Color _toColor(PowerSubsystemStatus? status) {
-  if (status == null) return Colors.white;
+  if (status == null) return Colors.grey;
   return status == PowerSubsystemStatus.healthy ? const Color(0xFF74FF9F) : Colors.red;
 }
