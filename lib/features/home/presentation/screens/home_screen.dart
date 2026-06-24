@@ -6,6 +6,7 @@ import 'package:scout_obd/features/compute/presentation/screens/compute_screen.d
 import 'package:scout_obd/features/home/presentation/widgets/sidebar.dart';
 import 'package:scout_obd/features/sensor/presentation/screens/sensor_screen.dart';
 
+import '../../../power/presentation/screens/power_screen.dart';
 import '../../home_providers.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
@@ -47,6 +48,7 @@ class HomeScreen extends ConsumerWidget {
                       items: const [
                         'SYSTEM',
                         'DRIVE',
+                        'POWER',
                         'COMPUTE',
                         'SENSOR',
                         'COMMUNICATION',
@@ -66,6 +68,7 @@ class HomeScreen extends ConsumerWidget {
                       children: const [
                         SystemScreen(),
                         DriveScreen(),
+                        PowerScreen(),
                         ComputeScreen(),
                         SensorScreen(),
                         CommunicationScreen(),
