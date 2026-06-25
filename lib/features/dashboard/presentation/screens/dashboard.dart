@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
 import '../../../drive/presentation/screens/drive_status_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
-import '../../di/dashboard_providers.dart';
+import '../../dashboard_providers.dart';
 import '../../state/dashboard_state.dart';
 import '../widgets/hud_sidebar.dart';
 import '../widgets/hud_top_bar.dart';

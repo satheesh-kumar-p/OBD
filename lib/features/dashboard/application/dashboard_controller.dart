@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection_container.dart';
 import '../../../shared/comp_mode_status/di/mode_info_providers.dart';
-import '../../../shared/comp_radio_state/di/comp_radio_state_providers.dart';
+import '../../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
 import '../../../shared/vcu_estop_status/di/e_stop_info_providers.dart';
 import '../../../shared/vcu_power_status/di/battery_info_providers.dart';
 import '../../../shared/vcu_subsystem_state/di/system_info_providers.dart';
@@ -18,7 +18,7 @@ class DashboardController extends Notifier<DashboardState> {
     final batteryAsync = ref.watch(batteryInfoProvider);
     final eStopAsync = ref.watch(eStopInfoProvider);
     final systemAsync = ref.watch(systemInfoProvider);
-    final computeCommAsync = ref.watch(compRadioStateProvider);
+    final computeCommAsync = ref.watch(compSubsystemInfoProvider);
     final globalTime = ref.watch(timeControllerProvider);
 
     ref.watch(clockTickerProvider);
@@ -33,7 +33,7 @@ class DashboardController extends Notifier<DashboardState> {
       battery: batteryAsync.asData?.value,
       eStopInfo: eStopAsync.asData?.value,
       systemInfo: systemAsync.asData?.value,
-      compRadioInfo: computeCommAsync.asData?.value,
+      compSubsystemState: computeCommAsync.asData?.value,
       globalTime: globalTime,
     );
   }
