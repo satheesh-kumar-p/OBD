@@ -62,7 +62,7 @@ class SystemScreenState {
       Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemFaultState.unknown,
       Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemFaultState.unknown,
       Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemFaultState.unknown,
-      Subsystem.compute: !systemStale ? systemInfo!.compute : SubsystemFaultState.unknown,
+      Subsystem.compute: !systemStale ? systemInfo!.mainCompute : SubsystemFaultState.unknown,
       Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemFaultState.unknown,
       Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemFaultState.unknown,
     };
@@ -115,15 +115,15 @@ class SystemScreenState {
   (Color, String) getVisuals(Subsystem subsystem) {
     final status = subsystemStatuses[subsystem] ?? SubsystemFaultState.unknown;
     return switch (status) {
-      SubsystemFaultState.healthy => (const Color(0xFF00FF66), 'Healthy'),
-      SubsystemFaultState.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
-      SubsystemFaultState.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
-      SubsystemFaultState.unknown => (Colors.white24, 'Unknown'),
+      SubsystemFaultState.noFault => (const Color(0xFF00FF66), 'Healthy'),
+      SubsystemFaultState.faulty => (const Color(0xFFFF3B3B), 'Fault Detected'),
+      SubsystemFaultState.unknown => (const Color(0xFF93A9B5), 'Not Connected'),
+      SubsystemFaultState.badValue => (Colors.white24, '--'),
     };
   }
 
   bool isStatusActive(Subsystem subsystem) {
     final status = subsystemStatuses[subsystem] ?? SubsystemFaultState.unknown;
-    return status == SubsystemFaultState.healthy || status == SubsystemFaultState.unhealthy;
+    return status == SubsystemFaultState.noFault || status == SubsystemFaultState.faulty;
   }
 }

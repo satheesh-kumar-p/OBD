@@ -13,7 +13,9 @@ class SystemInfoEntity {
   final SubsystemFaultState rearLeftMotor;
   final SubsystemFaultState frontRightMotor;
   final SubsystemFaultState rearRightMotor;
-  final SubsystemFaultState compute;
+  final SubsystemFaultState mainCompute;
+  final SubsystemFaultState secondaryCompute;
+  final SubsystemFaultState vcu;
 
   const SystemInfoEntity({
     required this.frontMotorController,
@@ -28,7 +30,9 @@ class SystemInfoEntity {
     required this.rearLeftMotor,
     required this.frontRightMotor,
     required this.rearRightMotor,
-    required this.compute,
+    required this.mainCompute,
+    required this.secondaryCompute,
+    required this.vcu,
   });
 
   @override
@@ -46,7 +50,9 @@ class SystemInfoEntity {
         '  rearLeftMotor: $rearLeftMotor,\n'
         '  frontRightMotor: $frontRightMotor,\n'
         '  rearRightMotor: $rearRightMotor,\n'
-        '  compute: $compute\n'
+        '  main Compute: $mainCompute,\n'
+        '  secondary Compute: $secondaryCompute,\n'
+        '  vcu: $vcu\n'
         ')';
   }
 }

@@ -78,9 +78,19 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       endBit: 17,
     ),
     const CanField<int>(
-      name: 'compute',
+      name: 'mainCompute',
       startBit: 14,
       endBit: 15,
+    ),
+    const CanField<int>(
+      name: 'secondaryCompute',
+      startBit: 12,
+      endBit: 13,
+    ),
+    const CanField<int>(
+      name: 'vcu',
+      startBit: 10,
+      endBit: 11,
     ),
   ];
 
@@ -98,7 +108,9 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       dcDc48v12v: _toStatus(values['dcDc48vTo12v']),
       dcDc12v5v: _toStatus(values['dcDc12vTo5v']),
       hvPdu: _toStatus(values['hvPdu']),
-      compute: _toStatus(values['compute']),
+      mainCompute: _toStatus(values['mainCompute']),
+      secondaryCompute: _toStatus(values['secondaryCompute']),
+      vcu: _toStatus(values['vcu']),
 
       // Individual motors
       frontLeftMotor: _toStatus(values['frontLeftMotor']),

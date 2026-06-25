@@ -97,9 +97,10 @@ class DashboardState {
   Color get handCtrlColor {
     final status = compRadioInfo?.uhfRadio;
     return switch (status) {
-      SubsystemFaultState.healthy => const Color(0xFF00FF66),
-      SubsystemFaultState.unhealthy => const Color(0xFFFF3B3B),
-      SubsystemFaultState.noCommunication || SubsystemFaultState.unknown || null => Colors.white38,
+      SubsystemFaultState.noFault => const Color(0xFF00FF66),
+      SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
+      SubsystemFaultState.unknown => Colors.white,
+      SubsystemFaultState.badValue || null => Colors.orange,
     };
   }
 
