@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../application/dashboard_controller.dart';
-import '../state/dashboard_state.dart';
+import 'application/dashboard_controller.dart';
+import 'state/dashboard_state.dart';
 
 /// Manages the currently selected tab in the dashboard.
 final dashboardIndexProvider = StateProvider<int>((ref) => 0);
