@@ -1,19 +1,19 @@
-import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
 
 class SystemInfoEntity {
-  final SubsystemStatus frontMotorController;
-  final SubsystemStatus rearMotorController;
-  final SubsystemStatus hvBattery;
-  final SubsystemStatus lvBattery;
-  final SubsystemStatus lvPdu;
-  final SubsystemStatus dcDc48v12v;
-  final SubsystemStatus dcDc12v5v;
-  final SubsystemStatus vcu;
-  final SubsystemStatus frontLeftMotor;
-  final SubsystemStatus rearLeftMotor;
-  final SubsystemStatus frontRightMotor;
-  final SubsystemStatus rearRightMotor;
-  final SubsystemStatus compute;
+  final SubsystemFaultState frontMotorController;
+  final SubsystemFaultState rearMotorController;
+  final SubsystemFaultState hvBattery;
+  final SubsystemFaultState lvBattery;
+  final SubsystemFaultState lvPdu;
+  final SubsystemFaultState dcDc48v12v;
+  final SubsystemFaultState dcDc12v5v;
+  final SubsystemFaultState hvPdu;
+  final SubsystemFaultState frontLeftMotor;
+  final SubsystemFaultState rearLeftMotor;
+  final SubsystemFaultState frontRightMotor;
+  final SubsystemFaultState rearRightMotor;
+  final SubsystemFaultState compute;
 
   const SystemInfoEntity({
     required this.frontMotorController,
@@ -23,7 +23,7 @@ class SystemInfoEntity {
     required this.lvPdu,
     required this.dcDc48v12v,
     required this.dcDc12v5v,
-    required this.vcu,
+    required this.hvPdu,
     required this.frontLeftMotor,
     required this.rearLeftMotor,
     required this.frontRightMotor,
@@ -41,7 +41,7 @@ class SystemInfoEntity {
         '  lvPdu: $lvPdu,\n'
         '  dcDc48v12v: $dcDc48v12v,\n'
         '  dcDc12v5v: $dcDc12v5v,\n'
-        '  vcu: $vcu,\n'
+        '  hvPdu: $hvPdu,\n'
         '  frontLeftMotor: $frontLeftMotor,\n'
         '  rearLeftMotor: $rearLeftMotor,\n'
         '  frontRightMotor: $frontRightMotor,\n'

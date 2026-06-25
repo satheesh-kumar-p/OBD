@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../../../shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
-import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 
 class SystemScreenState {
@@ -40,7 +40,7 @@ class SystemScreenState {
 
   /// Calculates the current display status for all subsystems,
   /// accounting for data staleness (5-second timeout).
-  Map<Subsystem, SubsystemStatus> get subsystemStatuses {
+  Map<Subsystem, SubsystemFaultState> get subsystemStatuses {
     const staleThreshold = Duration(seconds: 5);
 
     final bool systemStale = systemInfoLastUpdate == null || 
@@ -50,21 +50,21 @@ class SystemScreenState {
         now.difference(computeInfoLastUpdate!) > staleThreshold;
 
     return {
-      Subsystem.frontMotorController: !systemStale ? systemInfo!.frontMotorController : SubsystemStatus.unknown,
-      Subsystem.rearMotorController: !systemStale ? systemInfo!.rearMotorController : SubsystemStatus.unknown,
-      Subsystem.hvBattery: !systemStale ? systemInfo!.hvBattery : SubsystemStatus.unknown,
-      Subsystem.lvBattery: !systemStale ? systemInfo!.lvBattery : SubsystemStatus.unknown,
-      Subsystem.lvPdu: !systemStale ? systemInfo!.lvPdu : SubsystemStatus.unknown,
-      Subsystem.dcDc48v12v: !systemStale ? systemInfo!.dcDc48v12v : SubsystemStatus.unknown,
-      Subsystem.dcDc12v5v: !systemStale ? systemInfo!.dcDc12v5v : SubsystemStatus.unknown,
-      Subsystem.vcu: !systemStale ? systemInfo!.vcu : SubsystemStatus.unknown,
-      Subsystem.frontLeftMotor: !systemStale ? systemInfo!.frontLeftMotor : SubsystemStatus.unknown,
-      Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemStatus.unknown,
-      Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemStatus.unknown,
-      Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemStatus.unknown,
-      Subsystem.compute: !systemStale ? systemInfo!.compute : SubsystemStatus.unknown,
-      Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemStatus.unknown,
-      Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemStatus.unknown,
+      Subsystem.frontMotorController: !systemStale ? systemInfo!.frontMotorController : SubsystemFaultState.unknown,
+      Subsystem.rearMotorController: !systemStale ? systemInfo!.rearMotorController : SubsystemFaultState.unknown,
+      Subsystem.hvBattery: !systemStale ? systemInfo!.hvBattery : SubsystemFaultState.unknown,
+      Subsystem.lvBattery: !systemStale ? systemInfo!.lvBattery : SubsystemFaultState.unknown,
+      Subsystem.lvPdu: !systemStale ? systemInfo!.lvPdu : SubsystemFaultState.unknown,
+      Subsystem.dcDc48v12v: !systemStale ? systemInfo!.dcDc48v12v : SubsystemFaultState.unknown,
+      Subsystem.dcDc12v5v: !systemStale ? systemInfo!.dcDc12v5v : SubsystemFaultState.unknown,
+      Subsystem.vcu: !systemStale ? systemInfo!.vcu : SubsystemFaultState.unknown,
+      Subsystem.frontLeftMotor: !systemStale ? systemInfo!.frontLeftMotor : SubsystemFaultState.unknown,
+      Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemFaultState.unknown,
+      Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemFaultState.unknown,
+      Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemFaultState.unknown,
+      Subsystem.compute: !systemStale ? systemInfo!.compute : SubsystemFaultState.unknown,
+      Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemFaultState.unknown,
+      Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemFaultState.unknown,
     };
   }
 
@@ -113,17 +113,17 @@ class SystemScreenState {
   }
 
   (Color, String) getVisuals(Subsystem subsystem) {
-    final status = subsystemStatuses[subsystem] ?? SubsystemStatus.unknown;
+    final status = subsystemStatuses[subsystem] ?? SubsystemFaultState.unknown;
     return switch (status) {
-      SubsystemStatus.healthy => (const Color(0xFF00FF66), 'Healthy'),
-      SubsystemStatus.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
-      SubsystemStatus.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
-      SubsystemStatus.unknown => (Colors.white24, 'Unknown'),
+      SubsystemFaultState.healthy => (const Color(0xFF00FF66), 'Healthy'),
+      SubsystemFaultState.unhealthy => (const Color(0xFFFF3B3B), 'Fault Detected'),
+      SubsystemFaultState.noCommunication => (const Color(0xFF93A9B5), 'Not Connected'),
+      SubsystemFaultState.unknown => (Colors.white24, 'Unknown'),
     };
   }
 
   bool isStatusActive(Subsystem subsystem) {
-    final status = subsystemStatuses[subsystem] ?? SubsystemStatus.unknown;
-    return status == SubsystemStatus.healthy || status == SubsystemStatus.unhealthy;
+    final status = subsystemStatuses[subsystem] ?? SubsystemFaultState.unknown;
+    return status == SubsystemFaultState.healthy || status == SubsystemFaultState.unhealthy;
   }
 }

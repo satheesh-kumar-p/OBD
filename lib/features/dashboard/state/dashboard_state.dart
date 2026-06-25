@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scout_obd/shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 
-import '../../../core/enums/subsystem_status_enum.dart';
+import '../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
+import '../../../shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
 import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
 import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
@@ -97,9 +97,9 @@ class DashboardState {
   Color get handCtrlColor {
     final status = compRadioInfo?.uhfRadio;
     return switch (status) {
-      SubsystemStatus.healthy => const Color(0xFF00FF66),
-      SubsystemStatus.unhealthy => const Color(0xFFFF3B3B),
-      SubsystemStatus.noCommunication || SubsystemStatus.unknown || null => Colors.white38,
+      SubsystemFaultState.healthy => const Color(0xFF00FF66),
+      SubsystemFaultState.unhealthy => const Color(0xFFFF3B3B),
+      SubsystemFaultState.noCommunication || SubsystemFaultState.unknown || null => Colors.white38,
     };
   }
 

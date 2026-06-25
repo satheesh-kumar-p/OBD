@@ -1,6 +1,6 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../domain/entities/comp_radio_state_entity.dart';
 
 class CompRadioStateMapper extends CanExtractionStrategy<CompRadioState> {
@@ -23,12 +23,16 @@ class CompRadioStateMapper extends CanExtractionStrategy<CompRadioState> {
     );
   }
 
-  SubsystemStatus _toStatus(int value) {
+  SubsystemFaultState _toStatus(int value) {
     switch (value) {
-      case 1: return SubsystemStatus.noCommunication;
-      case 2: return SubsystemStatus.healthy;
-      case 3: return SubsystemStatus.unhealthy;
-      default: return SubsystemStatus.unknown;
+      case 0:
+        return SubsystemFaultState.unknown;
+      case 1:
+        return SubsystemFaultState.noFault;
+      case 2:
+        return SubsystemFaultState.faulty;
+      default:
+        return SubsystemFaultState.badValue;
     }
   }
 }

@@ -1,8 +1,8 @@
-import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
 
 class CompRadioState {
-  final SubsystemStatus uhfRadio;
-  final SubsystemStatus lBandRadio;
+  final SubsystemFaultState uhfRadio;
+  final SubsystemFaultState lBandRadio;
 
   CompRadioState({
     required this.uhfRadio,
