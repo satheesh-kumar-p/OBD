@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../shared/comp_subsystem_state/data/mappers/comp_subsystem_state_mapper.dart';
+import '../../../shared/vcu_estop_status/data/mapper/e_stop_info_mapper.dart';
 import '../../dashboard/application/time_controller.dart';
 import '../domain/entities/debug_message.dart';
 
