@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../di/dashboard_providers.dart';
+import '../../dashboard_providers.dart';
 import 'hud_battery_status_icon.dart';
 import 'hud_date_time_label.dart';
 import 'hud_handctrlStatus.dart';
