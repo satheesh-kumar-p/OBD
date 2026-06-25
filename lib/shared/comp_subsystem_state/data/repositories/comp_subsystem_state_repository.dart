@@ -2,18 +2,18 @@ import 'dart:async';
 import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
-import '../../domain/entities/comp_radio_state_entity.dart';
-import '../mappers/comp_radio_state_mapper.dart';
+import '../../domain/entities/comp_subsystem_state_entity.dart';
+import '../mappers/comp_subsystem_state_mapper.dart';
 
-class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
+class CompSubsystemStateRepository implements ICanDataRepository<CompSubsystemState> {
   final CommManager _canManager;
   final Logger _logger;
 
-  final _ctrl = StreamController<CompRadioState>.broadcast();
-  final _mapper = CompRadioStateMapper();
+  final _ctrl = StreamController<CompSubsystemState>.broadcast();
+  final _mapper = CompSubsystemStateMapper();
   StreamSubscription? _sub;
 
-  CompRadioStateRepository({
+  CompSubsystemStateRepository({
     required CommManager canManager,
     required Logger logger,
   }) : _canManager = canManager,
@@ -22,9 +22,9 @@ class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   @override
   void startCanData() {
     if (_sub != null) return;
-    _logger.info('Starting Compute & Comm Info data stream (CAN ID: 0x${CompRadioStateMapper.id.toRadixString(16).toUpperCase()})');
+    _logger.info('Starting Compute & Comm Info data stream (CAN ID: 0x${CompSubsystemStateMapper.id.toRadixString(16).toUpperCase()})');
 
-    _sub = _canManager.watchMessage(CompRadioStateMapper.id).listen((frame) {
+    _sub = _canManager.watchMessage(CompSubsystemStateMapper.id).listen((frame) {
       try {
         final entity = _mapper.parse(frame.data);
         _ctrl.add(entity);
@@ -45,5 +45,5 @@ class CompRadioStateRepository implements ICanDataRepository<CompRadioState> {
   }
 
   @override
-  Stream<CompRadioState> watchCanData() => _ctrl.stream;
+  Stream<CompSubsystemState> watchCanData() => _ctrl.stream;
 }
