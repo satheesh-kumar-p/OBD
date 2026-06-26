@@ -10,32 +10,57 @@ import '../state/dashboard_state.dart';
 import 'time_controller.dart';
 
 class DashboardController extends Notifier<DashboardState> {
+  DateTime? _lastBatteryUpdate;
+  DateTime? _lastModeUpdate;
+  DateTime? _lastEStopUpdate;
+  DateTime? _lastSystemUpdate;
+  DateTime? _lastComputeUpdate;
+
   @override
   DashboardState build() {
-    final connectionAsync = ref.watch(commConnectionProvider);
-
-    final modeAsync = ref.watch(modeInfoProvider);
-    final batteryAsync = ref.watch(batteryInfoProvider);
-    final eStopAsync = ref.watch(eStopInfoProvider);
-    final systemAsync = ref.watch(systemInfoProvider);
-    final computeCommAsync = ref.watch(compSubsystemInfoProvider);
-    final globalTime = ref.watch(timeControllerProvider);
-
+    // Watch clock ticker to force a rebuild every second for staleness checks
     ref.watch(clockTickerProvider);
+    
+    final now = DateTime.now();
+    const stalenessThreshold = Duration(seconds: 5);
+
+    // Listen to providers to update last received timestamps
+    ref.listen(batteryInfoProvider, (prev, next) {
+      if (next.hasValue) _lastBatteryUpdate = DateTime.now();
+    });
+    ref.listen(modeInfoProvider, (prev, next) {
+      if (next.hasValue) _lastModeUpdate = DateTime.now();
+    });
+    ref.listen(eStopInfoProvider, (prev, next) {
+      if (next.hasValue) _lastEStopUpdate = DateTime.now();
+    });
+    ref.listen(systemInfoProvider, (prev, next) {
+      if (next.hasValue) _lastSystemUpdate = DateTime.now();
+    });
+    ref.listen(compSubsystemInfoProvider, (prev, next) {
+      if (next.hasValue) _lastComputeUpdate = DateTime.now();
+    });
+
+    final connectionAsync = ref.watch(commConnectionProvider);
+    final globalTime = ref.watch(timeControllerProvider);
 
     // If we aren't connected yet, return a default/disconnected state
     if (connectionAsync.asData == null) {
       return const DashboardState();
     }
 
+    // Helper to determine if data is fresh
+    bool isFresh(DateTime? lastUpdate) {
+      return lastUpdate != null && now.difference(lastUpdate) < stalenessThreshold;
+    }
+
     return DashboardState(
-      mode: modeAsync.asData?.value,
-      battery: batteryAsync.asData?.value,
-      eStopInfo: eStopAsync.asData?.value,
-      systemInfo: systemAsync.asData?.value,
-      compSubsystemState: computeCommAsync.asData?.value,
+      mode: isFresh(_lastModeUpdate) ? ref.read(modeInfoProvider).value : null,
+      battery: isFresh(_lastBatteryUpdate) ? ref.read(batteryInfoProvider).value : null,
+      eStopInfo: isFresh(_lastEStopUpdate) ? ref.read(eStopInfoProvider).value : null,
+      systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
+      compSubsystemState: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
       globalTime: globalTime,
     );
   }
-
 }
