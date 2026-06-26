@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:scout_obd/shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 import '../../../core/enums/subsystem_fault_state_enum.dart';
-import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
-import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
-import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
-import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
 import '../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
-
-enum HealthLevel { connected, noHeartbeat, disconnected }
+import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
+import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
+import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
+import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
+import '../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 class DashboardState {
   const DashboardState({
