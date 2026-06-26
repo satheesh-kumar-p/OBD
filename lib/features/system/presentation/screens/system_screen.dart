@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
-import '../../di/system_providers.dart';
+import '../../system_providers.dart';
 import '../state/system_screen_state.dart';
 
 class SystemScreen extends ConsumerWidget {
@@ -12,15 +12,21 @@ class SystemScreen extends ConsumerWidget {
     Subsystem.vcu,
     Subsystem.hvBattery,
     Subsystem.lvBattery,
+    Subsystem.secondaryCompute,
   ];
 
   static const _stage2 = [
     Subsystem.dcDc48v12v,
     Subsystem.lvPdu,
-    Subsystem.compute,
+    Subsystem.mainCompute,
     Subsystem.uhfRadio,
-    Subsystem.dcDc12v5v,
     Subsystem.lBandRadio,
+    Subsystem.dcDc12v5v,
+    Subsystem.ethernetSwitch,
+    Subsystem.gnss,
+    Subsystem.imu,
+    Subsystem.lidar2d,
+    Subsystem.lidar3d,
   ];
 
   static const _stage3 = [
