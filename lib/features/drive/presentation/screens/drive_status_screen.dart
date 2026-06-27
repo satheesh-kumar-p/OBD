@@ -105,7 +105,7 @@ class DriveScreen extends ConsumerWidget {
     final columns = [
       'DRIVE',
       'OVER CURRENT',
-      'OVER PRESSURE',
+      'OVER VOLTAGE',
       'UNDER VOLTAGE',
       'OVER TEMP',
       'CAN COMM',
