@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/shared/vcu_subsystem_power_state/data/vcu_subsystem_power_state_mapper.dart';
 
+import '../../../shared/vcu_subsystem_power_state/data/vcu_subsystem_power_state_mapper.dart';
 import '../domain/entities/debug_message.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
@@ -71,6 +71,11 @@ class DebugController extends Notifier<DebugState> {
       DriveMcInfoMapper(),
       DriveMotorInfoMapper(),
       VcuSubsystemPowerStateMapper(),
+      LvPduLoadCh1_4Mapper(),
+      LvPduVcuLoadCh5_8Mapper(),
+      VcuPduStatusMapper(),
+      VcuPowerSubsystemHealthMapper(),
+      VcuContactorStateMapper(),
     ];
 
     for (final strategy in mappersList) {
