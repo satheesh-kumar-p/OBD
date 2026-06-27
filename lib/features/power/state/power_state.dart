@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:scout_obd/shared/vcu_lv_pdu_load1/domain/entities/lv_pdu_load_ch1_4_entity.dart';
+import '../../../shared/vcu_lv_pdu_load2/domain/entities/lv_pdu_load_ch5_8_entity.dart';
 import '../../../shared/vcu_power_subsystem_health/domain/entities/power_health_entity.dart';
 import '../../../shared/vcu_contactor_state/domain/entities/vcu_contactor_state_entity.dart';
 import '../../../shared/vcu_pdu_status/domain/entities/vcu_pdu_status_entity.dart';
 import '../../../shared/vcu_power_subsystem_health/domain/entities/lv_pdu_health_entity.dart';
 import '../../../shared/vcu_power_subsystem_health/enums/power_subsystem_status.dart';
 import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
-import '../../../shared/pdu_vcu_status_ch1_4/domain/entities/pdu_vcu_status_ch1_4_entity.dart';
-import '../../../shared/pdu_vcu_status_ch5_8/domain/entities/pdu_vcu_status_ch5_8_entity.dart';
 
 class PowerState {
   final VcuContactorStateEntity? contactorState;
   final VcuPduStatusEntity? vcuPduStatus;
   final PowerHealthEntity? powerHealth;
   final BatteryInfoEntity? batteryInfo;
-  final PduVcuStatusCh1_4Entity? pduCh1_4;
-  final PduVcuStatusCh5_8Entity? pduCh5_8;
+  final LvPduLoadCh14Entity? pduCh1_4;
+  final LvPduLoadCh5_8Entity? pduCh5_8;
 
   const PowerState({
     this.contactorState,
@@ -123,8 +123,8 @@ class PowerState {
     VcuPduStatusEntity? vcuPduStatus,
     PowerHealthEntity? powerHealth,
     BatteryInfoEntity? batteryInfo,
-    PduVcuStatusCh1_4Entity? pduCh1_4,
-    PduVcuStatusCh5_8Entity? pduCh5_8,
+    LvPduLoadCh14Entity? pduCh1_4,
+    LvPduLoadCh5_8Entity? pduCh5_8,
   }) {
     return PowerState(
       contactorState: contactorState ?? this.contactorState,

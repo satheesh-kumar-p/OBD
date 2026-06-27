@@ -1,10 +1,10 @@
-class PduVcuStatusCh5_8Entity {
+class LvPduLoadCh5_8Entity {
   final double channel5Current;
   final double channel6Current;
   final double channel7Current;
   final double channel8Current;
 
-  const PduVcuStatusCh5_8Entity({
+  const LvPduLoadCh5_8Entity({
     required this.channel5Current,
     required this.channel6Current,
     required this.channel7Current,

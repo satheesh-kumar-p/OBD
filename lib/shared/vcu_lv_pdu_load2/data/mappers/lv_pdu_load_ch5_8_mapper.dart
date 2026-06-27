@@ -1,9 +1,9 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../domain/entities/pdu_vcu_status_ch5_8_entity.dart';
+import '../../domain/entities/lv_pdu_load_ch5_8_entity.dart';
 
-class PduVcuStatusCh5_8Mapper extends CanExtractionStrategy<PduVcuStatusCh5_8Entity> {
-  static final int id = 0x000A0611;
+class LvPduVcuLoadCh5_8Mapper extends CanExtractionStrategy<LvPduLoadCh5_8Entity> {
+  static final int id = 0x224;
 
   @override
   int get messageId => id;
@@ -12,33 +12,33 @@ class PduVcuStatusCh5_8Mapper extends CanExtractionStrategy<PduVcuStatusCh5_8Ent
   List<CanField<dynamic>> get fields => [
     const CanField<double>(
       name: 'channel5Current',
-      startBit: 48,
-      endBit: 57,
+      startBit: 32,
+      endBit: 39,
       transformer: _scaleCurrent,
     ),
     const CanField<double>(
       name: 'channel6Current',
-      startBit: 32,
-      endBit: 41,
+      startBit: 24,
+      endBit: 31,
       transformer: _scaleCurrent,
     ),
     const CanField<double>(
       name: 'channel7Current',
       startBit: 16,
-      endBit: 25,
+      endBit: 23,
       transformer: _scaleCurrent,
     ),
     const CanField<double>(
       name: 'channel8Current',
-      startBit: 0,
-      endBit: 9,
+      startBit: 8,
+      endBit: 15,
       transformer: _scaleCurrent,
     ),
   ];
 
   @override
-  PduVcuStatusCh5_8Entity build(Map<String, dynamic> values) {
-    return PduVcuStatusCh5_8Entity(
+  LvPduLoadCh5_8Entity build(Map<String, dynamic> values) {
+    return LvPduLoadCh5_8Entity(
       channel5Current: values['channel5Current'],
       channel6Current: values['channel6Current'],
       channel7Current: values['channel7Current'],
@@ -46,5 +46,5 @@ class PduVcuStatusCh5_8Mapper extends CanExtractionStrategy<PduVcuStatusCh5_8Ent
     );
   }
 
-  static double _scaleCurrent(int raw) => raw * 0.1;
+  static double _scaleCurrent(int raw) => raw / 10;
 }

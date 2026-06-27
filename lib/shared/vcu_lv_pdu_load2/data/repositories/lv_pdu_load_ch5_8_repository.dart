@@ -3,18 +3,18 @@ import 'dart:async';
 import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
-import '../mappers/pdu_vcu_status_ch5_8_mapper.dart';
-import '../../domain/entities/pdu_vcu_status_ch5_8_entity.dart';
+import '../mappers/lv_pdu_load_ch5_8_mapper.dart';
+import '../../domain/entities/lv_pdu_load_ch5_8_entity.dart';
 
-class PduVcuStatusCh5_8Repository implements ICanDataRepository<PduVcuStatusCh5_8Entity> {
+class LvPduLoadCh5_8Repository implements ICanDataRepository<LvPduLoadCh5_8Entity> {
   final CommManager _canManager;
   final Logger _logger;
 
-  final _statusCtrl = StreamController<PduVcuStatusCh5_8Entity>.broadcast();
-  final _mapper = PduVcuStatusCh5_8Mapper();
+  final _statusCtrl = StreamController<LvPduLoadCh5_8Entity>.broadcast();
+  final _mapper = LvPduVcuLoadCh5_8Mapper();
   StreamSubscription? _statusSub;
 
-  PduVcuStatusCh5_8Repository({
+  LvPduLoadCh5_8Repository({
     required CommManager canManager,
     required Logger logger,
   })  : _canManager = canManager,
@@ -23,10 +23,10 @@ class PduVcuStatusCh5_8Repository implements ICanDataRepository<PduVcuStatusCh5_
   @override
   void startCanData() {
     if (_statusSub != null) return;
-    _logger.info('Starting PDU VCU Status Channels 5-8 data stream (CAN ID: 0x${PduVcuStatusCh5_8Mapper.id.toRadixString(16).toUpperCase()})');
+    _logger.info('Starting PDU VCU Status Channels 5-8 data stream (CAN ID: 0x${LvPduVcuLoadCh5_8Mapper.id.toRadixString(16).toUpperCase()})');
 
     _statusSub = _canManager
-        .watchMessage(PduVcuStatusCh5_8Mapper.id)
+        .watchMessage(LvPduVcuLoadCh5_8Mapper.id)
         .listen(
           (frame) {
             try {
@@ -53,7 +53,7 @@ class PduVcuStatusCh5_8Repository implements ICanDataRepository<PduVcuStatusCh5_
   }
 
   @override
-  Stream<PduVcuStatusCh5_8Entity> watchCanData() {
+  Stream<LvPduLoadCh5_8Entity> watchCanData() {
     return _statusCtrl.stream;
   }
 }

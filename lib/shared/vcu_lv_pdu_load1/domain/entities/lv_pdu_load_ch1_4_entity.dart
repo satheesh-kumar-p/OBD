@@ -1,10 +1,10 @@
-class PduVcuStatusCh1_4Entity {
+class LvPduLoadCh14Entity {
   final double channel1Current;
   final double channel2Current;
   final double channel3Current;
   final double channel4Current;
 
-  const PduVcuStatusCh1_4Entity({
+  const LvPduLoadCh14Entity({
     required this.channel1Current,
     required this.channel2Current,
     required this.channel3Current,
@@ -13,7 +13,7 @@ class PduVcuStatusCh1_4Entity {
 
   @override
   String toString() {
-    return 'PduVcuStatusCh1_4Entity(\n'
+    return 'LvPduLoadCh14Entity(\n'
         '  ch1Current: ${channel1Current}A,\n'
         '  ch2Current: ${channel2Current}A,\n'
         '  ch3Current: ${channel3Current}A,\n'

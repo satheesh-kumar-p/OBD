@@ -9,4 +9,10 @@ class PowerHealthEntity {
     required this.hvBattery,
     required this.lvPdu,
   });
+
+  @override
+  String toString() {
+    return 'PowerHealthEntity(hvBattery: $hvBattery, lvPdu: $lvPdu)';
+  }
+
 }
