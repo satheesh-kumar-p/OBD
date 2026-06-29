@@ -137,7 +137,7 @@ class SystemScreenState {
     return switch (status) {
       SubsystemFaultState.noFault => (const Color(0xFF00FF66), 'Healthy'),
       SubsystemFaultState.faulty => (const Color(0xFFFF3B3B), 'Fault Detected'),
-      SubsystemFaultState.unknown => (const Color(0xFF93A9B5), 'Not Connected'),
+      SubsystemFaultState.unknown => (const Color(0xFF93A9B5), 'Unknown'),
       SubsystemFaultState.badValue => (Colors.white24, '--'),
     };
   }
