@@ -98,8 +98,8 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
   SystemInfoEntity build(Map<String, dynamic> values) {
     return SystemInfoEntity(
       // Motor controllers: ICD rear→left, front→right mapping
-      frontMotorController: _toStatus(values['rearMotorController']),
-      rearMotorController: _toStatus(values['frontMotorController']),
+      frontMotorController: _toStatus(values['frontMotorController']),
+      rearMotorController: _toStatus(values['rearMotorController']),
 
       // Other components
       hvBattery: _toStatus(values['hvBattery']),
