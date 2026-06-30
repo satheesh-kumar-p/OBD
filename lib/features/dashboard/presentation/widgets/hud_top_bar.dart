@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'hud_mode_label.dart';
 import 'hud_arm_status.dart';
-import 'hud_e_stop_status.dart';
+import 'hud_safety_status.dart';
 import 'hud_handctrlStatus.dart';
 import 'hud_date_time_label.dart';
 import 'hud_battery_status_icon.dart';
@@ -43,7 +43,7 @@ class HudTopBar extends ConsumerWidget {
               SizedBox(width: 8.w),
               HudModeLabel(
                 mainText: state.modeName,
-                subText: state.subModeName,
+                subText: state.holdMode,
               ),
               SizedBox(width: 8.w),
               HudModeLabel(
@@ -68,7 +68,7 @@ class HudTopBar extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const HudEStopStatus(),
+                const HudSafetyStatus(),
                 SizedBox(width: 16.w),
                 const HudHandctrlStatus(),
                 SizedBox(width: 16.w),
