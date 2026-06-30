@@ -32,7 +32,7 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       endBit: 23,
     ),
     const CanField<int>(
-      name: 'towStatus',
+      name: 'tow',
       startBit: 20,
       endBit: 21,
     ),
@@ -54,8 +54,8 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       operationalState: VcuOperationalState.fromInt(parsedValues['operationalState']),
       chargerConnected: parsedValues['chargerConnected'] == 1,
       chargingInProgress: parsedValues['chargingInProgress'] == 1,
-      towModeEnabled: parsedValues['towMode'] == 1,
-      towStatus: GenericState.fromInt(parsedValues['towStatus']),
+      towMode: parsedValues['towMode'] == 1,
+      tow: TowMode.fromInt(parsedValues['tow']),
       emergencyStatus: GenericState.fromInt(parsedValues['emergencyStatus']),
       remoteEmergencyStatus: GenericState.fromInt(parsedValues['remoteEmergencyStatus']),
     );

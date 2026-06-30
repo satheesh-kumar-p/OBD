@@ -43,3 +43,26 @@ enum GenericState {
     GenericState.unknown => 'Unknown',
   };
 }
+
+enum TowMode {
+  disabled,
+  disengaged,
+  engaged,
+  unknown;
+
+  static TowMode fromInt(int value) {
+    return switch (value) {
+      0 => TowMode.disabled,
+      1 => TowMode.disengaged,
+      2 => TowMode.engaged,
+      _ => TowMode.unknown,
+    };
+  }
+
+  String get label => switch (this) {
+    TowMode.disabled => 'Disabled',
+    TowMode.disengaged => 'Disengaged',
+    TowMode.engaged => 'Engaged',
+    TowMode.unknown => 'Unknown',
+  };
+}

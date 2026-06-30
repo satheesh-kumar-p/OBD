@@ -4,8 +4,8 @@ class VcuStatusEntity {
   final VcuOperationalState operationalState;
   final bool chargerConnected;
   final bool chargingInProgress;
-  final bool towModeEnabled;
-  final GenericState towStatus;
+  final bool towMode;
+  final TowMode tow;
   final GenericState emergencyStatus;
   final GenericState remoteEmergencyStatus;
 
@@ -13,8 +13,8 @@ class VcuStatusEntity {
     required this.operationalState,
     required this.chargerConnected,
     required this.chargingInProgress,
-    required this.towModeEnabled,
-    required this.towStatus,
+    required this.towMode,
+    required this.tow,
     required this.emergencyStatus,
     required this.remoteEmergencyStatus,
   });
@@ -25,8 +25,8 @@ class VcuStatusEntity {
         'Operational: ${operationalState.label}, '
         'Charger: ${chargerConnected ? 'Connected' : 'Disconnected'}, '
         'Charging: ${chargingInProgress ? 'In Progress' : 'No'}, '
-        'Tow Mode: ${towModeEnabled ? 'Enabled' : 'Disabled'}, '
-        'Tow Status: ${towStatus.label}, '
+        'Tow Mode: ${towMode ? 'Enabled' : 'Disabled'}, '
+        'Tow: ${tow.label}, '
         'Emergency: ${emergencyStatus.label}, '
         'Remote Emergency: ${remoteEmergencyStatus.label})';
   }
