@@ -105,6 +105,4 @@ class DashboardState {
   Color get headlightsColor => (mode?.headlightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
 
   Color get fogLightsColor => (mode?.frontFogLightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
-
-  double get batteryLevel => 1.0;
 }
