@@ -7,72 +7,48 @@ import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entit
 
 class SystemScreenState {
   final SystemInfoEntity? systemInfo;
-  final DateTime? systemInfoLastUpdate;
-  
   final CompSubsystemState? computeCommInfo;
-  final DateTime? computeInfoLastUpdate;
-  
-  /// The reference time for staleness calculations in this state frame.
-  final DateTime now;
 
-  SystemScreenState({
+  const SystemScreenState({
     this.systemInfo,
-    this.systemInfoLastUpdate,
     this.computeCommInfo,
-    this.computeInfoLastUpdate,
-    DateTime? now,
-  }) : now = now ?? DateTime.now();
+  });
 
   SystemScreenState copyWith({
     SystemInfoEntity? systemInfo,
-    DateTime? systemInfoLastUpdate,
     CompSubsystemState? computeCommInfo,
-    DateTime? computeInfoLastUpdate,
-    DateTime? now,
   }) {
     return SystemScreenState(
       systemInfo: systemInfo ?? this.systemInfo,
-      systemInfoLastUpdate: systemInfoLastUpdate ?? this.systemInfoLastUpdate,
       computeCommInfo: computeCommInfo ?? this.computeCommInfo,
-      computeInfoLastUpdate: computeInfoLastUpdate ?? this.computeInfoLastUpdate,
-      now: now ?? this.now,
     );
   }
 
-  /// Calculates the current display status for all subsystems,
-  /// accounting for data staleness (5-second timeout).
+  /// Calculates the current display status for all subsystems.
   Map<Subsystem, SubsystemFaultState> get subsystemStatuses {
-    const staleThreshold = Duration(seconds: 5);
-
-    final bool systemStale = systemInfoLastUpdate == null || 
-        now.difference(systemInfoLastUpdate!) > staleThreshold;
-    
-    final bool computeStale = computeInfoLastUpdate == null || 
-        now.difference(computeInfoLastUpdate!) > staleThreshold;
-
     return {
-      Subsystem.frontMotorController: !systemStale ? systemInfo!.frontMotorController : SubsystemFaultState.badValue,
-      Subsystem.rearMotorController: !systemStale ? systemInfo!.rearMotorController : SubsystemFaultState.badValue,
-      Subsystem.hvBattery: !systemStale ? systemInfo!.hvBattery : SubsystemFaultState.badValue,
-      Subsystem.lvBattery: !systemStale ? systemInfo!.lvBattery : SubsystemFaultState.badValue,
-      Subsystem.lvPdu: !systemStale ? systemInfo!.lvPdu : SubsystemFaultState.badValue,
-      Subsystem.hvPdu: !systemStale ? systemInfo!.hvPdu : SubsystemFaultState.badValue,
-      Subsystem.dcDc48v12v: !systemStale ? systemInfo!.dcDc48v12v : SubsystemFaultState.badValue,
-      Subsystem.dcDc12v5v: !systemStale ? systemInfo!.dcDc12v5v : SubsystemFaultState.badValue,
-      Subsystem.vcu: !systemStale ? systemInfo!.vcu : SubsystemFaultState.badValue,
-      Subsystem.frontLeftMotor: !systemStale ? systemInfo!.frontLeftMotor : SubsystemFaultState.badValue,
-      Subsystem.rearLeftMotor: !systemStale ? systemInfo!.rearLeftMotor : SubsystemFaultState.badValue,
-      Subsystem.frontRightMotor: !systemStale ? systemInfo!.frontRightMotor : SubsystemFaultState.badValue,
-      Subsystem.rearRightMotor: !systemStale ? systemInfo!.rearRightMotor : SubsystemFaultState.badValue,
-      Subsystem.mainCompute: !systemStale ? systemInfo!.mainCompute : SubsystemFaultState.badValue,
-      Subsystem.secondaryCompute: !systemStale ? systemInfo!.secondaryCompute : SubsystemFaultState.badValue,
-      Subsystem.uhfRadio: !computeStale ? computeCommInfo!.uhfRadio : SubsystemFaultState.badValue,
-      Subsystem.lBandRadio: !computeStale ? computeCommInfo!.lBandRadio : SubsystemFaultState.badValue,
-      Subsystem.ethernetSwitch: !computeStale ? computeCommInfo!.ethernetSwitchFault : SubsystemFaultState.badValue,
-      Subsystem.gnss: !computeStale ? computeCommInfo!.gnssFault : SubsystemFaultState.badValue,
-      Subsystem.imu: !computeStale ? computeCommInfo!.imuFault : SubsystemFaultState.badValue,
-      Subsystem.lidar2d: !computeStale ? computeCommInfo!.lidar2dFault : SubsystemFaultState.badValue,
-      Subsystem.lidar3d: !computeStale ? computeCommInfo!.lidar3dFault : SubsystemFaultState.badValue,
+      Subsystem.frontMotorController: systemInfo?.frontMotorController ?? SubsystemFaultState.unknown,
+      Subsystem.rearMotorController: systemInfo?.rearMotorController ?? SubsystemFaultState.unknown,
+      Subsystem.hvBattery: systemInfo?.hvBattery ?? SubsystemFaultState.unknown,
+      Subsystem.lvBattery: systemInfo?.lvBattery ?? SubsystemFaultState.unknown,
+      Subsystem.lvPdu: systemInfo?.lvPdu ?? SubsystemFaultState.unknown,
+      Subsystem.hvPdu: systemInfo?.hvPdu ?? SubsystemFaultState.unknown,
+      Subsystem.dcDc48v12v: systemInfo?.dcDc48v12v ?? SubsystemFaultState.unknown,
+      Subsystem.dcDc12v5v: systemInfo?.dcDc12v5v ?? SubsystemFaultState.unknown,
+      Subsystem.vcu: systemInfo?.vcu ?? SubsystemFaultState.unknown,
+      Subsystem.frontLeftMotor: systemInfo?.frontLeftMotor ?? SubsystemFaultState.unknown,
+      Subsystem.rearLeftMotor: systemInfo?.rearLeftMotor ?? SubsystemFaultState.unknown,
+      Subsystem.frontRightMotor: systemInfo?.frontRightMotor ?? SubsystemFaultState.unknown,
+      Subsystem.rearRightMotor: systemInfo?.rearRightMotor ?? SubsystemFaultState.unknown,
+      Subsystem.mainCompute: systemInfo?.mainCompute ?? SubsystemFaultState.unknown,
+      Subsystem.secondaryCompute: systemInfo?.secondaryCompute ?? SubsystemFaultState.unknown,
+      Subsystem.uhfRadio: computeCommInfo?.uhfRadio ?? SubsystemFaultState.unknown,
+      Subsystem.lBandRadio: computeCommInfo?.lBandRadio ?? SubsystemFaultState.unknown,
+      Subsystem.ethernetSwitch: computeCommInfo?.ethernetSwitchFault ?? SubsystemFaultState.unknown,
+      Subsystem.gnss: computeCommInfo?.gnssFault ?? SubsystemFaultState.unknown,
+      Subsystem.imu: computeCommInfo?.imuFault ?? SubsystemFaultState.unknown,
+      Subsystem.lidar2d: computeCommInfo?.lidar2dFault ?? SubsystemFaultState.unknown,
+      Subsystem.lidar3d: computeCommInfo?.lidar3dFault ?? SubsystemFaultState.unknown,
     };
   }
 
@@ -138,7 +114,6 @@ class SystemScreenState {
       SubsystemFaultState.noFault => (const Color(0xFF00FF66), 'Healthy'),
       SubsystemFaultState.faulty => (const Color(0xFFFF3B3B), 'Fault Detected'),
       SubsystemFaultState.unknown => (const Color(0xFF93A9B5), 'Unknown'),
-      SubsystemFaultState.badValue => (Colors.white24, '--'),
     };
   }
 

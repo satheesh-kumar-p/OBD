@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/di/injection_container.dart';
 import '../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
 import '../../shared/vcu_subsystem_state/di/system_info_providers.dart';
 import 'presentation/state/system_screen_state.dart';
@@ -10,36 +11,32 @@ final systemScreenStateProvider = NotifierProvider<SystemScreenNotifier, SystemS
 );
 
 class SystemScreenNotifier extends Notifier<SystemScreenState> {
+  DateTime? _lastSystemUpdate;
+  DateTime? _lastComputeUpdate;
+
   @override
   SystemScreenState build() {
-    // 1. Listen for System Health data (0x203)
-    ref.listen(systemInfoProvider, (previous, next) {
-      next.whenData((data) {
-        state = state.copyWith(
-          systemInfo: data,
-          systemInfoLastUpdate: DateTime.now(),
-          now: DateTime.now(),
-        );
-      });
+    ref.watch(stalenessTickerProvider);
+
+    // 2. Listen to providers to track when data last arrived
+    ref.listen(systemInfoProvider, (prev, next) {
+      if (next.hasValue) _lastSystemUpdate = DateTime.now();
+    });
+    ref.listen(compSubsystemInfoProvider, (prev, next) {
+      if (next.hasValue) _lastComputeUpdate = DateTime.now();
     });
 
-    // 2. Listen for Compute data (0x199)
-    ref.listen(compSubsystemInfoProvider, (previous, next) {
-      next.whenData((data) {
-        state = state.copyWith(
-          computeCommInfo: data,
-          computeInfoLastUpdate: DateTime.now(),
-        );
-      });
-    });
+    final now = DateTime.now();
+    const staleThreshold = Duration(seconds: 5);
 
-    // 3. Periodic timer to update 'now' for staleness calculations
-    final timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      state = state.copyWith(now: DateTime.now());
-    });
+    bool isFresh(DateTime? lastUpdate) {
+      return lastUpdate != null && now.difference(lastUpdate) < staleThreshold;
+    }
 
-    ref.onDispose(() => timer.cancel());
-
-    return SystemScreenState();
+    // 3. Return a new state object every time build() is triggered (rebuild or ticker)
+    return SystemScreenState(
+      systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
+      computeCommInfo: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
+    );
   }
 }

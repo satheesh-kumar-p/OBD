@@ -18,8 +18,7 @@ class DashboardController extends Notifier<DashboardState> {
 
   @override
   DashboardState build() {
-    // Watch clock ticker to force a rebuild every second for staleness checks
-    ref.watch(clockTickerProvider);
+    ref.watch(stalenessTickerProvider);
     
     final now = DateTime.now();
     const stalenessThreshold = Duration(seconds: 5);

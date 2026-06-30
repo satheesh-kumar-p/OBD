@@ -59,14 +59,12 @@ class CompSubsystemStateMapper extends CanExtractionStrategy<CompSubsystemState>
 
   SubsystemFaultState _toFaultStatus(int value) {
     switch (value) {
-      case 0:
-        return SubsystemFaultState.unknown;
       case 1:
         return SubsystemFaultState.noFault;
       case 2:
         return SubsystemFaultState.faulty;
       default:
-        return SubsystemFaultState.badValue;
+        return SubsystemFaultState.unknown;
     }
   }
 

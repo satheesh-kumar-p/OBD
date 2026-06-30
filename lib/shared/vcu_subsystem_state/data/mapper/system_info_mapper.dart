@@ -122,14 +122,12 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
 
   SubsystemFaultState _toStatus(int value) {
     switch (value) {
-      case 0:
-        return SubsystemFaultState.unknown;
       case 1:
         return SubsystemFaultState.noFault;
       case 2:
         return SubsystemFaultState.faulty;
       default:
-        return SubsystemFaultState.badValue;
+        return SubsystemFaultState.unknown;
     }
   }
 }

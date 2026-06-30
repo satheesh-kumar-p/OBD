@@ -88,7 +88,7 @@ class DashboardState {
     return switch (eStopInfo?.status) {
       EStopStatus.engaged => const Color(0xFFFF3B3B),
       EStopStatus.released => const Color(0xFF00FF66),
-      EStopStatus.unknown || null => Colors.white12,
+      EStopStatus.unknown || null => Colors.white,
     };
   }
 
@@ -97,8 +97,7 @@ class DashboardState {
     return switch (status) {
       SubsystemFaultState.noFault => const Color(0xFF00FF66),
       SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
-      SubsystemFaultState.unknown => Colors.white,
-      SubsystemFaultState.badValue || null => Colors.orange,
+      SubsystemFaultState.unknown || null => Colors.white,
     };
   }
 
