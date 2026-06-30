@@ -1,7 +1,10 @@
 enum MainMode {
   unknown(-1, 'UNKNOWN'),
   modeA(1, 'MODE A'),
-  modeB(2, 'MODE B');
+  modeB(2, 'MODE B'),
+  modeC(3, 'MODE C'),
+  modeD(4, 'MODE D'),
+  modeE(5, 'MODE E');
 
   const MainMode(this.value, this.label);
   final int value;
@@ -16,17 +19,6 @@ enum HoldSubMode {
   const HoldSubMode(this.value, this.label);
   final int value;
   final String label;
-}
-
-enum ModeChangeReason {
-  unknown(-1), // Invalid values
-  gcsCommand(0),
-  failsafe(1),
-  sensorFault(2),
-  commLoss(3);
-
-  const ModeChangeReason(this.value);
-  final int value;
 }
 
 enum SpeedMode {
@@ -48,6 +40,17 @@ enum DriveMode {
   position(4, 'POSITION');
 
   const DriveMode(this.value, this.label);
+  final int value;
+  final String label;
+}
+
+enum ArmStatus {
+  unknown(-1, 'UNKNOWN'),
+  disarmed(1, 'DISARMED'),
+  armed(2, 'ARMED'),
+  override(3, 'OVERRIDE');
+
+  const ArmStatus(this.value, this.label);
   final int value;
   final String label;
 }

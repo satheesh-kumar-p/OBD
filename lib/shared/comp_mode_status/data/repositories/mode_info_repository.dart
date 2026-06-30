@@ -39,7 +39,7 @@ class ModeInfoRepository implements ICanDataRepository<ModeEntity> {
                 'hold sub mode': modeInfo.holdSubMode.label,
                 'speed': modeInfo.speedMode,
                 'drive': modeInfo.driveMode.name,
-                'armed': modeInfo.armed,
+                'armed': modeInfo.armStatus.label,
               });
             } catch (e, st) {
               _logger.error('Failed to parse Mode Info frame', error: e, stack: st);

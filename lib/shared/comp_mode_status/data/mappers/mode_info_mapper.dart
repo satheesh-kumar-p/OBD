@@ -51,33 +51,15 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
       ),
     ),
 
-    CanField<bool>(
-      name: 'armed',
-      startBit: 23,
-      endBit: 23,
-      transformer: (value) => value == 1,
-    ),
-
-    CanField<bool>(
-      name: 'headlightsOn',
+    CanField<ArmStatus>(
+      name: 'armStatus',
       startBit: 22,
-      endBit: 22,
-      transformer: (value) => value == 1,
-    ),
-
-    CanField<bool>(
-      name: 'frontFogLightsOn',
-      startBit: 21,
-      endBit: 21,
-      transformer: (value) => value == 1,
-    ),
-
-    CanField<bool>(
-      name: 'rearBrakeLightsOn',
-      startBit: 20,
-      endBit: 20,
-      transformer: (value) => value == 1,
-    ),
+      endBit: 23,
+      transformer: (value) => ArmStatus.values.firstWhere(
+            (e) => e.value == value,
+        orElse: () => ArmStatus.unknown,
+      ),
+    )
   ];
 
   @override
@@ -87,10 +69,7 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
       holdSubMode: parsedValues['holdSubMode'],
       speedMode: parsedValues['speedMode'],
       driveMode: parsedValues['driveMode'],
-      armed: parsedValues['armed'],
-      headlightsOn: parsedValues['headlightsOn'],
-      frontFogLightsOn: parsedValues['frontFogLightsOn'],
-      rearBrakeLightsOn: parsedValues['rearBrakeLightsOn'],
+      armStatus: parsedValues['armStatus'],
     );
   }
 }

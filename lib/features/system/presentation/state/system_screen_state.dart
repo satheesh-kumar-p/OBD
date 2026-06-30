@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
-import '../../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
+import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
+import '../../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 class SystemScreenState {
   final SystemInfoEntity? systemInfo;
