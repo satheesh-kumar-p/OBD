@@ -10,6 +10,7 @@ class HudBatteryStatusIcon extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dashboardStateProvider);
     final battery = state.battery;
+    final isCharging = state.vcuStatus?.chargingInProgress ?? false;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -23,6 +24,7 @@ class HudBatteryStatusIcon extends ConsumerWidget {
             BatteryLevelIndicator(
               soc: battery?.lvBatterySoc ?? 0,
               color: state.lvBatteryColor,
+              isCharging: false,
             ),
             SizedBox(height: 4.h),
             Text(
@@ -44,6 +46,7 @@ class HudBatteryStatusIcon extends ConsumerWidget {
             BatteryLevelIndicator(
               soc: battery?.hvBatterySoc ?? 0,
               color: state.hvBatteryColor,
+              isCharging: isCharging,
             ),
             SizedBox(height: 4.h),
             Text(
@@ -64,11 +67,13 @@ class HudBatteryStatusIcon extends ConsumerWidget {
 class BatteryLevelIndicator extends StatelessWidget {
   final int soc;
   final Color color;
+  final bool isCharging;
 
   const BatteryLevelIndicator({
     super.key,
     required this.soc,
     required this.color,
+    this.isCharging = false,
   });
 
   @override
@@ -93,10 +98,14 @@ class BatteryLevelIndicator extends StatelessWidget {
               width: width,
               height: height,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: borderW),
+                border: Border.all(
+                  color: isCharging ? const Color(0xFF00FF66) : Colors.white,
+                  width: borderW,
+                ),
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Stack(
+                alignment: Alignment.centerLeft,
                 children: [
                   Positioned(
                     left: inset,
@@ -110,15 +119,29 @@ class BatteryLevelIndicator extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Center(
-                    child: Text(
-                      '$soc%',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: height * 0.6,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'monospace',
-                        height: 1.0,
+                  Positioned.fill(
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (isCharging)
+                            Icon(
+                              Icons.bolt_rounded,
+                              color: Colors.white,
+                              size: height * 0.55,
+                            ),
+                          Text(
+                            '$soc%',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: height * (isCharging ? 0.45 : 0.6),
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'monospace',
+                              height: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -129,7 +152,7 @@ class BatteryLevelIndicator extends StatelessWidget {
               width: terminalW,
               height: terminalH,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isCharging ? const Color(0xFF00FF66) : Colors.white,
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(1.5 * unit),
                   bottomRight: Radius.circular(1.5 * unit),

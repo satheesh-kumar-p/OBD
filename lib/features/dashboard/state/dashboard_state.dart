@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/enums/subsystem_fault_state_enum.dart';
+import '../../../shared/vcu_status/domain/vcu_status_entity.dart';
 import '../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
 import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
@@ -16,6 +17,7 @@ class DashboardState {
     this.eStopInfo,
     this.systemInfo,
     this.compSubsystemState,
+    this.vcuStatus,
     this.selectedIndex = 0,
   });
 
@@ -25,6 +27,7 @@ class DashboardState {
   final EStopInfoEntity? eStopInfo;
   final SystemInfoEntity? systemInfo;
   final CompSubsystemState? compSubsystemState;
+  final VcuStatusEntity? vcuStatus;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -34,6 +37,7 @@ class DashboardState {
     EStopInfoEntity? eStopInfo,
     SystemInfoEntity? systemInfo,
     CompSubsystemState? compRadioInfo,
+    VcuStatusEntity? vcuStatus,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -43,6 +47,7 @@ class DashboardState {
       eStopInfo: eStopInfo ?? this.eStopInfo,
       systemInfo: systemInfo ?? this.systemInfo,
       compSubsystemState: compRadioInfo ?? this.compSubsystemState,
+      vcuStatus: vcuStatus ?? this.vcuStatus,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -100,8 +105,4 @@ class DashboardState {
       SubsystemFaultState.unknown || null => Colors.white,
     };
   }
-
-  Color get headlightsColor => (mode?.headlightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
-
-  Color get fogLightsColor => (mode?.frontFogLightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
 }

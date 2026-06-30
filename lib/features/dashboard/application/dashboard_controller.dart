@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'time_controller.dart';
+import '../state/dashboard_state.dart';
 import '../../../core/di/injection_container.dart';
+import '../../../shared/vcu_status/vcu_status_providers.dart';
 import '../../../shared/comp_mode_status/di/mode_info_providers.dart';
-import '../../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
 import '../../../shared/vcu_estop_status/di/e_stop_info_providers.dart';
 import '../../../shared/vcu_power_status/di/battery_info_providers.dart';
 import '../../../shared/vcu_subsystem_state/di/system_info_providers.dart';
-import '../state/dashboard_state.dart';
-import 'time_controller.dart';
+import '../../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
 
 class DashboardController extends Notifier<DashboardState> {
   DateTime? _lastBatteryUpdate;
@@ -15,6 +16,7 @@ class DashboardController extends Notifier<DashboardState> {
   DateTime? _lastEStopUpdate;
   DateTime? _lastSystemUpdate;
   DateTime? _lastComputeUpdate;
+  DateTime? _lastVcuStatusUpdate;
 
   @override
   DashboardState build() {
@@ -39,6 +41,9 @@ class DashboardController extends Notifier<DashboardState> {
     ref.listen(compSubsystemInfoProvider, (prev, next) {
       if (next.hasValue) _lastComputeUpdate = DateTime.now();
     });
+    ref.listen(vcuStatusProvider, (prev, next) {
+      if (next.hasValue) _lastVcuStatusUpdate = DateTime.now();
+    });
 
     final connectionAsync = ref.watch(commConnectionProvider);
     final globalTime = ref.watch(timeControllerProvider);
@@ -59,6 +64,7 @@ class DashboardController extends Notifier<DashboardState> {
       eStopInfo: isFresh(_lastEStopUpdate) ? ref.read(eStopInfoProvider).value : null,
       systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
       compSubsystemState: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
+      vcuStatus: isFresh(_lastVcuStatusUpdate) ? ref.read(vcuStatusProvider).value : null,
       globalTime: globalTime,
     );
   }

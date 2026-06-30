@@ -6,17 +6,15 @@ class HudModeLabel extends StatelessWidget {
     super.key,
     required this.mainText,
     required this.subText,
-    this.armed = false,
   });
 
   final String mainText;
   final String subText;
-  final bool armed;
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = armed ? Colors.redAccent.withOpacity(0.8) : Colors.white24;
-    final bgColor = armed ? Colors.redAccent.withOpacity(0.1) : Colors.white10;
+    const borderColor = Colors.white24;
+    const bgColor = Colors.white10;
 
     return IntrinsicWidth(
       child: Container(
@@ -25,61 +23,30 @@ class HudModeLabel extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: borderColor, width: 1.w),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (armed) ...[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.redAccent,
-                    size: 24.r,
-                  ),
-                  Text(
-                    'ARMED',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5.w,
-                    ),
-                  ),
-                ],
+            Text(
+              mainText,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.4.w,
+                height: 1.1,
               ),
-              SizedBox(width: 10.w),
-            ],
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    mainText,
-                    style: TextStyle(
-                      color: armed ? Colors.redAccent : Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.4.w,
-                      height: 1.1,
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: Text(
-                    subText,
-                    style: TextStyle(
-                      color: armed ? Colors.redAccent.withOpacity(0.7) : Colors.orangeAccent,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.3.w,
-                      height: 1.1,
-                    ),
-                  ),
-                ),
-              ],
+            ),
+            Text(
+              subText,
+              style: TextStyle(
+                color: Colors.orangeAccent,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3.w,
+                height: 1.1,
+              ),
             ),
           ],
         ),

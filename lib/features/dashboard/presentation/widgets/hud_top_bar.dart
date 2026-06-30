@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../dashboard_providers.dart';
-import 'hud_battery_status_icon.dart';
-import 'hud_date_time_label.dart';
-import 'hud_handctrlStatus.dart';
+
 import 'hud_mode_label.dart';
+import 'hud_arm_status.dart';
 import 'hud_e_stop_status.dart';
-import 'hud_indicator_tile.dart';
+import 'hud_handctrlStatus.dart';
+import 'hud_date_time_label.dart';
+import 'hud_battery_status_icon.dart';
+import '../../dashboard_providers.dart';
 
 class HudTopBar extends ConsumerWidget {
   const HudTopBar({super.key});
@@ -38,10 +39,11 @@ class HudTopBar extends ConsumerWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const HudArmStatus(),
+              SizedBox(width: 8.w),
               HudModeLabel(
                 mainText: state.modeName,
                 subText: state.subModeName,
-                armed: state.mode?.armed ?? false,
               ),
               SizedBox(width: 8.w),
               HudModeLabel(
@@ -71,22 +73,6 @@ class HudTopBar extends ConsumerWidget {
                 const HudHandctrlStatus(),
                 SizedBox(width: 16.w),
                 const HudBatteryStatusIcon(),
-                if (state.mode != null) ...[
-                  SizedBox(width: 20.w),
-                  HudIndicatorTile(
-                    icon: Icons.light_mode_rounded,
-                    color: state.headlightsColor,
-                    label: 'HL',
-                    isActive: state.mode!.headlightsOn,
-                  ),
-                  SizedBox(width: 8.w),
-                  HudIndicatorTile(
-                    icon: Icons.wb_twilight_rounded,
-                    color: state.fogLightsColor,
-                    label: 'FOG',
-                    isActive: state.mode!.frontFogLightsOn,
-                  ),
-                ],
               ],
             ),
           ),
