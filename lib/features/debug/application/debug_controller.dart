@@ -64,6 +64,7 @@ class DebugController extends Notifier<DebugState> {
       CompTimeSyncMapper(),
       CompSubsystemStateMapper(),
       EStopInfoMapper(),
+      VcuStatusMapper(),
     ];
 
     for (final strategy in mappersList) {
