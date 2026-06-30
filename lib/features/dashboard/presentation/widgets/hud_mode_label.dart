@@ -42,8 +42,8 @@ class HudModeLabel extends StatelessWidget {
               subText,
               style: TextStyle(
                 color: Colors.orangeAccent,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w900,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 0.3.w,
                 height: 1.1,
               ),
