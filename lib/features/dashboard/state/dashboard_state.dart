@@ -107,6 +107,15 @@ class DashboardState {
     };
   }
 
+  Color get gcsColor {
+    final status = compSubsystemState?.lBandRadio;
+    return switch (status) {
+      SubsystemFaultState.noFault => const Color(0xFF00FF66),
+      SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
+      SubsystemFaultState.unknown || null => Colors.white,
+    };
+  }
+
   // --- Safety Status Getters ---
 
   Color get physicalEStopColor => _getGenericStatusColor(vcuStatus?.emergencyStatus);

@@ -44,48 +44,32 @@ class _HandControllerPainter extends CustomPainter {
 
     final path = Path()..fillType = PathFillType.evenOdd;
 
-    const bodyRect = Rect.fromLTWH(10, 30, 80, 54);
-    path.addRRect(RRect.fromRectAndRadius(bodyRect, const Radius.circular(16)));
+    // Main vertical body
+    const bodyRect = Rect.fromLTWH(25, 10, 50, 80);
+    path.addRRect(RRect.fromRectAndRadius(bodyRect, const Radius.circular(8)));
 
-    const leftGrip = Rect.fromLTWH(2, 34, 22, 48);
-    const rightGrip = Rect.fromLTWH(76, 34, 22, 48);
-    path.addRRect(RRect.fromRectAndRadius(leftGrip, const Radius.circular(14)));
-    path.addRRect(RRect.fromRectAndRadius(rightGrip, const Radius.circular(14)));
+    // Top Antenna
+    const antennaRect = Rect.fromLTWH(47, 2, 6, 8);
+    path.addRRect(RRect.fromRectAndRadius(antennaRect, const Radius.circular(2)));
 
-    const antennaW = 6.0;
-    const antennaH = 18.0;
-    const antennaY = 12.0;
-    const leftAntennaX = 24.0;
-    const rightAntennaX = 70.0;
-    path.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(leftAntennaX, antennaY, antennaW, antennaH),
-        const Radius.circular(3),
-      ),
-    );
-    path.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(rightAntennaX, antennaY, antennaW, antennaH),
-        const Radius.circular(3),
-      ),
-    );
+    // Screen area (as a hole)
+    const screenRect = Rect.fromLTWH(30, 18, 40, 25);
+    path.addRRect(RRect.fromRectAndRadius(screenRect, const Radius.circular(2)));
 
-    const screenHole = Rect.fromLTWH(32, 40, 36, 22);
-    path.addRRect(RRect.fromRectAndRadius(screenHole, const Radius.circular(4)));
+    // Control area elements (as holes)
+    // Left Control (D-pad style)
+    path.addOval(Rect.fromCircle(center: const Offset(38, 55), radius: 6));
+    
+    // Right Control (Action buttons style)
+    path.addOval(Rect.fromCircle(center: const Offset(62, 55), radius: 6));
 
-    const buttonR = 3.0;
-    const leftButtonsX = 16.0;
-    const rightButtonsX = 84.0;
-    const buttonYs = <double>[44.0, 54.0, 64.0];
-    for (final y in buttonYs) {
-      path.addOval(Rect.fromCircle(center: const Offset(leftButtonsX, 0).translate(0, y), radius: buttonR));
-      path.addOval(Rect.fromCircle(center: const Offset(rightButtonsX, 0).translate(0, y), radius: buttonR));
-    }
-
-    const indicatorY = 35.0;
-    path.addOval(Rect.fromCircle(center: const Offset(46, indicatorY), radius: 1.6));
-    path.addOval(Rect.fromCircle(center: const Offset(50, indicatorY), radius: 1.6));
-    path.addOval(Rect.fromCircle(center: const Offset(54, indicatorY), radius: 1.6));
+    // Middle/Bottom buttons
+    path.addOval(Rect.fromCircle(center: const Offset(50, 55), radius: 3));
+    
+    const lowerButtonsY = 72.0;
+    path.addOval(Rect.fromCircle(center: const Offset(38, lowerButtonsY), radius: 4));
+    path.addOval(Rect.fromCircle(center: const Offset(50, lowerButtonsY), radius: 4));
+    path.addOval(Rect.fromCircle(center: const Offset(62, lowerButtonsY), radius: 4));
 
     canvas.drawPath(path, paint);
   }
