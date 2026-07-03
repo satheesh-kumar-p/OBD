@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import '../../core/di/injection_container.dart';
 import 'application/dashboard_controller.dart';
 import 'state/dashboard_state.dart';
 
@@ -15,5 +16,11 @@ final dashboardStateProvider = Provider<DashboardState>((ref) {
   final selectedIndex = ref.watch(dashboardIndexProvider);
 
   return state.copyWith(selectedIndex: selectedIndex);
+});
+
+/// Provides the current system time formatted as a string, updating every second.
+final dashboardTimeProvider = Provider<String>((ref) {
+  ref.watch(clockTickerProvider);
+  return DashboardState.systemTimeFormatted;
 });
 

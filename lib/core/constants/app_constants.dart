@@ -16,8 +16,5 @@ abstract final class AppConstants {
 
 
   // Centralized Message Dispatch Rules
-  static const List<MessageConfig> dispatchConfigs = [
-    // Time Sync (0x206)
-    MessageConfig.sample(0x206, 2.0),
-  ];
+  static const List<MessageConfig> dispatchConfigs = [];
 }

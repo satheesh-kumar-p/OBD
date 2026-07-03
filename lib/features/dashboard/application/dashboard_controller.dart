@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'time_controller.dart';
 import '../state/dashboard_state.dart';
 import '../../../core/di/injection_container.dart';
 import '../../../shared/vcu_status/vcu_status_providers.dart';
@@ -46,7 +45,6 @@ class DashboardController extends Notifier<DashboardState> {
     });
 
     final connectionAsync = ref.watch(commConnectionProvider);
-    final globalTime = ref.watch(timeControllerProvider);
 
     // If we aren't connected yet, return a default/disconnected state
     if (connectionAsync.asData == null) {
@@ -65,7 +63,6 @@ class DashboardController extends Notifier<DashboardState> {
       systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
       compSubsystemState: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
       vcuStatus: isFresh(_lastVcuStatusUpdate) ? ref.read(vcuStatusProvider).value : null,
-      globalTime: globalTime,
     );
   }
 }

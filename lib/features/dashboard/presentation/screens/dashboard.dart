@@ -6,7 +6,6 @@ import '../../../debug/presentation/screens/debug_screen.dart';
 import '../../../drive/presentation/screens/drive_status_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
 import '../../dashboard_providers.dart';
-import '../../state/dashboard_state.dart';
 import '../widgets/hud_sidebar.dart';
 import '../widgets/hud_top_bar.dart';
 
@@ -15,7 +14,7 @@ class Dashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dashboardState = ref.watch(dashboardStateProvider);
+    final selectedIndex = ref.watch(dashboardStateProvider.select((s) => s.selectedIndex));
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +42,7 @@ class Dashboard extends ConsumerWidget {
                       items: const [
                         'SYSTEM', 'DRIVE', 'DEBUG',
                       ],
-                      selectedIndex: dashboardState.selectedIndex,
+                      selectedIndex: selectedIndex,
                       onSelect: (index) {
                         ref.read(dashboardIndexProvider.notifier).state = index;
                       },
@@ -52,7 +51,14 @@ class Dashboard extends ConsumerWidget {
 
                   // Page Content
                   Expanded(
-                    child: _DashboardContent(state: dashboardState),
+                    child: IndexedStack(
+                      index: selectedIndex,
+                      children: const [
+                        SystemScreen(),
+                        DriveScreen(),
+                        DebugScreen(),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -60,24 +66,6 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _DashboardContent extends StatelessWidget {
-  const _DashboardContent({required this.state});
-
-  final DashboardState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return IndexedStack(
-      index: state.selectedIndex,
-      children: const [
-        SystemScreen(),
-        DriveScreen(),
-        DebugScreen(),
-      ],
     );
   }
 }

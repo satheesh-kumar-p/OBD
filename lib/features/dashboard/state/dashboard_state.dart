@@ -12,7 +12,6 @@ import '../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_stat
 
 class DashboardState {
   const DashboardState({
-    this.globalTime,
     this.mode,
     this.battery,
     this.eStopInfo,
@@ -22,7 +21,6 @@ class DashboardState {
     this.selectedIndex = 0,
   });
 
-  final DateTime? globalTime;
   final ModeEntity? mode;
   final BatteryInfoEntity? battery;
   final EStopInfoEntity? eStopInfo;
@@ -32,7 +30,6 @@ class DashboardState {
   final int selectedIndex;
 
   DashboardState copyWith({
-    DateTime? globalTime,
     ModeEntity? mode,
     BatteryInfoEntity? battery,
     EStopInfoEntity? eStopInfo,
@@ -42,7 +39,6 @@ class DashboardState {
     int? selectedIndex,
   }) {
     return DashboardState(
-      globalTime: globalTime ?? this.globalTime,
       mode: mode ?? this.mode,
       battery: battery ?? this.battery,
       eStopInfo: eStopInfo ?? this.eStopInfo,
@@ -53,11 +49,8 @@ class DashboardState {
     );
   }
 
-  String get systemTimeFormatted {
-    // If we have synced CAN time, we use the repository's latest current time
-    // instead of just the last emitted stream value. This ensures the clock
-    // feels smooth even if the stream emission has slight jitter.
-    final now = globalTime ?? DateTime.now();
+  static String get systemTimeFormatted {
+    final now = DateTime.now();
 
     return '${now.day.toString().padLeft(2, '0')}-'
         '${now.month.toString().padLeft(2, '0')}-'
