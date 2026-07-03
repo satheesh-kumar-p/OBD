@@ -14,6 +14,9 @@ abstract final class AppConstants {
   static const String tcpHost = '192.168.1.10';
   static const int tcpPort = 5002;
 
+  // Staleness Configuration
+  static const Duration staleThreshold = Duration(seconds: 5);
+
   // CAN Message ID Whitelist
   // Any ID not in this list will be ignored by the MessageDispatcher
   static const Set<int> whitelistedMessageIds = {

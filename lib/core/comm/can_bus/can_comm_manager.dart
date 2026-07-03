@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../constants/app_constants.dart';
 import '../../dispatcher/message_dispatcher.dart';
 import '../../logger/logger.dart';
 import 'can_config.dart';
@@ -15,7 +16,7 @@ class CanCommManager {
     MessageDispatcher? dispatcher,
   })  : _service = service,
         _logger = logger,
-        _dispatcher = dispatcher ?? MessageDispatcher() {
+        _dispatcher = dispatcher ?? MessageDispatcher(staleThreshold: AppConstants.staleThreshold) {
     _service.connectionStream.listen((connected) {
       _logger.info('CAN Connection Status: ${connected ? "CONNECTED" : "DISCONNECTED"}');
     });

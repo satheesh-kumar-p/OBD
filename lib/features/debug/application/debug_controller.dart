@@ -46,14 +46,19 @@ class DebugController extends Notifier<DebugState> {
   DebugState build() {
     _registerMappers();
 
-    ref.listen(commFrameStreamProvider, (previous, next) {
-      final frame = next.asData?.value;
+    final commManager = ref.watch(commManagerProvider);
 
-      // The debug screen only logs whitelisted traffic
-      if (frame != null && AppConstants.whitelistedMessageIds.contains(frame.id)) {
-        addFrame(frame);
-      }
-    });
+    // Subscribe to every whitelisted message stream
+    for (final id in AppConstants.whitelistedMessageIds) {
+      final subscription = commManager.watchMessage(id).listen((frame) {
+        if (frame != null) {
+          addFrame(frame);
+        }
+      });
+
+      // Ensure we clean up listeners when the controller is disposed
+      ref.onDispose(() => subscription.cancel());
+    }
 
     return DebugState(messagesById: {}, sortedIds: []);
   }

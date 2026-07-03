@@ -32,7 +32,7 @@ class CommManager {
     CanFrameParser? parser,
   })  : _transportType = transportType,
         _logger = logger,
-        _dispatcher = dispatcher ?? MessageDispatcher(),
+        _dispatcher = dispatcher ?? MessageDispatcher(staleThreshold: AppConstants.staleThreshold),
         _parser = parser ?? CanFrameParser();
 
   void _createTransport() {
@@ -87,9 +87,6 @@ class CommManager {
 
   /// Whether the service is currently connected.
   bool get isConnected => _transport?.isConnected ?? false;
-
-  /// Stream of all incoming CAN frames (the firehose).
-  Stream<CanFrame> get rawFrameStream => _parser.frames;
 
   /// Returns a filtered stream of frames with a specific [messageId].
   /// Emits [null] if the data goes stale.

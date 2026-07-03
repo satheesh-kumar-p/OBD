@@ -19,6 +19,7 @@ class _ScheduledTask {
 class MessageDispatcher {
   final Map<int, MessageConfig> _configs;
   final Set<int> _whitelist;
+  final Duration _staleThreshold;
   
   /// Per-ID broadcast streams. Emits [null] when data goes stale.
   final Map<int, StreamController<CanFrame?>> _controllers = {};
@@ -44,8 +45,10 @@ class MessageDispatcher {
     List<MessageConfig> configs = const [],
     Set<int> whitelist = const {},
     Duration tickInterval = const Duration(milliseconds: 10),
+    required Duration staleThreshold,
   }) : _configs = {for (var c in configs) c.messageId: c},
-       _whitelist = whitelist {
+       _whitelist = whitelist,
+       _staleThreshold = staleThreshold {
     _startMasterTicker(tickInterval);
     _startWatchdog();
   }
@@ -125,13 +128,13 @@ class MessageDispatcher {
   }
 
   void _startWatchdog() {
-    // Every 5 seconds, check for sensors that haven't sent data in a while.
-    _watchdogTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    // Watchdog Polling is hardcoded to every 3 seconds
+    _watchdogTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       final now = DateTime.now();
-      final staleThreshold = now.subtract(const Duration(seconds: 10));
+      final staleLimit = now.subtract(_staleThreshold);
 
       final staleIds = _lastSeen.entries
-          .where((e) => e.value.isBefore(staleThreshold))
+          .where((e) => e.value.isBefore(staleLimit))
           .map((e) => e.key)
           .toList();
 
@@ -140,12 +143,10 @@ class MessageDispatcher {
         _emit(id, null);
 
         // 2. Cleanup resources
+        // Note: We DO NOT close the controller or remove it from the map.
+        // This ensures that when data returns, the listeners are still active.
         _lastSeen.remove(id);
         _latestFrames.remove(id);
-        
-        // 3. Close and remove the controller
-        final controller = _controllers.remove(id);
-        controller?.close();
       }
     });
   }
