@@ -1,66 +1,36 @@
 import 'dart:async';
 
+import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../../core/logger/logger.dart';
 import '../mappers/drive_info_mapper.dart';
 import '../../domain/entities/drive_information_entity.dart';
 import '../../../../core/comm/comm_manager.dart';
-import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 
-class DriveInfoRepository implements ICanDataRepository<DriveInformationEntity> {
+class DriveInfoRepository implements ICanDataRepository<DriveInformationEntity?> {
   final CommManager _canManager;
+  final CanExtractionStrategy<DriveInformationEntity> _mapper;
   final Logger _logger;
-
-  final _driveCtrl = StreamController<DriveInformationEntity>.broadcast();
-
-  final _mapper = DriveInfoMapper();
-
-  StreamSubscription? _driveSub;
 
   DriveInfoRepository({
     required CommManager canManager,
+    required CanExtractionStrategy<DriveInformationEntity> mapper,
     required Logger logger,
-  })  : _canManager = canManager,
-        _logger = logger;
+  }) : _canManager = canManager,
+       _mapper = mapper,
+       _logger = logger;
 
   @override
-  void startCanData() {
-    if (_driveSub != null) return;
-    _logger.info('Starting Drive Info data stream (CAN ID: 0x${_mapper.messageId.toRadixString(16).toUpperCase()})');
-
-    _driveSub = _canManager
-        .watchMessage(_mapper.messageId)
-        .listen(
-          (frame) {
-            try {
-              final driveInfo = _mapper.parse(frame.data);
-              _driveCtrl.add(driveInfo);
-
-              _logger.debug('Drive data received', context: {
-                'fl_motor': driveInfo.frontLeftMotor.overSpeed,
-                'fr_motor': driveInfo.frontRightMotor.overSpeed,
-                'rl_motor': driveInfo.rearLeftMotor.overSpeed,
-                'rr_motor': driveInfo.rearRightMotor.overSpeed,
-              });
-            } catch (e, st) {
-              _logger.error('Failed to parse Drive Info frame', error: e, stack: st);
-            }
-          },
-          onError: (e, st) {
-            _logger.error('CAN Drive Info Stream Error', error: e, stack: st);
-          },
-        );
-  }
-
-  @override
-  void stopCanData() {
-    if (_driveSub == null) return;
-    _logger.info('Stopping Drive Info data stream');
-    _driveSub?.cancel();
-    _driveSub = null;
-  }
-
-  @override
-  Stream<DriveInformationEntity> watchCanData() {
-    return _driveCtrl.stream;
+  Stream<DriveInformationEntity?> watchCanData() {
+    return _canManager.watchMessage(_mapper.messageId).map((frame) {
+      if (frame == null) return null;
+      
+      try {
+        return _mapper.parse(frame.data);
+      } catch (e, st) {
+        _logger.error('Failed to parse Drive Info frame', error: e, stack: st);
+        return null;
+      }
+    });
   }
 }

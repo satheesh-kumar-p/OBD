@@ -15,19 +15,23 @@ class TimeController extends Notifier<DateTime> {
     DateTime currentTime = stateOrNull ?? DateTime.now();
 
     globalTimeAsync.whenData((info) {
-      currentTime = info.toDateTime;
+      if (info != null) {
+        currentTime = info.toDateTime;
+      }
     });
 
     syncTimeAsync.whenData((sync) {
-      currentTime = DateTime(
-        currentTime.year,
-        currentTime.month,
-        currentTime.day,
-        sync.hour,
-        sync.minute,
-        sync.second,
-        sync.millisecond,
-      );
+      if (sync != null) {
+        currentTime = DateTime(
+          currentTime.year,
+          currentTime.month,
+          currentTime.day,
+          sync.hour,
+          sync.minute,
+          sync.second,
+          sync.millisecond,
+        );
+      }
     });
 
     _localIncrementTimer?.cancel();

@@ -14,49 +14,43 @@ class DriveState {
     this.mcTempVolt,
   });
 
-  bool get isLoading => driveInfo == null;
+  bool get isLoading => driveInfo == null && mcTempVolt == null;
 
   List<MotorStatusRowData> get motorRows {
-    final frontStale = driveInfo != null && !driveInfo!.isFrontValid;
-    final rearStale = driveInfo != null && !driveInfo!.isRearValid;
-
     return [
-      MotorStatusRowData(name: 'FRONT LEFT MOTOR', info: driveInfo?.frontLeftMotor, isStale: frontStale),
-      MotorStatusRowData(name: 'FRONT RIGHT MOTOR', info: driveInfo?.frontRightMotor, isStale: frontStale),
-      MotorStatusRowData(name: 'REAR LEFT MOTOR', info: driveInfo?.rearLeftMotor, isStale: rearStale),
-      MotorStatusRowData(name: 'REAR RIGHT MOTOR', info: driveInfo?.rearRightMotor, isStale: rearStale),
+      MotorStatusRowData(name: 'FRONT LEFT MOTOR', info: driveInfo?.frontLeftMotor),
+      MotorStatusRowData(name: 'FRONT RIGHT MOTOR', info: driveInfo?.frontRightMotor),
+      MotorStatusRowData(name: 'REAR LEFT MOTOR', info: driveInfo?.rearLeftMotor),
+      MotorStatusRowData(name: 'REAR RIGHT MOTOR', info: driveInfo?.rearRightMotor),
     ];
   }
 
   List<ControllerStatusRowData> get controllerRows {
-    final frontStale = driveInfo != null && !driveInfo!.isFrontValid;
-    final rearStale = driveInfo != null && !driveInfo!.isRearValid;
-
     return [
       ControllerStatusRowData(
         name: 'FRONT MOTOR CTRL',
         info: driveInfo?.frontMotorController,
         voltage: mcTempVolt?.frontMcVoltage,
         temp: mcTempVolt?.frontMcTemp,
-        isStale: frontStale,
       ),
       ControllerStatusRowData(
         name: 'REAR MOTOR CTRL',
         info: driveInfo?.rearMotorController,
         voltage: mcTempVolt?.rearMcVoltage,
         temp: mcTempVolt?.rearMcTemp,
-        isStale: rearStale,
       ),
     ];
   }
 
   DriveState copyWith({
     DriveInformationEntity? driveInfo,
+    bool clearDriveInfo = false,
     McTempVoltEntity? mcTempVolt,
+    bool clearMcTempVolt = false,
   }) {
     return DriveState(
-      driveInfo: driveInfo ?? this.driveInfo,
-      mcTempVolt: mcTempVolt ?? this.mcTempVolt,
+      driveInfo: clearDriveInfo ? null : (driveInfo ?? this.driveInfo),
+      mcTempVolt: clearMcTempVolt ? null : (mcTempVolt ?? this.mcTempVolt),
     );
   }
 }
@@ -68,16 +62,15 @@ class MotorStatusRowData {
   MotorStatusRowData({
     required this.name,
     MotorInformation? info,
-    bool isStale = false,
   }) : colors = [
-          _getStatusColor(isStale ? null : info?.overSpeed),
-          _getStatusColor(isStale ? null : info?.overload),
-          _getStatusColor(isStale ? null : info?.phaseLoss),
-          _getStatusColor(isStale ? null : info?.brake),
-          _getStatusColor(isStale ? null : info?.encoderFault),
-          _getStatusColor(isStale ? null : info?.overTemp),
-          _getStatusColor(isStale ? null : info?.hallFault),
-          _getStatusColor(isStale ? null : info?.stalled),
+          _getStatusColor(info?.overSpeed),
+          _getStatusColor(info?.overload),
+          _getStatusColor(info?.phaseLoss),
+          _getStatusColor(info?.brake),
+          _getStatusColor(info?.encoderFault),
+          _getStatusColor(info?.overTemp),
+          _getStatusColor(info?.hallFault),
+          _getStatusColor(info?.stalled),
         ];
 }
 
@@ -92,17 +85,16 @@ class ControllerStatusRowData {
     MotorControllerInformation? info,
     double? voltage,
     int? temp,
-    bool isStale = false,
   })  : colors = [
-          _getStatusColor(isStale ? null : info?.drive),
-          _getStatusColor(isStale ? null : info?.overCurrent),
-          _getStatusColor(isStale ? null : info?.overPressure),
-          _getStatusColor(isStale ? null : info?.underVoltage),
-          _getStatusColor(isStale ? null : info?.overTemperature),
-          _getStatusColor(isStale ? null : info?.canCommunication),
+          _getStatusColor(info?.drive),
+          _getStatusColor(info?.overCurrent),
+          _getStatusColor(info?.overPressure),
+          _getStatusColor(info?.underVoltage),
+          _getStatusColor(info?.overTemperature),
+          _getStatusColor(info?.canCommunication),
         ],
-        voltage = (isStale || voltage == null) ? '--' : '${voltage.toStringAsFixed(1)} V',
-        temp = (isStale || temp == null) ? '--' : '$temp C';
+        voltage = (voltage == null) ? '--' : '${voltage.toStringAsFixed(1)} V',
+        temp = (temp == null) ? '--' : '$temp C';
 }
 
 Color _getStatusColor(Status? status) {
