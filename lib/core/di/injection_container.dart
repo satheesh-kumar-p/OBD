@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../comm/can_bus/can_bus.dart';
 import '../dispatcher/message_dispatcher.dart';
 import '../comm/comm_manager.dart';
 import '../constants/app_constants.dart';
 import '../logger/logger.dart';
-import '../comm/can_bus/can_frame.dart';
 
 /// High-level communication manager.
 final commManagerLoggerProvider = Provider<Logger>((ref) => Logger('COMM_MANAGER'));
@@ -12,6 +12,7 @@ final commManagerLoggerProvider = Provider<Logger>((ref) => Logger('COMM_MANAGER
 final commDispatcherProvider = Provider<MessageDispatcher>((ref) {
   return MessageDispatcher(
     configs: AppConstants.dispatchConfigs,
+    whitelist: AppConstants.whitelistedMessageIds,
   );
 });
 
@@ -39,18 +40,13 @@ final commConnectionProvider = FutureProvider<void>((ref) async {
   }
 });
 
-/// Provides the raw CAN frame stream for debugging.
-final commFrameStreamProvider = StreamProvider<CanFrame>((ref) {
-  final manager = ref.watch(commManagerProvider);
-  return manager.frameStream;
-});
-
 /// Provides a ticker that emits every second to refresh time-dependent UI.
 final clockTickerProvider = StreamProvider<int>((ref) {
   return Stream.periodic(const Duration(seconds: 1), (tick) => tick);
 });
 
-/// Provides a ticker that emits every 5 seconds for efficiency-minded staleness checks.
-final stalenessTickerProvider = StreamProvider<int>((ref) {
-  return Stream.periodic(const Duration(seconds: 5), (tick) => tick);
+/// Provides the raw CAN frame stream for debugging.
+final commFrameStreamProvider = StreamProvider<CanFrame>((ref) {
+  final manager = ref.watch(commManagerProvider);
+  return manager.rawFrameStream;
 });

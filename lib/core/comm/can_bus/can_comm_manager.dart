@@ -26,12 +26,6 @@ class CanCommManager {
   final MessageDispatcher _dispatcher;
   StreamSubscription<CanFrame>? _frameSub;
 
-  // A persistent controller so listeners can subscribe before connection
-  final _frameController = StreamController<CanFrame>.broadcast();
-
-  /// Stream of all incoming CAN frames (filtered/sampled by dispatcher).
-  Stream<CanFrame> get frameStream => _dispatcher.frameStream;
-
   /// Stream of connection status.
   Stream<bool> get connectionStream => _service.connectionStream;
 
@@ -79,8 +73,9 @@ class CanCommManager {
   }
 
   /// Returns a filtered stream of frames with a specific [messageId].
-  Stream<CanFrame> watchMessage(int messageId) {
-    return frameStream.where((frame) => frame.id == messageId);
+  /// Emits [null] if the data goes stale.
+  Stream<CanFrame?> watchMessage(int messageId) {
+    return _dispatcher.streamFor(messageId);
   }
 
   /// Sends a [CanFrame] to the CAN bus.
@@ -95,7 +90,6 @@ class CanCommManager {
   /// Disposes of the manager and any active connections.
   void dispose() {
     disconnect();
-    _frameController.close();
     _dispatcher.dispose();
     _service.dispose();
   }

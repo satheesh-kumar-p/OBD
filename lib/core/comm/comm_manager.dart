@@ -82,18 +82,19 @@ class CommManager {
     );
   }
 
-  /// Stream of processed [CanFrame]s from the dispatcher.
-  Stream<CanFrame> get frameStream => _dispatcher.frameStream;
-
   /// Stream of connection status.
   Stream<bool> get connectionStream => _connectionCtrl.stream;
 
   /// Whether the service is currently connected.
   bool get isConnected => _transport?.isConnected ?? false;
 
+  /// Stream of all incoming CAN frames (the firehose).
+  Stream<CanFrame> get rawFrameStream => _parser.frames;
+
   /// Returns a filtered stream of frames with a specific [messageId].
-  Stream<CanFrame> watchMessage(int messageId) {
-    return frameStream.where((frame) => frame.id == messageId);
+  /// Emits [null] if the data goes stale.
+  Stream<CanFrame?> watchMessage(int messageId) {
+    return _dispatcher.streamFor(messageId);
   }
 
   /// Initializes the connection.

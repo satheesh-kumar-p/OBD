@@ -14,11 +14,14 @@ class _ScheduledTask {
 }
 
 /// Dispatches CAN frames based on per-message configurations.
-/// Uses a Priority Queue (Min-Heap) for efficient scheduling, a watchdog
-/// for resource cleanup, and drift-correction for stable telemetry frequency.
+/// Uses a Priority Queue (Min-Heap) for efficient scheduling, per-ID streams
+/// for reactive consumption, and active staleness invalidation.
 class MessageDispatcher {
   final Map<int, MessageConfig> _configs;
-  final StreamController<CanFrame> _outputController = StreamController<CanFrame>.broadcast();
+  final Set<int> _whitelist;
+  
+  /// Per-ID broadcast streams. Emits [null] when data goes stale.
+  final Map<int, StreamController<CanFrame?>> _controllers = {};
   
   // Storage: Always holds the latest frame for an ID.
   final Map<int, CanFrame> _latestFrames = {};
@@ -39,17 +42,27 @@ class MessageDispatcher {
 
   MessageDispatcher({
     List<MessageConfig> configs = const [],
+    Set<int> whitelist = const {},
     Duration tickInterval = const Duration(milliseconds: 10),
-  }) : _configs = {for (var c in configs) c.messageId: c} {
+  }) : _configs = {for (var c in configs) c.messageId: c},
+       _whitelist = whitelist {
     _startMasterTicker(tickInterval);
     _startWatchdog();
   }
 
-  /// The output stream of processed (filtered/sampled) frames.
-  Stream<CanFrame> get frameStream => _outputController.stream;
+  /// Returns a dedicated broadcast stream for a specific [messageId].
+  /// Emits [CanFrame] when data arrives, and [null] if data becomes stale.
+  Stream<CanFrame?> streamFor(int messageId) {
+    return _getOrCreateController(messageId).stream;
+  }
 
   /// Feeds a raw CAN frame into the dispatcher.
   void dispatch(CanFrame frame) {
+    // GUARDRAIL: Only process whitelisted messages
+    if (_whitelist.isNotEmpty && !_whitelist.contains(frame.id)) {
+      return;
+    }
+
     final now = DateTime.now();
     _lastSeen[frame.id] = now;
 
@@ -57,7 +70,7 @@ class MessageDispatcher {
 
     // Default to pass-through if no config found
     if (config == null || config.strategy == DispatchStrategy.passThrough) {
-      _outputController.add(frame);
+      _emit(frame.id, frame);
       return;
     }
 
@@ -89,7 +102,7 @@ class MessageDispatcher {
 
       if (frame != null) {
         // We have new data! Emit and reschedule.
-        _outputController.add(frame);
+        _emit(task.messageId, frame);
         
         final config = _configs[task.messageId]!;
         
@@ -106,29 +119,49 @@ class MessageDispatcher {
       } else {
         // NO NEW DATA: The bus has been quiet for this ID.
         // We stop the throttling for this ID to save CPU.
-        // It will restart automatically when the next frame for this ID arrives.
         _activeInQueue.remove(task.messageId);
       }
     }
   }
 
   void _startWatchdog() {
-    // Every 5 seconds, purge info for sensors that haven't sent data in a while.
+    // Every 5 seconds, check for sensors that haven't sent data in a while.
     _watchdogTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       final now = DateTime.now();
       final staleThreshold = now.subtract(const Duration(seconds: 10));
 
-      _lastSeen.removeWhere((id, lastTime) {
-        if (lastTime.isBefore(staleThreshold)) {
-          // Remove from all state maps to act as "garbage collection"
-          _latestFrames.remove(id);
-          // Note: Priority Queue cleanup is handled naturally by _tick 
-          // when it finds no data in _latestFrames.
-          return true;
-        }
-        return false;
-      });
+      final staleIds = _lastSeen.entries
+          .where((e) => e.value.isBefore(staleThreshold))
+          .map((e) => e.key)
+          .toList();
+
+      for (final id in staleIds) {
+        // 1. Signal staleness to listeners
+        _emit(id, null);
+
+        // 2. Cleanup resources
+        _lastSeen.remove(id);
+        _latestFrames.remove(id);
+        
+        // 3. Close and remove the controller
+        final controller = _controllers.remove(id);
+        controller?.close();
+      }
     });
+  }
+
+  void _emit(int id, CanFrame? frame) {
+    final controller = _controllers[id];
+    if (controller != null && !controller.isClosed) {
+      controller.add(frame);
+    }
+  }
+
+  StreamController<CanFrame?> _getOrCreateController(int id) {
+    return _controllers.putIfAbsent(
+      id,
+      () => StreamController<CanFrame?>.broadcast(),
+    );
   }
 
   void dispose() {
@@ -138,6 +171,9 @@ class MessageDispatcher {
     _activeInQueue.clear();
     _lastSeen.clear();
     _scheduler.clear();
-    _outputController.close();
+    for (final controller in _controllers.values) {
+      controller.close();
+    }
+    _controllers.clear();
   }
 }
