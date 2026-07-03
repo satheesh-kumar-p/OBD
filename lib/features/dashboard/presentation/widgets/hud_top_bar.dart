@@ -16,7 +16,10 @@ class HudTopBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardStateProvider);
+    final modeName = ref.watch(dashboardStateProvider.select((s) => s.modeName));
+    final holdMode = ref.watch(dashboardStateProvider.select((s) => s.holdMode));
+    final driveModeName = ref.watch(dashboardStateProvider.select((s) => s.driveModeName));
+    final speedModeName = ref.watch(dashboardStateProvider.select((s) => s.speedModeName));
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -43,13 +46,13 @@ class HudTopBar extends ConsumerWidget {
               const HudArmStatus(),
               SizedBox(width: 8.w),
               HudModeLabel(
-                mainText: state.modeName,
-                subText: state.holdMode,
+                mainText: modeName,
+                subText: holdMode,
               ),
               SizedBox(width: 8.w),
               HudModeLabel(
-                mainText: state.driveModeName,
-                subText: state.speedModeName,
+                mainText: driveModeName,
+                subText: speedModeName,
               ),
             ],
           ),

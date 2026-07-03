@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_obd/features/dashboard/state/dashboard_state.dart';
 import '../../dashboard_providers.dart';
 
 class HudDateTimeLabel extends ConsumerWidget {

@@ -8,29 +8,36 @@ class HudSafetyStatus extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardStateProvider);
+    final physicalEStopColor = ref.watch(dashboardStateProvider.select((s) => s.physicalEStopColor));
+    final isPhysicalEStopInactive = ref.watch(dashboardStateProvider.select((s) => s.isPhysicalEStopInactive));
+    
+    final remoteEStopColor = ref.watch(dashboardStateProvider.select((s) => s.remoteEStopColor));
+    final isRemoteEStopInactive = ref.watch(dashboardStateProvider.select((s) => s.isRemoteEStopInactive));
+    
+    final towStatusColor = ref.watch(dashboardStateProvider.select((s) => s.towStatusColor));
+    final isTowInactive = ref.watch(dashboardStateProvider.select((s) => s.isTowInactive));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _SafetyIndicator(
           label: 'E-STOP',
-          color: state.physicalEStopColor,
-          isInactive: state.isPhysicalEStopInactive,
+          color: physicalEStopColor,
+          isInactive: isPhysicalEStopInactive,
           icon: Icons.stop_circle_rounded,
         ),
         SizedBox(width: 8.w),
         _SafetyIndicator(
           label: 'REMOTE\nE-STOP',
-          color: state.remoteEStopColor,
-          isInactive: state.isRemoteEStopInactive,
+          color: remoteEStopColor,
+          isInactive: isRemoteEStopInactive,
           icon: Icons.settings_remote_rounded,
         ),
         SizedBox(width: 8.w),
         _SafetyIndicator(
           label: 'TOW',
-          color: state.towStatusColor,
-          isInactive: state.isTowInactive,
+          color: towStatusColor,
+          isInactive: isTowInactive,
           icon: Icons.airport_shuttle_rounded,
         ),
       ],

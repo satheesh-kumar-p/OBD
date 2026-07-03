@@ -21,6 +21,13 @@ class DashboardController extends Notifier<DashboardState> {
   DashboardState build() {
     ref.watch(stalenessTickerProvider);
     
+    final batteryAsync = ref.watch(batteryInfoProvider);
+    final modeAsync = ref.watch(modeInfoProvider);
+    final eStopAsync = ref.watch(eStopInfoProvider);
+    final systemAsync = ref.watch(systemInfoProvider);
+    final computeAsync = ref.watch(compSubsystemInfoProvider);
+    final vcuStatusAsync = ref.watch(vcuStatusProvider);
+
     final now = DateTime.now();
     const stalenessThreshold = Duration(seconds: 5);
 
@@ -57,12 +64,12 @@ class DashboardController extends Notifier<DashboardState> {
     }
 
     return DashboardState(
-      mode: isFresh(_lastModeUpdate) ? ref.read(modeInfoProvider).value : null,
-      battery: isFresh(_lastBatteryUpdate) ? ref.read(batteryInfoProvider).value : null,
-      eStopInfo: isFresh(_lastEStopUpdate) ? ref.read(eStopInfoProvider).value : null,
-      systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
-      compSubsystemState: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
-      vcuStatus: isFresh(_lastVcuStatusUpdate) ? ref.read(vcuStatusProvider).value : null,
+      mode: isFresh(_lastModeUpdate) ? modeAsync.value : null,
+      battery: isFresh(_lastBatteryUpdate) ? batteryAsync.value : null,
+      eStopInfo: isFresh(_lastEStopUpdate) ? eStopAsync.value : null,
+      systemInfo: isFresh(_lastSystemUpdate) ? systemAsync.value : null,
+      compSubsystemState: isFresh(_lastComputeUpdate) ? computeAsync.value : null,
+      vcuStatus: isFresh(_lastVcuStatusUpdate) ? vcuStatusAsync.value : null,
     );
   }
 }

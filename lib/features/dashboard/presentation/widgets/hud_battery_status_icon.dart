@@ -8,9 +8,12 @@ class HudBatteryStatusIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardStateProvider);
-    final battery = state.battery;
-    final isCharging = state.vcuStatus?.chargingInProgress ?? false;
+    final lvSoc = ref.watch(dashboardStateProvider.select((s) => s.battery?.lvBatterySoc ?? 0));
+    final lvColor = ref.watch(dashboardStateProvider.select((s) => s.lvBatteryColor));
+    
+    final hvSoc = ref.watch(dashboardStateProvider.select((s) => s.battery?.hvBatterySoc ?? 0));
+    final hvColor = ref.watch(dashboardStateProvider.select((s) => s.hvBatteryColor));
+    final isCharging = ref.watch(dashboardStateProvider.select((s) => s.vcuStatus?.chargingInProgress ?? false));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -22,8 +25,8 @@ class HudBatteryStatusIcon extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BatteryLevelIndicator(
-              soc: battery?.lvBatterySoc ?? 0,
-              color: state.lvBatteryColor,
+              soc: lvSoc,
+              color: lvColor,
               isCharging: false,
             ),
             SizedBox(height: 4.h),
@@ -44,8 +47,8 @@ class HudBatteryStatusIcon extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BatteryLevelIndicator(
-              soc: battery?.hvBatterySoc ?? 0,
-              color: state.hvBatteryColor,
+              soc: hvSoc,
+              color: hvColor,
               isCharging: isCharging,
             ),
             SizedBox(height: 4.h),
