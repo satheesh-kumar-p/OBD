@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../constants/app_constants.dart';
 import '../../dispatcher/message_dispatcher.dart';
 import '../../logger/logger.dart';
 import 'can_config.dart';
@@ -15,7 +16,7 @@ class CanCommManager {
     MessageDispatcher? dispatcher,
   })  : _service = service,
         _logger = logger,
-        _dispatcher = dispatcher ?? MessageDispatcher() {
+        _dispatcher = dispatcher ?? MessageDispatcher(staleThreshold: AppConstants.staleThreshold) {
     _service.connectionStream.listen((connected) {
       _logger.info('CAN Connection Status: ${connected ? "CONNECTED" : "DISCONNECTED"}');
     });
@@ -25,12 +26,6 @@ class CanCommManager {
   final ICanService _service;
   final MessageDispatcher _dispatcher;
   StreamSubscription<CanFrame>? _frameSub;
-
-  // A persistent controller so listeners can subscribe before connection
-  final _frameController = StreamController<CanFrame>.broadcast();
-
-  /// Stream of all incoming CAN frames (filtered/sampled by dispatcher).
-  Stream<CanFrame> get frameStream => _dispatcher.frameStream;
 
   /// Stream of connection status.
   Stream<bool> get connectionStream => _service.connectionStream;
@@ -79,8 +74,9 @@ class CanCommManager {
   }
 
   /// Returns a filtered stream of frames with a specific [messageId].
-  Stream<CanFrame> watchMessage(int messageId) {
-    return frameStream.where((frame) => frame.id == messageId);
+  /// Emits [null] if the data goes stale.
+  Stream<CanFrame?> watchMessage(int messageId) {
+    return _dispatcher.streamFor(messageId);
   }
 
   /// Sends a [CanFrame] to the CAN bus.
@@ -95,7 +91,6 @@ class CanCommManager {
   /// Disposes of the manager and any active connections.
   void dispose() {
     disconnect();
-    _frameController.close();
     _dispatcher.dispose();
     _service.dispose();
   }

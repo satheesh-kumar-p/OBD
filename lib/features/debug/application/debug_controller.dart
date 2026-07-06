@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../dashboard/application/time_controller.dart';
 import '../domain/entities/debug_message.dart';
 
@@ -45,12 +46,19 @@ class DebugController extends Notifier<DebugState> {
   DebugState build() {
     _registerMappers();
 
-    ref.listen(commFrameStreamProvider, (previous, next) {
-      final frame = next.asData?.value;
-      if (frame != null) {
-        addFrame(frame);
-      }
-    });
+    final commManager = ref.watch(commManagerProvider);
+
+    // Subscribe to every whitelisted message stream
+    for (final id in AppConstants.whitelistedMessageIds) {
+      final subscription = commManager.watchMessage(id).listen((frame) {
+        if (frame != null) {
+          addFrame(frame);
+        }
+      });
+
+      // Ensure we clean up listeners when the controller is disposed
+      ref.onDispose(() => subscription.cancel());
+    }
 
     return DebugState(messagesById: {}, sortedIds: []);
   }
@@ -107,9 +115,9 @@ class DebugController extends Notifier<DebugState> {
     final newMessagesById = Map<int, List<DebugMessage>>.from(state.messagesById);
     newMessagesById[frame.id] = currentLogs;
 
-    List<int> newSortedIds = state.sortedIds;
+    List<int> newSortedIds = List<int>.from(state.sortedIds);
     if (!state.messagesById.containsKey(frame.id)) {
-      newSortedIds = List<int>.from(state.sortedIds)..add(frame.id);
+      newSortedIds.add(frame.id);
       newSortedIds.sort();
     }
 

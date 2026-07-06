@@ -9,27 +9,6 @@ class TimeController extends Notifier<DateTime> {
 
   @override
   DateTime build() {
-    final globalTimeAsync = ref.watch(globalTimeInfoProvider);
-    final syncTimeAsync = ref.watch(compTimeSyncProvider);
-
-    DateTime currentTime = stateOrNull ?? DateTime.now();
-
-    globalTimeAsync.whenData((info) {
-      currentTime = info.toDateTime;
-    });
-
-    syncTimeAsync.whenData((sync) {
-      currentTime = DateTime(
-        currentTime.year,
-        currentTime.month,
-        currentTime.day,
-        sync.hour,
-        sync.minute,
-        sync.second,
-        sync.millisecond,
-      );
-    });
-
     _localIncrementTimer?.cancel();
     _localIncrementTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       state = state.add(const Duration(milliseconds: 100));
@@ -39,7 +18,39 @@ class TimeController extends Notifier<DateTime> {
       _localIncrementTimer?.cancel();
     });
 
-    return currentTime;
+    // Listen for global time updates and only apply them when they arrive
+    ref.listen(globalTimeInfoProvider, (previous, next) {
+      next.whenData((info) {
+        if (info != null) {
+          state = info.toDateTime;
+        }
+      });
+    });
+
+    // Listen for time sync updates and only apply them when they arrive
+    ref.listen(compTimeSyncProvider, (previous, next) {
+      next.whenData((sync) {
+        if (sync != null) {
+          state = DateTime(
+            state.year,
+            state.month,
+            state.day,
+            sync.hour,
+            sync.minute,
+            sync.second,
+            sync.millisecond,
+          );
+        }
+      });
+    });
+
+    // Initialize with current value if available, otherwise use now()
+    final initialGlobal = ref.read(globalTimeInfoProvider).value;
+    if (initialGlobal != null) {
+      return initialGlobal.toDateTime;
+    }
+
+    return DateTime.now();
   }
 }
 

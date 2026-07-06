@@ -1,61 +1,35 @@
 import 'dart:async';
 
 import '../../../../core/comm/comm_manager.dart';
-import '../../../../core/logger/logger.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
-import '../mappers/battery_info_mapper.dart';
+import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
+import '../../../../core/logger/logger.dart';
 import '../../domain/entities/battery_info_entity.dart';
 
-class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity> {
+class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity?> {
   final CommManager _canManager;
+  final CanExtractionStrategy<BatteryInfoEntity> _mapper;
   final Logger _logger;
-
-  final _batteryCtrl = StreamController<BatteryInfoEntity>.broadcast();
-  final _mapper = BatteryInfoMapper();
-  StreamSubscription? _batterySub;
 
   BatteryInfoRepositoryImpl({
     required CommManager canManager,
+    required CanExtractionStrategy<BatteryInfoEntity> mapper,
     required Logger logger,
   }) : _canManager = canManager,
+       _mapper = mapper,
        _logger = logger;
 
   @override
-  void startCanData() {
-    if (_batterySub != null) return;
-    _logger.info('Starting Battery Info data stream (CAN ID: 0x${BatteryInfoMapper.id.toRadixString(16).toUpperCase()})');
-
-    _batterySub = _canManager
-        .watchMessage(BatteryInfoMapper.id)
-        .listen(
-          (frame) {
-            try {
-              final batteryInfo = _mapper.parse(frame.data);
-              _batteryCtrl.add(batteryInfo);
-              _logger.debug('Battery data received', context: {
-                'HV Battery SOC': '${batteryInfo.hvBatterySoc}%',
-                'LV Battery SOC': '${batteryInfo.lvBatterySoc}%'
-              });
-            } catch (e, st) {
-              _logger.error('Failed to parse Battery Info frame', error: e, stack: st);
-            }
-          },
-          onError: (e, st) {
-            _logger.error('CAN Battery Info Stream Error', error: e, stack: st);
-          },
-        );
-  }
-
-  @override
-  void stopCanData() {
-    if (_batterySub == null) return;
-    _logger.info('Stopping Battery Info data stream');
-    _batterySub?.cancel();
-    _batterySub = null;
-  }
-
-  @override
-  Stream<BatteryInfoEntity> watchCanData() {
-    return _batteryCtrl.stream;
+  Stream<BatteryInfoEntity?> watchCanData() {
+    return _canManager.watchMessage(_mapper.messageId).map((frame) {
+      if (frame == null) return null;
+      
+      try {
+        return _mapper.parse(frame.data);
+      } catch (e, st) {
+        _logger.error('Failed to parse Battery Info frame', error: e, stack: st);
+        return null;
+      }
+    });
   }
 }
