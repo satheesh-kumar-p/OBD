@@ -75,10 +75,14 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       operationalState: VcuOperationalState.fromInt(parsedValues['operationalState']),
       chargerConnected: parsedValues['chargerConnected'] == 1,
       chargingInProgress: parsedValues['chargingInProgress'] == 1,
-      towMode: parsedValues['towMode'] == 1,
-      tow: TowModeEnum.fromInt(parsedValues['tow']),
-      emergencyStatus: GenericState.fromInt(parsedValues['emergencyStatus']),
-      remoteEmergencyStatus: GenericState.fromInt(parsedValues['remoteEmergencyStatus']),
+      towMode: TowModeEnum.fromInt(parsedValues['towMode']),
+      armMode: ArmModeEnum.fromInt(parsedValues['armMode']),
+      driveMode: DriveModeEnum.fromInt(parsedValues['driveMode']),
+      driveModeLimit: DriveModeLimitEnum.fromInt(parsedValues['driveModeLimit']),
+      emergency: EmergencyEnum.fromInt(parsedValues['emergency']),
+      remoteEmergency: RemoteEmergencyEnum.fromInt(parsedValues['remoteEmergency']),
+      autonomyMode: AutonomyModeEnum.fromInt(parsedValues['autonomyMode']),
+      holdState: HoldStateEnum.fromInt(parsedValues['holdState']),
     );
   }
 }
