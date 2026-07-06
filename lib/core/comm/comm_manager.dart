@@ -32,7 +32,7 @@ class CommManager {
     CanFrameParser? parser,
   })  : _transportType = transportType,
         _logger = logger,
-        _dispatcher = dispatcher ?? MessageDispatcher(),
+        _dispatcher = dispatcher ?? MessageDispatcher(staleThreshold: AppConstants.staleThreshold),
         _parser = parser ?? CanFrameParser();
 
   void _createTransport() {
@@ -82,9 +82,6 @@ class CommManager {
     );
   }
 
-  /// Stream of processed [CanFrame]s from the dispatcher.
-  Stream<CanFrame> get frameStream => _dispatcher.frameStream;
-
   /// Stream of connection status.
   Stream<bool> get connectionStream => _connectionCtrl.stream;
 
@@ -92,8 +89,9 @@ class CommManager {
   bool get isConnected => _transport?.isConnected ?? false;
 
   /// Returns a filtered stream of frames with a specific [messageId].
-  Stream<CanFrame> watchMessage(int messageId) {
-    return frameStream.where((frame) => frame.id == messageId);
+  /// Emits [null] if the data goes stale.
+  Stream<CanFrame?> watchMessage(int messageId) {
+    return _dispatcher.streamFor(messageId);
   }
 
   /// Initializes the connection.
