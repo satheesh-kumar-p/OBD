@@ -4,7 +4,6 @@ import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
-import '../mappers/battery_info_mapper.dart';
 import '../../domain/entities/battery_info_entity.dart';
 
 class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity?> {
@@ -22,7 +21,7 @@ class BatteryInfoRepositoryImpl implements ICanDataRepository<BatteryInfoEntity?
 
   @override
   Stream<BatteryInfoEntity?> watchCanData() {
-    return _canManager.watchMessage(BatteryInfoMapper.id).map((frame) {
+    return _canManager.watchMessage(_mapper.messageId).map((frame) {
       if (frame == null) return null;
       
       try {

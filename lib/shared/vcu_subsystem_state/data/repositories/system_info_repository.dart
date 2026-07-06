@@ -4,7 +4,6 @@ import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
-import '../mapper/system_info_mapper.dart';
 import '../../domain/entities/system_info_entity.dart';
 
 class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity?> {
@@ -22,7 +21,7 @@ class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity?> {
 
   @override
   Stream<SystemInfoEntity?> watchCanData() {
-    return _canManager.watchMessage(SystemInfoMapper.id).map((frame) {
+    return _canManager.watchMessage(_mapper.messageId).map((frame) {
       if (frame == null) return null;
 
       try {

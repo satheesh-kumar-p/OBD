@@ -5,7 +5,6 @@ import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/global_time_info_entity.dart';
-import '../mappers/global_time_info_mapper.dart';
 
 class GlobalTimeInfoRepository implements ICanDataRepository<GlobalTimeInfoEntity?> {
   final CommManager _canManager;

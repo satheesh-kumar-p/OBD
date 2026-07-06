@@ -5,7 +5,6 @@ import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/comp_time_sync_entity.dart';
-import '../mappers/comp_time_sync_mapper.dart';
 
 class CompTimeSyncRepository implements ICanDataRepository<CompTimeSyncEntity?> {
   final CommManager _canManager;
