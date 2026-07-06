@@ -11,53 +11,53 @@ class ModeInfoMapper extends CanExtractionStrategy<ModeEntity> {
 
   @override
   List<CanField<dynamic>> get fields => [
-    CanField<MainMode>(
+    CanField<MainModeEnum>(
       name: 'mainMode',
       startBit: 36,
       endBit: 39,
-      transformer: (value) => MainMode.values.firstWhere(
+      transformer: (value) => MainModeEnum.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => MainMode.unknown,
+        orElse: () => MainModeEnum.unknown,
       ),
     ),
 
-    CanField<HoldSubMode>(
+    CanField<HoldSubModeEnum>(
       name: 'holdSubMode',
       startBit: 32,
       endBit: 35,
-      transformer: (value) => HoldSubMode.values.firstWhere(
+      transformer: (value) => HoldSubModeEnum.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => HoldSubMode.unknown,
+        orElse: () => HoldSubModeEnum.unknown,
       ),
     ),
 
-    CanField<SpeedMode>(
+    CanField<SpeedModeEnum>(
       name: 'speedMode',
       startBit: 28,
       endBit: 31,
-      transformer: (value) => SpeedMode.values.firstWhere(
+      transformer: (value) => SpeedModeEnum.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => SpeedMode.unknown,
+        orElse: () => SpeedModeEnum.unknown,
       ),
     ),
 
-    CanField<DriveMode>(
+    CanField<DriveModeEnum>(
       name: 'driveMode',
       startBit: 24,
       endBit: 27,
-      transformer: (value) => DriveMode.values.firstWhere(
+      transformer: (value) => DriveModeEnum.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => DriveMode.unknown,
+        orElse: () => DriveModeEnum.unknown,
       ),
     ),
 
-    CanField<ArmStatus>(
+    CanField<ArmStatusEnum>(
       name: 'armStatus',
       startBit: 22,
       endBit: 23,
-      transformer: (value) => ArmStatus.values.firstWhere(
+      transformer: (value) => ArmStatusEnum.values.firstWhere(
             (e) => e.value == value,
-        orElse: () => ArmStatus.unknown,
+        orElse: () => ArmStatusEnum.unknown,
       ),
     )
   ];
