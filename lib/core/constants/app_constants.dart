@@ -25,6 +25,7 @@ abstract final class AppConstants {
     0x204, // Drive Fault Info
     0x20C, // Radio/Compute State
     0x211, // MC Temp & Voltage
+    0x219, // VCU Status (Common Page Information)
   };
 
   // Centralized Message Dispatch Rules
