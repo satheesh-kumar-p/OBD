@@ -143,7 +143,7 @@ class SystemScreenState {
   List<StageData> get stages {
     final opState = vcuStatus?.operationalState;
     final inactiveColor = Colors.white.withOpacity(0.5);
-    const activeColor = Colors.orangeAccent;
+    const activeColor = Color(0xFF00FF66);
 
     return [
       StageData(
