@@ -9,34 +9,16 @@ final systemScreenStateProvider = NotifierProvider<SystemScreenNotifier, SystemS
 );
 
 class SystemScreenNotifier extends Notifier<SystemScreenState> {
-  DateTime? _lastSystemUpdate;
-  DateTime? _lastComputeUpdate;
-  DateTime? _lastVcuStatusUpdate;
-
   @override
   SystemScreenState build() {
-
-    ref.listen(systemInfoProvider, (prev, next) {
-      if (next.hasValue) _lastSystemUpdate = DateTime.now();
-    });
-    ref.listen(compSubsystemInfoProvider, (prev, next) {
-      if (next.hasValue) _lastComputeUpdate = DateTime.now();
-    });
-    ref.listen(vcuStatusProvider, (prev, next) {
-      if (next.hasValue) _lastVcuStatusUpdate = DateTime.now();
-    });
-
-    final now = DateTime.now();
-    const staleThreshold = Duration(seconds: 5);
-
-    bool isFresh(DateTime? lastUpdate) {
-      return lastUpdate != null && now.difference(lastUpdate) < staleThreshold;
-    }
+    final systemInfo = ref.watch(systemInfoProvider).value;
+    final computeInfo = ref.watch(compSubsystemInfoProvider).value;
+    final vcuStatus = ref.watch(vcuStatusProvider).value;
 
     return SystemScreenState(
-      systemInfo: isFresh(_lastSystemUpdate) ? ref.read(systemInfoProvider).value : null,
-      computeCommInfo: isFresh(_lastComputeUpdate) ? ref.read(compSubsystemInfoProvider).value : null,
-      vcuStatus: isFresh(_lastVcuStatusUpdate) ? ref.read(vcuStatusProvider).value : null,
+      systemInfo: systemInfo,
+      computeCommInfo: computeInfo,
+      vcuStatus: vcuStatus,
     );
   }
 }
