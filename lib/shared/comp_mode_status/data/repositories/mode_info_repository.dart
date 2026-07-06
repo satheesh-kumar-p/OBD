@@ -4,7 +4,6 @@ import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
-import '../mappers/mode_info_mapper.dart';
 import '../../domain/entities/mode_entity.dart';
 
 class ModeInfoRepository implements ICanDataRepository<ModeEntity?> {
@@ -22,7 +21,7 @@ class ModeInfoRepository implements ICanDataRepository<ModeEntity?> {
 
   @override
   Stream<ModeEntity?> watchCanData() {
-    return _canManager.watchMessage(ModeInfoMapper.id).map((frame) {
+    return _canManager.watchMessage(_mapper.messageId).map((frame) {
       if (frame == null) return null;
       
       try {
