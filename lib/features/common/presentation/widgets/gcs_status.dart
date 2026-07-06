@@ -2,14 +2,23 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../dashboard_providers.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
+import '../../../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
 
-class HudGcsStatus extends ConsumerWidget {
-  const HudGcsStatus({super.key});
+class GcsStatus extends ConsumerWidget {
+  const GcsStatus({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statusColor = ref.watch(dashboardStateProvider.select((s) => s.gcsColor));
+    final subsystemState = ref.watch(compSubsystemInfoProvider).asData?.value;
+    final status = subsystemState?.lBandRadio;
+    
+    final statusColor = switch (status) {
+      SubsystemFaultState.noFault => const Color(0xFF00FF66),
+      SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
+      SubsystemFaultState.unknown || null => Colors.white,
+    };
+
     final iconSize = 44.r;
 
     return SizedBox(

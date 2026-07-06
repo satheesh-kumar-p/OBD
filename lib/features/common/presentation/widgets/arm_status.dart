@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../shared/comp_mode_status/di/mode_info_providers.dart';
 import '../../../../shared/comp_mode_status/enums/mode_enum.dart';
-import '../../dashboard_providers.dart';
 
-class HudArmStatus extends ConsumerWidget {
-  const HudArmStatus({super.key});
+class ArmStatus extends ConsumerWidget {
+  const ArmStatus({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final armStatus = ref.watch(dashboardStateProvider.select((s) => s.mode?.armStatus ?? ArmStatus.unknown));
+    final armStatus = ref.watch(modeInfoProvider.select((s) => s.asData?.value?.armStatus ?? ArmStatusEnum.unknown));
 
     final (color, bgColor, IconData? icon) = switch (armStatus) {
-      ArmStatus.armed => (
-          Colors.redAccent,
-          Colors.redAccent.withOpacity(0.1),
-          Icons.lock_open_rounded
-        ),
-      ArmStatus.disarmed => (
-          Colors.greenAccent,
-          Colors.greenAccent.withOpacity(0.1),
-          Icons.lock_rounded
-        ),
-      ArmStatus.override => (
-          Colors.orangeAccent,
-          Colors.orangeAccent.withOpacity(0.1),
-          Icons.warning_amber_rounded
-        ),
-      ArmStatus.unknown => (
-          Colors.white24,
-          Colors.white10,
-          null,
-        ),
+      ArmStatusEnum.armed => (
+      Colors.redAccent,
+      Colors.redAccent.withOpacity(0.1),
+      Icons.lock_open_rounded
+      ),
+      ArmStatusEnum.disarmed => (
+      Colors.greenAccent,
+      Colors.greenAccent.withOpacity(0.1),
+      Icons.lock_rounded
+      ),
+      ArmStatusEnum.override => (
+      Colors.orangeAccent,
+      Colors.orangeAccent.withOpacity(0.1),
+      Icons.warning_amber_rounded
+      ),
+      ArmStatusEnum.unknown => (
+      Colors.white24,
+      Colors.white10,
+      null,
+      ),
     };
 
     return Container(

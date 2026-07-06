@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class HudSidebar extends StatelessWidget {
-  const HudSidebar({
+class Sidebar extends StatelessWidget {
+  const Sidebar({
     super.key,
     required this.items,
     required this.selectedIndex,
@@ -37,7 +37,7 @@ class HudSidebar extends StatelessWidget {
                     vertical: 6.h,
                     horizontal: 8.w,
                   ),
-                  child: _HudSidebarItem(
+                  child: _SidebarItem(
                     label: items[i],
                     selected: i == selectedIndex,
                     enabled: true,
@@ -53,8 +53,8 @@ class HudSidebar extends StatelessWidget {
   }
 }
 
-class _HudSidebarItem extends StatelessWidget {
-  const _HudSidebarItem({
+class _SidebarItem extends StatelessWidget {
+  const _SidebarItem({
     required this.label,
     required this.selected,
     required this.enabled,

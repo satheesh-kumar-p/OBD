@@ -1,30 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../dashboard_providers.dart';
+import '../../../../shared/vcu_power_status/di/battery_info_providers.dart';
+import '../../../../shared/vcu_status/vcu_status_providers.dart';
 
-class HudBatteryStatusIcon extends ConsumerWidget {
-  const HudBatteryStatusIcon({super.key});
+class BatteryStatusIcon extends ConsumerWidget {
+  const BatteryStatusIcon({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lvSoc = ref.watch(dashboardStateProvider.select((s) => s.battery?.lvBatterySoc ?? 0));
-    final lvColor = ref.watch(dashboardStateProvider.select((s) => s.lvBatteryColor));
-    
-    final hvSoc = ref.watch(dashboardStateProvider.select((s) => s.battery?.hvBatterySoc ?? 0));
-    final hvColor = ref.watch(dashboardStateProvider.select((s) => s.hvBatteryColor));
-    final isCharging = ref.watch(dashboardStateProvider.select((s) => s.vcuStatus?.chargingInProgress ?? false));
+    final battery = ref.watch(batteryInfoProvider).asData?.value;
+    final vcuStatus = ref.watch(vcuStatusProvider).asData?.value;
+
+    final lvSoc = battery?.lvBatterySoc ?? 0;
+    final hvSoc = battery?.hvBatterySoc ?? 0;
+    final isCharging = vcuStatus?.chargingInProgress ?? false;
+
+    Color getBatteryColor(int soc) {
+      if (soc < 20) return const Color(0xFFFF3B3B);
+      if (soc < 50) return Colors.orangeAccent;
+      return const Color(0xFF00FF66);
+    }
+
+    final lvColor = getBatteryColor(lvSoc);
+    final hvColor = getBatteryColor(hvSoc);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // LV Battery
         Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BatteryLevelIndicator(
+            _BatteryLevelIndicator(
               soc: lvSoc,
               color: lvColor,
               isCharging: false,
@@ -41,12 +50,11 @@ class HudBatteryStatusIcon extends ConsumerWidget {
           ],
         ),
         SizedBox(width: 16.w),
-        // HV Battery
         Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BatteryLevelIndicator(
+            _BatteryLevelIndicator(
               soc: hvSoc,
               color: hvColor,
               isCharging: isCharging,
@@ -67,13 +75,12 @@ class HudBatteryStatusIcon extends ConsumerWidget {
   }
 }
 
-class BatteryLevelIndicator extends StatelessWidget {
+class _BatteryLevelIndicator extends StatelessWidget {
   final int soc;
   final Color color;
   final bool isCharging;
 
-  const BatteryLevelIndicator({
-    super.key,
+  const _BatteryLevelIndicator({
     required this.soc,
     required this.color,
     this.isCharging = false,

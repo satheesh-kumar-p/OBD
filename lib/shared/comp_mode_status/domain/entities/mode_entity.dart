@@ -1,13 +1,13 @@
 import '../../enums/mode_enum.dart';
 
 class ModeEntity {
-  final MainMode mainMode;
-  final HoldSubMode holdSubMode;
+  final MainModeEnum mainMode;
+  final HoldSubModeEnum holdSubMode;
 
-  final SpeedMode speedMode;
-  final DriveMode driveMode;
+  final SpeedModeEnum speedMode;
+  final DriveModeEnum driveMode;
 
-  final ArmStatus armStatus;
+  final ArmStatusEnum armStatus;
 
   ModeEntity({
     required this.mainMode,

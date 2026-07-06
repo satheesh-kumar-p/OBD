@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../dashboard_providers.dart';
+import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
+import '../../../../shared/vcu_status/vcu_status_providers.dart';
 
-class HudSafetyStatus extends ConsumerWidget {
-  const HudSafetyStatus({super.key});
+class SafetyStatus extends ConsumerWidget {
+  const SafetyStatus({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final physicalEStopColor = ref.watch(dashboardStateProvider.select((s) => s.physicalEStopColor));
-    final isPhysicalEStopInactive = ref.watch(dashboardStateProvider.select((s) => s.isPhysicalEStopInactive));
-    
-    final remoteEStopColor = ref.watch(dashboardStateProvider.select((s) => s.remoteEStopColor));
-    final isRemoteEStopInactive = ref.watch(dashboardStateProvider.select((s) => s.isRemoteEStopInactive));
-    
-    final towStatusColor = ref.watch(dashboardStateProvider.select((s) => s.towStatusColor));
-    final isTowInactive = ref.watch(dashboardStateProvider.select((s) => s.isTowInactive));
+    final vcuStatus = ref.watch(vcuStatusProvider).asData?.value;
+
+    final physicalEStopColor = _getGenericStatusColor(vcuStatus?.emergencyStatus);
+    final isPhysicalEStopInactive = _isGenericInactive(vcuStatus?.emergencyStatus);
+
+    final remoteEStopColor = _getGenericStatusColor(vcuStatus?.remoteEmergencyStatus);
+    final isRemoteEStopInactive = _isGenericInactive(vcuStatus?.remoteEmergencyStatus);
+
+    final towStatusColor = _getTowStatusColor(vcuStatus?.tow);
+    final isTowInactive = _isTowInactiveStatus(vcuStatus?.tow);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -42,6 +45,30 @@ class HudSafetyStatus extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  bool _isGenericInactive(GenericState? state) =>
+      state == null || state == GenericState.disabled || state == GenericState.unknown;
+
+  bool _isTowInactiveStatus(TowMode? state) =>
+      state == null || state == TowMode.disabled || state == TowMode.unknown;
+
+  Color _getGenericStatusColor(GenericState? state) {
+    return switch (state) {
+      GenericState.disabled => Colors.white24,
+      GenericState.disengaged => Colors.orangeAccent,
+      GenericState.engaged => const Color(0xFFFF3B3B),
+      _ => Colors.white10,
+    };
+  }
+
+  Color _getTowStatusColor(TowMode? state) {
+    return switch (state) {
+      TowMode.disabled => Colors.white24,
+      TowMode.disengaged => Colors.orangeAccent,
+      TowMode.engaged => const Color(0xFFFF3B3B),
+      _ => Colors.white10,
+    };
   }
 }
 

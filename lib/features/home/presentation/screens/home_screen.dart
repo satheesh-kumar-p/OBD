@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scout_obd/features/home/presentation/widgets/sidebar.dart';
 
+import '../../home_providers.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
-import '../../../drive/presentation/screens/drive_status_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
-import '../../dashboard_providers.dart';
-import '../widgets/hud_sidebar.dart';
-import '../widgets/hud_top_bar.dart';
+import '../../../common/presentation/screens/common_page_screen.dart';
+import '../../../drive/presentation/screens/drive_status_screen.dart';
 
-class Dashboard extends ConsumerWidget {
-  const Dashboard({super.key});
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = ref.watch(dashboardStateProvider.select((s) => s.selectedIndex));
+    final selectedIndex = ref.watch(homeIndexProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,9 +26,10 @@ class Dashboard extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // 1. Common Page (Top Bar)
             SizedBox(
               height: 60.h,
-              child: const HudTopBar(),
+              child: const CommonPageScreen(),
             ),
 
             // 2. Main Area (Sidebar + Content)
@@ -36,20 +37,23 @@ class Dashboard extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Sidebar for navigation
                   SizedBox(
                     width: 180.w,
-                    child: HudSidebar(
+                    child: Sidebar(
                       items: const [
-                        'SYSTEM', 'DRIVE', 'DEBUG',
+                        'SYSTEM',
+                        'DRIVE',
+                        'DEBUG',
                       ],
                       selectedIndex: selectedIndex,
                       onSelect: (index) {
-                        ref.read(dashboardIndexProvider.notifier).state = index;
+                        ref.read(homeIndexProvider.notifier).setIndex(index);
                       },
                     ),
                   ),
 
-                  // Page Content
+                  // Page Content (Rendered selected screens)
                   Expanded(
                     child: IndexedStack(
                       index: selectedIndex,

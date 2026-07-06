@@ -2,37 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../system_providers.dart';
+import '../state/system_screen_state.dart';
 
-class SystemScreen extends StatelessWidget {
+class SystemScreen extends ConsumerWidget {
   const SystemScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemScreenStateProvider);
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _StageSection(index: 0),
+          _buildStageSection(state, 0),
           SizedBox(height: 16.h),
-          const _StageSection(index: 1),
+          _buildStageSection(state, 1),
           SizedBox(height: 16.h),
-          const _StageSection(index: 2),
+          _buildStageSection(state, 2),
           SizedBox(height: 8.h),
         ],
       ),
     );
   }
-}
 
-class _StageSection extends ConsumerWidget {
-  final int index;
-  const _StageSection({required this.index});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final stage = ref.watch(systemScreenStateProvider.select((s) => s.stages[index]));
-    final state = ref.watch(systemScreenStateProvider);
+  Widget _buildStageSection(SystemScreenState state, int index) {
+    final stage = state.stages[index];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +51,7 @@ class _StageSection extends ConsumerWidget {
           itemCount: stage.items.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 6,
-            childAspectRatio: 1.45,
+            childAspectRatio: 1.3,
             mainAxisSpacing: 6.h,
             crossAxisSpacing: 4.w,
           ),
@@ -104,16 +100,16 @@ class _SubsystemTile extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.only(left: 2.r, right: 2.r, bottom: 2.r),
+        padding: EdgeInsets.all(2.r),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              size: 42.r,
+              size: 38.r,
               color: isStatusActive ? color : Colors.white38,
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 5.h),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -121,13 +117,13 @@ class _SubsystemTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.95),
-                  fontSize: 19.sp,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
                 ),
               ),
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 5.h),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -135,7 +131,7 @@ class _SubsystemTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: color,
-                  fontSize: 15.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
                 ),

@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../shared/comp_mode_status/di/mode_info_providers.dart';
 
-class HudModeLabel extends StatelessWidget {
-  const HudModeLabel({
-    super.key,
-    required this.mainText,
-    required this.subText,
-  });
-
-  final String mainText;
-  final String subText;
+class MissionModeLabel extends ConsumerWidget {
+  const MissionModeLabel({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const borderColor = Colors.white24;
-    const bgColor = Colors.white10;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(modeInfoProvider).asData?.value;
+    final mainText = mode?.mainMode.label ?? 'UNKNOWN';
+    final subText = 'HOLD: ${mode?.holdSubMode.label ?? 'UNKNOWN'}';
 
     return IntrinsicWidth(
       child: Container(
         decoration: BoxDecoration(
-          color: bgColor,
+          color: Colors.white10,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: borderColor, width: 1.w),
+          border: Border.all(color: Colors.white24, width: 1.w),
         ),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
         child: Column(
