@@ -38,7 +38,6 @@ class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity> {
 
               _logger.debug('System Health data received', context: {
                 'hv_batt': health.hvBattery,
-                'vcu': health.vcu,
                 'pdu': health.lvPdu,
               });
             } catch (e, st) {

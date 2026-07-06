@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:scout_obd/shared/comp_radio_state/domain/entities/comp_radio_state_entity.dart';
 
-import '../../../core/enums/subsystem_status_enum.dart';
-import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
-import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
-import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
-import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
+import '../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
-
-enum HealthLevel { connected, noHeartbeat, disconnected }
+import '../../../shared/comp_mode_status/domain/entities/mode_entity.dart';
+import '../../../shared/vcu_estop_status/domain/entities/e_stop_info_entity.dart';
+import '../../../shared/vcu_power_status/domain/entities/battery_info_entity.dart';
+import '../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
+import '../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 class DashboardState {
   const DashboardState({
@@ -17,7 +15,7 @@ class DashboardState {
     this.battery,
     this.eStopInfo,
     this.systemInfo,
-    this.compRadioInfo,
+    this.compSubsystemState,
     this.selectedIndex = 0,
   });
 
@@ -26,7 +24,7 @@ class DashboardState {
   final BatteryInfoEntity? battery;
   final EStopInfoEntity? eStopInfo;
   final SystemInfoEntity? systemInfo;
-  final CompRadioState? compRadioInfo;
+  final CompSubsystemState? compSubsystemState;
   final int selectedIndex;
 
   DashboardState copyWith({
@@ -35,7 +33,7 @@ class DashboardState {
     BatteryInfoEntity? battery,
     EStopInfoEntity? eStopInfo,
     SystemInfoEntity? systemInfo,
-    CompRadioState? compRadioInfo,
+    CompSubsystemState? compRadioInfo,
     int? selectedIndex,
   }) {
     return DashboardState(
@@ -44,7 +42,7 @@ class DashboardState {
       battery: battery ?? this.battery,
       eStopInfo: eStopInfo ?? this.eStopInfo,
       systemInfo: systemInfo ?? this.systemInfo,
-      compRadioInfo: compRadioInfo ?? this.compRadioInfo,
+      compSubsystemState: compRadioInfo ?? this.compSubsystemState,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -90,22 +88,20 @@ class DashboardState {
     return switch (eStopInfo?.status) {
       EStopStatus.engaged => const Color(0xFFFF3B3B),
       EStopStatus.released => const Color(0xFF00FF66),
-      EStopStatus.unknown || null => Colors.white12,
+      EStopStatus.unknown || null => Colors.white,
     };
   }
 
   Color get handCtrlColor {
-    final status = compRadioInfo?.uhfRadio;
+    final status = compSubsystemState?.uhfRadio;
     return switch (status) {
-      SubsystemStatus.healthy => const Color(0xFF00FF66),
-      SubsystemStatus.unhealthy => const Color(0xFFFF3B3B),
-      SubsystemStatus.noCommunication || SubsystemStatus.unknown || null => Colors.white38,
+      SubsystemFaultState.noFault => const Color(0xFF00FF66),
+      SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
+      SubsystemFaultState.unknown || null => Colors.white,
     };
   }
 
   Color get headlightsColor => (mode?.headlightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
 
   Color get fogLightsColor => (mode?.frontFogLightsOn ?? false) ? Colors.orangeAccent : Colors.white10;
-
-  double get batteryLevel => 1.0;
 }

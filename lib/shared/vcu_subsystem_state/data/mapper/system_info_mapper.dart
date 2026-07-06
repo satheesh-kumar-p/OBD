@@ -1,6 +1,6 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
-import '../../../../core/enums/subsystem_status_enum.dart';
+import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../domain/entities/system_info_entity.dart';
 
 /// Parser for CAN Message 0x203 - Subsystem State
@@ -51,7 +51,7 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       endBit: 27,
     ),
     const CanField<int>(
-      name: 'vcu',
+      name: 'hvPdu',
       startBit: 24,
       endBit: 25,
     ),
@@ -78,9 +78,19 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       endBit: 17,
     ),
     const CanField<int>(
-      name: 'compute',
+      name: 'mainCompute',
       startBit: 14,
       endBit: 15,
+    ),
+    const CanField<int>(
+      name: 'secondaryCompute',
+      startBit: 12,
+      endBit: 13,
+    ),
+    const CanField<int>(
+      name: 'vcu',
+      startBit: 10,
+      endBit: 11,
     ),
   ];
 
@@ -88,8 +98,8 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
   SystemInfoEntity build(Map<String, dynamic> values) {
     return SystemInfoEntity(
       // Motor controllers: ICD rear→left, front→right mapping
-      frontMotorController: _toStatus(values['rearMotorController']),
-      rearMotorController: _toStatus(values['frontMotorController']),
+      frontMotorController: _toStatus(values['frontMotorController']),
+      rearMotorController: _toStatus(values['rearMotorController']),
 
       // Other components
       hvBattery: _toStatus(values['hvBattery']),
@@ -97,8 +107,10 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       lvPdu: _toStatus(values['lvPdu']),
       dcDc48v12v: _toStatus(values['dcDc48vTo12v']),
       dcDc12v5v: _toStatus(values['dcDc12vTo5v']),
+      hvPdu: _toStatus(values['hvPdu']),
+      mainCompute: _toStatus(values['mainCompute']),
+      secondaryCompute: _toStatus(values['secondaryCompute']),
       vcu: _toStatus(values['vcu']),
-      compute: _toStatus(values['compute']),
 
       // Individual motors
       frontLeftMotor: _toStatus(values['frontLeftMotor']),
@@ -108,22 +120,14 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
     );
   }
 
-  /// Convert  2-bit CAN value to SubsystemStatus
-  /// ICD Mapping:
-  /// 0 = Reserved → noCommunication
-  /// 1 = No communication → noCommunication
-  /// 2 = Communicating healthy → healthy
-  /// 3 = Communicating not healthy → unhealthy
-  SubsystemStatus _toStatus(int value) {
+  SubsystemFaultState _toStatus(int value) {
     switch (value) {
-      case 1:  // No communication
-        return SubsystemStatus.noCommunication;
-      case 2:  // Healthy
-        return SubsystemStatus.healthy;
-      case 3:  // Unhealthy/Fault
-        return SubsystemStatus.unhealthy;
+      case 1:
+        return SubsystemFaultState.noFault;
+      case 2:
+        return SubsystemFaultState.faulty;
       default:
-        return SubsystemStatus.unknown;
+        return SubsystemFaultState.unknown;
     }
   }
 }

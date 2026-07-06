@@ -1,20 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/shared/vcu_estop_status/data/mapper/e_stop_info_mapper.dart';
 
 import '../../../../core/comm/can_bus/can_frame.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../core/comm/can_bus/can_extraction_strategy.dart';
-import '../../../shared/comp_radio_state/data/mappers/comp_radio_state_mapper.dart';
 import '../../dashboard/application/time_controller.dart';
 import '../domain/entities/debug_message.dart';
 
 // Import all mappers
+import '../../../shared/vcu_status/data/vcu_status_mapper.dart';
 import '../../../shared/comp_mode_status/data/mappers/mode_info_mapper.dart';
-import '../../../shared/comp_time_sync/data/mappers/comp_time_sync_mapper.dart';
 import '../../../shared/vcu_drive_health/data/mappers/drive_info_mapper.dart';
+import '../../../shared/vcu_estop_status/data/mapper/e_stop_info_mapper.dart';
+import '../../../shared/comp_time_sync/data/mappers/comp_time_sync_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
 import '../../../shared/vcu_subsystem_state/data/mapper/system_info_mapper.dart';
 import '../../../shared/comp_global_time_info/data/mappers/global_time_info_mapper.dart';
+import '../../../shared/comp_subsystem_state/data/mappers/comp_subsystem_state_mapper.dart';
 
 class DebugState {
   final Map<int, List<DebugMessage>> messagesById;
@@ -62,8 +63,9 @@ class DebugController extends Notifier<DebugState> {
       ModeInfoMapper(),
       GlobalTimeInfoMapper(),
       CompTimeSyncMapper(),
-      CompRadioStateMapper(),
+      CompSubsystemStateMapper(),
       EStopInfoMapper(),
+      VcuStatusMapper(),
     ];
 
     for (final strategy in mappersList) {

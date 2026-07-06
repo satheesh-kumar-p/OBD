@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../di/injection_container.dart';
-import '../../features/system/di/system_providers.dart';
+import '../../features/system/system_providers.dart';
 import '../../features/debug/di/debug_providers.dart';
 
 /// The CoreController is responsible for keeping background services alive

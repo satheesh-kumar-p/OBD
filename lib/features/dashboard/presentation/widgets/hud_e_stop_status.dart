@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../di/dashboard_providers.dart';
+import '../../dashboard_providers.dart';
 import '../../../../shared/vcu_estop_status/enums/e_stop_status_enum.dart';
 
 class HudEStopStatus extends ConsumerWidget {

@@ -4,6 +4,7 @@ enum Subsystem {
   hvBattery,
   lvBattery,
   lvPdu,
+  hvPdu,
   dcDc48v12v,
   dcDc12v5v,
   vcu,
@@ -13,5 +14,11 @@ enum Subsystem {
   rearRightMotor,
   uhfRadio,
   lBandRadio,
-  compute;
+  mainCompute,
+  secondaryCompute,
+  ethernetSwitch,
+  gnss,
+  imu,
+  lidar2d,
+  lidar3d;
 }
