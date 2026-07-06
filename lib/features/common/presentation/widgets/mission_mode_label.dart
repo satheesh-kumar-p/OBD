@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/comp_mode_status/di/mode_info_providers.dart';
+import '../../../../shared/vcu_status/vcu_status_providers.dart';
+import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
 
 class MissionModeLabel extends ConsumerWidget {
   const MissionModeLabel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(modeInfoProvider).asData?.value;
-    final mainText = mode?.mainMode.label ?? 'UNKNOWN';
-    final subText = 'HOLD: ${mode?.holdSubMode.label ?? 'UNKNOWN'}';
+    final status = ref.watch(vcuStatusProvider).asData?.value;
+
+    final autonomyMode = status?.autonomyMode ?? AutonomyModeEnum.unknown;
+    final holdState = status?.holdState ?? HoldStateEnum.unknown;
+
+    final mainText = autonomyMode.label;
+    final subText = 'HOLD: ${holdState.label}';
+
+    final subColor = switch (holdState) {
+      HoldStateEnum.disengaged => const Color(0xFF00FF66), // Green
+      HoldStateEnum.engaged => const Color(0xFFFF3B3B),    // Red
+      HoldStateEnum.unknown => Colors.white,
+    };
 
     return IntrinsicWidth(
       child: Container(
@@ -27,7 +38,7 @@ class MissionModeLabel extends ConsumerWidget {
             Text(
               mainText,
               style: TextStyle(
-                color: Colors.white,
+                color: autonomyMode == AutonomyModeEnum.unknown ? Colors.white : Colors.white,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.4.w,
@@ -37,7 +48,7 @@ class MissionModeLabel extends ConsumerWidget {
             Text(
               subText,
               style: TextStyle(
-                color: Colors.orangeAccent,
+                color: subColor,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3.w,

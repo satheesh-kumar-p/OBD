@@ -11,14 +11,14 @@ class SafetyStatus extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vcuStatus = ref.watch(vcuStatusProvider).asData?.value;
 
-    final physicalEStopColor = _getGenericStatusColor(vcuStatus?.emergencyStatus);
-    final isPhysicalEStopInactive = _isGenericInactive(vcuStatus?.emergencyStatus);
+    final physicalEStopColor = _getEmergencyColor(vcuStatus?.emergency);
+    final isPhysicalEStopInactive = vcuStatus?.emergency == EmergencyEnum.unknown || vcuStatus == null;
 
-    final remoteEStopColor = _getGenericStatusColor(vcuStatus?.remoteEmergencyStatus);
-    final isRemoteEStopInactive = _isGenericInactive(vcuStatus?.remoteEmergencyStatus);
+    final remoteEStopColor = _getRemoteEmergencyColor(vcuStatus?.remoteEmergency);
+    final isRemoteEStopInactive = vcuStatus?.remoteEmergency == RemoteEmergencyEnum.unknown || vcuStatus == null;
 
-    final towStatusColor = _getTowStatusColor(vcuStatus?.tow);
-    final isTowInactive = _isTowInactiveStatus(vcuStatus?.tow);
+    final towStatusColor = _getTowColor(vcuStatus?.towMode);
+    final isTowInactive = vcuStatus?.towMode == TowModeEnum.unknown || vcuStatus == null;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -47,27 +47,28 @@ class SafetyStatus extends ConsumerWidget {
     );
   }
 
-  bool _isGenericInactive(GenericState? state) =>
-      state == null || state == GenericState.disabled || state == GenericState.unknown;
-
-  bool _isTowInactiveStatus(TowMode? state) =>
-      state == null || state == TowMode.disabled || state == TowMode.unknown;
-
-  Color _getGenericStatusColor(GenericState? state) {
+  Color _getEmergencyColor(EmergencyEnum? state) {
     return switch (state) {
-      GenericState.disabled => Colors.white24,
-      GenericState.disengaged => Colors.orangeAccent,
-      GenericState.engaged => const Color(0xFFFF3B3B),
-      _ => Colors.white10,
+      EmergencyEnum.disabled => Colors.orangeAccent,
+      EmergencyEnum.disengaged => const Color(0xFF00FF66), // Green
+      EmergencyEnum.engaged => const Color(0xFFFF3B3B),    // Red
+      _ => Colors.white24,
     };
   }
 
-  Color _getTowStatusColor(TowMode? state) {
+  Color _getRemoteEmergencyColor(RemoteEmergencyEnum? state) {
     return switch (state) {
-      TowMode.disabled => Colors.white24,
-      TowMode.disengaged => Colors.orangeAccent,
-      TowMode.engaged => const Color(0xFFFF3B3B),
-      _ => Colors.white10,
+      RemoteEmergencyEnum.disengaged => const Color(0xFF00FF66), // Green
+      RemoteEmergencyEnum.engaged => const Color(0xFFFF3B3B),    // Red
+      _ => Colors.white24,
+    };
+  }
+
+  Color _getTowColor(TowModeEnum? state) {
+    return switch (state) {
+      TowModeEnum.disengaged => const Color(0xFF00FF66), // Green
+      TowModeEnum.engaged => const Color(0xFFFF3B3B),    // Red
+      _ => Colors.white24,
     };
   }
 }

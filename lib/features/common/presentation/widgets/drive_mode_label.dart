@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/comp_mode_status/di/mode_info_providers.dart';
+import '../../../../shared/vcu_status/vcu_status_providers.dart';
+import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
 
 class DriveModeLabel extends ConsumerWidget {
   const DriveModeLabel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(modeInfoProvider).asData?.value;
-    final mainText = mode?.driveMode.label ?? 'UNKNOWN';
-    final subText = mode?.speedMode.label ?? 'UNKNOWN';
+    final status = ref.watch(vcuStatusProvider).asData?.value;
+
+    final driveMode = status?.driveMode ?? DriveModeEnum.unknown;
+    final driveLimit = status?.driveModeLimit ?? DriveModeLimitEnum.unknown;
+
+    final mainText = driveMode.label;
+    final subText = driveLimit.label;
 
     return IntrinsicWidth(
       child: Container(
@@ -27,7 +32,7 @@ class DriveModeLabel extends ConsumerWidget {
             Text(
               mainText,
               style: TextStyle(
-                color: Colors.white,
+                color: driveMode == DriveModeEnum.unknown ? Colors.white : Colors.white,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.4.w,
@@ -37,7 +42,7 @@ class DriveModeLabel extends ConsumerWidget {
             Text(
               subText,
               style: TextStyle(
-                color: Colors.orangeAccent,
+                color: driveLimit == DriveModeLimitEnum.unknown ? Colors.white : Colors.orangeAccent,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3.w,

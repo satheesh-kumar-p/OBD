@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/comp_mode_status/di/mode_info_providers.dart';
-import '../../../../shared/comp_mode_status/enums/mode_enum.dart';
+import '../../../../shared/vcu_status/vcu_status_providers.dart';
+import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
 
 class ArmStatus extends ConsumerWidget {
   const ArmStatus({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final armStatus = ref.watch(modeInfoProvider.select((s) => s.asData?.value?.armStatus ?? ArmStatusEnum.unknown));
+    final armMode = ref.watch(vcuStatusProvider.select((s) => s.asData?.value?.armMode ?? ArmModeEnum.unknown));
 
-    final (color, bgColor, IconData? icon) = switch (armStatus) {
-      ArmStatusEnum.armed => (
-      Colors.redAccent,
-      Colors.redAccent.withOpacity(0.1),
-      Icons.lock_open_rounded
+    final (color, bgColor, IconData? icon) = switch (armMode) {
+      ArmModeEnum.armed => (
+        const Color(0xFFFF3B3B), // Red
+        const Color(0xFFFF3B3B).withOpacity(0.1),
+        Icons.lock_open_rounded
       ),
-      ArmStatusEnum.disarmed => (
-      Colors.greenAccent,
-      Colors.greenAccent.withOpacity(0.1),
-      Icons.lock_rounded
+      ArmModeEnum.disarmed => (
+        const Color(0xFF00FF66), // Green
+        const Color(0xFF00FF66).withOpacity(0.1),
+        Icons.lock_rounded
       ),
-      ArmStatusEnum.override => (
-      Colors.orangeAccent,
-      Colors.orangeAccent.withOpacity(0.1),
-      Icons.warning_amber_rounded
+      ArmModeEnum.override => (
+        Colors.orangeAccent,
+        Colors.orangeAccent.withOpacity(0.1),
+        Icons.warning_amber_rounded
       ),
-      ArmStatusEnum.unknown => (
-      Colors.white24,
-      Colors.white10,
-      null,
+      _ => (
+        Colors.white24,
+        Colors.white10,
+        null,
       ),
     };
 
@@ -49,7 +49,7 @@ class ArmStatus extends ConsumerWidget {
             SizedBox(width: 8.w),
           ],
           Text(
-            armStatus.label,
+            armMode.label,
             style: TextStyle(
               color: color,
               fontSize: 14.sp,

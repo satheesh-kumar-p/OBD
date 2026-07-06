@@ -8,8 +8,6 @@ import '../../../core/constants/app_constants.dart';
 
 // Import all mappers
 import '../../../shared/vcu_status/data/vcu_status_mapper.dart';
-import '../../../shared/comp_mode_status/data/mappers/mode_info_mapper.dart';
-import '../../../shared/vcu_estop_status/data/mapper/e_stop_info_mapper.dart';
 import '../../../shared/vcu_drive_health/data/mappers/drive_info_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
 import '../../../shared/vcu_subsystem_state/data/mapper/system_info_mapper.dart';
@@ -65,9 +63,7 @@ class DebugController extends Notifier<DebugState> {
       BatteryInfoMapper(),
       SystemInfoMapper(),
       DriveInfoMapper(),
-      ModeInfoMapper(),
       CompSubsystemStateMapper(),
-      EStopInfoMapper(),
       VcuStatusMapper(),
     ];
 
