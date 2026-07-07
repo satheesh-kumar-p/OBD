@@ -1,7 +1,6 @@
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
 
-// TODO: REFACTOR class name
-class SystemInfoEntity {
+class VcuSubsystemInfoEntity {
   final SubsystemFaultState forwardMotorController;
   final SubsystemFaultState aftMotorController;
   final SubsystemFaultState hvBattery;
@@ -16,7 +15,7 @@ class SystemInfoEntity {
   final SubsystemFaultState mainCompute;
   final SubsystemFaultState vcu;
 
-  const SystemInfoEntity({
+  const VcuSubsystemInfoEntity({
     required this.forwardMotorController,
     required this.aftMotorController,
     required this.hvBattery,

@@ -11,7 +11,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../shared/vcu_status/data/vcu_status_mapper.dart';
 import '../../../shared/vcu_drive_health/data/mappers/drive_info_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
-import '../../../shared/vcu_subsystem_state/data/mapper/system_info_mapper.dart';
+import '../../../shared/vcu_subsystem_state/data/mapper/vcu_subsystem_state_mapper.dart';
 import '../../../shared/comp_subsystem_state/data/mappers/comp_subsystem_state_mapper.dart';
 
 class DebugState {

@@ -1,9 +1,9 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
-import '../../domain/entities/system_info_entity.dart';
+import '../../domain/entities/vcu_subsystem_info_entity.dart';
 
-class VcuSubsystemStateMapper extends CanExtractionStrategy<SystemInfoEntity> {
+class VcuSubsystemStateMapper extends CanExtractionStrategy<VcuSubsystemInfoEntity> {
   static final int id = 0x203;
 
   @override
@@ -84,8 +84,8 @@ class VcuSubsystemStateMapper extends CanExtractionStrategy<SystemInfoEntity> {
   ];
 
   @override
-  SystemInfoEntity build(Map<String, dynamic> values) {
-    return SystemInfoEntity(
+  VcuSubsystemInfoEntity build(Map<String, dynamic> values) {
+    return VcuSubsystemInfoEntity(
       forwardMotorController: SubsystemFaultState.fromInt(values['forwardMotorController']),
       aftMotorController: SubsystemFaultState.fromInt(values['aftMotorController']),
       hvBattery: SubsystemFaultState.fromInt(values['hvBattery']),

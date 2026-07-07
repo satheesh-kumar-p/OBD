@@ -5,7 +5,7 @@ import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
 import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
 import '../../../../shared/vcu_status/domain/vcu_status_entity.dart';
-import '../../../../shared/vcu_subsystem_state/domain/entities/system_info_entity.dart';
+import '../../../../shared/vcu_subsystem_state/domain/entities/vcu_subsystem_info_entity.dart';
 import '../../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 class StageData {
@@ -22,7 +22,7 @@ class StageData {
 
 // TODO: Remove special handling of GNSS after ICD gets updated
 class SystemScreenState {
-  final SystemInfoEntity? systemInfo;
+  final VcuSubsystemInfoEntity? systemInfo;
   final CompSubsystemStateEntity? computeCommInfo;
   final SecComputeHealthEntity? secComputeInfo;
   final VcuStatusEntity? vcuStatus;
@@ -35,7 +35,7 @@ class SystemScreenState {
   });
 
   SystemScreenState copyWith({
-    SystemInfoEntity? systemInfo,
+    VcuSubsystemInfoEntity? systemInfo,
     CompSubsystemStateEntity? computeCommInfo,
     VcuStatusEntity? vcuStatus,
     SecComputeHealthEntity? secComputeInfo,

@@ -4,23 +4,23 @@ import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/comm/can_bus/i_can_data_repository.dart';
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
-import '../../domain/entities/system_info_entity.dart';
+import '../../domain/entities/vcu_subsystem_info_entity.dart';
 
-class SystemInfoRepository implements ICanDataRepository<SystemInfoEntity?> {
+class VcuSubsystemInfoRepository implements ICanDataRepository<VcuSubsystemInfoEntity?> {
   final CommManager _canManager;
-  final CanExtractionStrategy<SystemInfoEntity> _mapper;
+  final CanExtractionStrategy<VcuSubsystemInfoEntity> _mapper;
   final Logger _logger;
 
-  SystemInfoRepository({
+  VcuSubsystemInfoRepository({
     required CommManager canManager,
-    required CanExtractionStrategy<SystemInfoEntity> mapper,
+    required CanExtractionStrategy<VcuSubsystemInfoEntity> mapper,
     required Logger logger,
   }) : _canManager = canManager,
        _mapper = mapper,
        _logger = logger;
 
   @override
-  Stream<SystemInfoEntity?> watchCanData() {
+  Stream<VcuSubsystemInfoEntity?> watchCanData() {
     return _canManager.watchMessage(_mapper.messageId).map((frame) {
       if (frame == null) return null;
 
