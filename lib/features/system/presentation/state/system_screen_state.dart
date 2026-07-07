@@ -3,6 +3,7 @@ import 'package:scout_obd/shared/sec_comp_hw_health/domain/sec_compute_health_en
 
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../../core/constants/subsystem_list_constants.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
 import '../../../../shared/vcu_status/domain/vcu_status_entity.dart';
 import '../../../../shared/vcu_subsystem_state/domain/entities/vcu_subsystem_info_entity.dart';
@@ -134,18 +135,18 @@ class SystemScreenState {
 
     if (status is GnssFaultState) {
       return switch (status) {
-        GnssFaultState.healthy => (const Color(0xFF00FF66), 'Healthy'),
-        GnssFaultState.degraded => (Colors.orangeAccent, 'Degraded'),
-        GnssFaultState.faulty => (const Color(0xFFFF3B3B), 'Faulty'),
-        GnssFaultState.unknown => (const Color(0xFF93A9B5), 'Unknown'),
+        GnssFaultState.healthy => (AppColors.healthy, 'Healthy'),
+        GnssFaultState.degraded => (AppColors.degraded, 'Degraded'),
+        GnssFaultState.faulty => (AppColors.faulty, 'Faulty'),
+        GnssFaultState.unknown => (AppColors.unknown, 'Unknown'),
       };
     }
 
     final faultStatus = status as SubsystemFaultState? ?? SubsystemFaultState.unknown;
     return switch (faultStatus) {
-      SubsystemFaultState.healthy => (const Color(0xFF00FF66), 'Healthy'),
-      SubsystemFaultState.faulty => (const Color(0xFFFF3B3B), 'Faulty'),
-      SubsystemFaultState.unknown => (const Color(0xFF93A9B5), 'Unknown'),
+      SubsystemFaultState.healthy => (AppColors.healthy, 'Healthy'),
+      SubsystemFaultState.faulty => (AppColors.faulty, 'Faulty'),
+      SubsystemFaultState.unknown => (AppColors.unknown, 'Unknown'),
     };
   }
 
@@ -161,8 +162,8 @@ class SystemScreenState {
 
   List<StageData> get stages {
     final opState = vcuStatus?.operationalState;
-    final inactiveColor = Colors.white.withOpacity(0.5);
-    const activeColor = Color(0xFF00FF66);
+    final inactiveColor = AppColors.textDisabled.withOpacity(0.5);
+    const activeColor = AppColors.healthy;
 
     return [
       StageData(

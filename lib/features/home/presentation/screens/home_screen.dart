@@ -6,7 +6,7 @@ import 'package:scout_obd/features/home/presentation/widgets/sidebar.dart';
 import '../../home_providers.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
-import '../../../common/presentation/screens/common_page_screen.dart';
+import '../../../common/presentation/screens/common_screen.dart';
 import '../../../drive/presentation/screens/drive_status_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -29,7 +29,7 @@ class HomeScreen extends ConsumerWidget {
             // 1. Common Page (Top Bar)
             SizedBox(
               height: 60.h,
-              child: const CommonPageScreen(),
+              child: const CommonScreen(),
             ),
 
             // 2. Main Area (Sidebar + Content)

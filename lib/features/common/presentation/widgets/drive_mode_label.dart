@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/vcu_status/vcu_status_providers.dart';
-import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../common_providers.dart';
 
 class DriveModeLabel extends ConsumerWidget {
   const DriveModeLabel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final status = ref.watch(vcuStatusProvider).asData?.value;
-
-    final driveMode = status?.driveMode ?? DriveModeEnum.unknown;
-    final driveLimit = status?.driveModeLimit ?? DriveModeLimitEnum.unknown;
-
-    final mainText = driveMode.label;
-    final subText = driveLimit.label;
+    final (mainText, subText, subColor) = ref.watch(commonScreenStateProvider.select((s) => s.driveModeVisuals));
 
     return IntrinsicWidth(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white10,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Colors.white24, width: 1.w),
+          border: Border.all(color: AppColors.border, width: 1.w),
         ),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
         child: Column(
@@ -32,7 +26,7 @@ class DriveModeLabel extends ConsumerWidget {
             Text(
               mainText,
               style: TextStyle(
-                color: driveMode == DriveModeEnum.unknown ? Colors.white : Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.4.w,
@@ -42,7 +36,7 @@ class DriveModeLabel extends ConsumerWidget {
             Text(
               subText,
               style: TextStyle(
-                color: driveLimit == DriveModeLimitEnum.unknown ? Colors.white : Colors.orangeAccent,
+                color: subColor,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3.w,

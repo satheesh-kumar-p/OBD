@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../system_providers.dart';
 import '../state/system_screen_state.dart';
 
@@ -92,10 +93,10 @@ class _SubsystemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isStatusActive ? color.withOpacity(0.1) : Colors.white.withOpacity(0.09),
+        color: isStatusActive ? color.withOpacity(0.1) : AppColors.surface,
         borderRadius: BorderRadius.circular(2.r),
         border: Border.all(
-          color: isStatusActive ? color.withOpacity(0.4) : Colors.white10,
+          color: isStatusActive ? color.withOpacity(0.4) : AppColors.border,
           width: 0.5.w,
         ),
       ),
@@ -107,7 +108,7 @@ class _SubsystemTile extends StatelessWidget {
             Icon(
               icon,
               size: 38.r,
-              color: isStatusActive ? color : Colors.white38,
+              color: isStatusActive ? color : AppColors.textDisabled,
             ),
             SizedBox(height: 5.h),
             FittedBox(
@@ -116,7 +117,7 @@ class _SubsystemTile extends StatelessWidget {
                 name,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.95),
+                  color: AppColors.textPrimary.withOpacity(0.95),
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
                   height: 1.0,

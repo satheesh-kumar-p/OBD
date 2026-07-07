@@ -1,75 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/vcu_status/domain/vcu_status_enums.dart';
-import '../../../../shared/vcu_status/vcu_status_providers.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../common_providers.dart';
 
 class SafetyStatus extends ConsumerWidget {
   const SafetyStatus({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vcuStatus = ref.watch(vcuStatusProvider).asData?.value;
-
-    final physicalEStopColor = _getEmergencyColor(vcuStatus?.emergency);
-    final isPhysicalEStopInactive = vcuStatus?.emergency == EmergencyEnum.unknown || vcuStatus == null;
-
-    final remoteEStopColor = _getRemoteEmergencyColor(vcuStatus?.remoteEmergency);
-    final isRemoteEStopInactive = vcuStatus?.remoteEmergency == RemoteEmergencyEnum.unknown || vcuStatus == null;
-
-    final towStatusColor = _getTowColor(vcuStatus?.towMode);
-    final isTowInactive = vcuStatus?.towMode == TowModeEnum.unknown || vcuStatus == null;
+    final indicators = ref.watch(commonScreenStateProvider.select((s) => s.safetyIndicators));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _SafetyIndicator(
-          label: 'E-STOP',
-          color: physicalEStopColor,
-          isInactive: isPhysicalEStopInactive,
-          icon: Icons.stop_circle_rounded,
-        ),
-        SizedBox(width: 8.w),
-        _SafetyIndicator(
-          label: 'REMOTE\nE-STOP',
-          color: remoteEStopColor,
-          isInactive: isRemoteEStopInactive,
-          icon: Icons.settings_remote_rounded,
-        ),
-        SizedBox(width: 8.w),
-        _SafetyIndicator(
-          label: 'TOW',
-          color: towStatusColor,
-          isInactive: isTowInactive,
-          icon: Icons.car_crash_outlined,
-        ),
-      ],
+      children: indicators.map((indicator) {
+        return Padding(
+          padding: EdgeInsets.only(right: 8.w),
+          child: _SafetyIndicator(
+            label: indicator.label,
+            color: indicator.color,
+            isInactive: indicator.isInactive,
+            icon: indicator.icon,
+          ),
+        );
+      }).toList(),
     );
-  }
-
-  Color _getEmergencyColor(EmergencyEnum? state) {
-    return switch (state) {
-      EmergencyEnum.disabled => Colors.orangeAccent,
-      EmergencyEnum.disengaged => const Color(0xFF00FF66), // Green
-      EmergencyEnum.engaged => const Color(0xFFFF3B3B),    // Red
-      _ => Colors.white24,
-    };
-  }
-
-  Color _getRemoteEmergencyColor(RemoteEmergencyEnum? state) {
-    return switch (state) {
-      RemoteEmergencyEnum.disengaged => const Color(0xFF00FF66), // Green
-      RemoteEmergencyEnum.engaged => const Color(0xFFFF3B3B),    // Red
-      _ => Colors.white24,
-    };
-  }
-
-  Color _getTowColor(TowModeEnum? state) {
-    return switch (state) {
-      TowModeEnum.disengaged => const Color(0xFF00FF66), // Green
-      TowModeEnum.engaged => const Color(0xFFFF3B3B),    // Red
-      _ => Colors.white24,
-    };
   }
 }
 
@@ -88,8 +43,8 @@ class _SafetyIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = isInactive ? Colors.white10 : color.withOpacity(0.8);
-    final bgColor = isInactive ? Colors.white.withOpacity(0.05) : color.withOpacity(0.15);
+    final borderColor = isInactive ? AppColors.border : color.withOpacity(0.8);
+    final bgColor = isInactive ? AppColors.surface : color.withOpacity(0.15);
 
     return Container(
       width: 58.w,
@@ -112,7 +67,7 @@ class _SafetyIndicator extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isInactive ? Colors.white24 : color,
+            color: isInactive ? AppColors.textDisabled : color,
             size: 20.r,
           ),
           SizedBox(height: 2.h),
@@ -120,7 +75,7 @@ class _SafetyIndicator extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isInactive ? Colors.white24 : color,
+              color: isInactive ? AppColors.textDisabled : color,
               fontSize: 9.sp,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.5,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../common_providers.dart';
 
 class DateTimeLabel extends ConsumerWidget {
@@ -8,7 +9,7 @@ class DateTimeLabel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final systemTime = ref.watch(systemTimeProvider);
+    final systemTime = ref.watch(commonScreenStateProvider.select((s) => s.systemTime));
 
     return FittedBox(
       fit: BoxFit.scaleDown,
@@ -18,7 +19,7 @@ class DateTimeLabel extends ConsumerWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: 24.sp,
           fontWeight: FontWeight.w900,
           letterSpacing: 1.2.w,

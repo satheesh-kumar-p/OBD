@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/application/core_controller.dart';
+import 'core/theme/app_colors.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/home/presentation/widgets/app_background.dart';
 
@@ -34,9 +35,9 @@ class MyApp extends StatelessWidget {
           title: 'Scout Display',
           theme: ThemeData(
             useMaterial3: true,
-            scaffoldBackgroundColor: Colors.black,
+            scaffoldBackgroundColor: AppColors.background,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.lightBlueAccent,
+              seedColor: AppColors.accent,
               brightness: Brightness.dark,
             ),
           ),

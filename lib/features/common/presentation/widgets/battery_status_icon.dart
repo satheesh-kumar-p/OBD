@@ -1,29 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/vcu_power_status/di/battery_info_providers.dart';
-import '../../../../shared/vcu_status/vcu_status_providers.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../common_providers.dart';
 
 class BatteryStatusIcon extends ConsumerWidget {
   const BatteryStatusIcon({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final battery = ref.watch(batteryInfoProvider).asData?.value;
-    final vcuStatus = ref.watch(vcuStatusProvider).asData?.value;
-
-    final lvSoc = battery?.lvBatterySoc ?? 0;
-    final hvSoc = battery?.hvBatterySoc ?? 0;
-    final isCharging = vcuStatus?.chargingInProgress ?? false;
-
-    Color getBatteryColor(int soc) {
-      if (soc < 20) return const Color(0xFFFF3B3B);
-      if (soc < 50) return Colors.orangeAccent;
-      return const Color(0xFF00FF66);
-    }
-
-    final lvColor = getBatteryColor(lvSoc);
-    final hvColor = getBatteryColor(hvSoc);
+    final indicators = ref.watch(commonScreenStateProvider.select((s) => s.batteryIndicators));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -34,15 +20,15 @@ class BatteryStatusIcon extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _BatteryLevelIndicator(
-              soc: lvSoc,
-              color: lvColor,
-              isCharging: false,
+              soc: indicators[0].soc,
+              color: indicators[0].color,
+              isCharging: indicators[0].isCharging,
             ),
             SizedBox(height: 4.h),
             Text(
-              'LV',
+              indicators[0].label,
               style: TextStyle(
-                color: Colors.white70,
+                color: AppColors.textSecondary,
                 fontSize: 10.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -55,15 +41,15 @@ class BatteryStatusIcon extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _BatteryLevelIndicator(
-              soc: hvSoc,
-              color: hvColor,
-              isCharging: isCharging,
+              soc: indicators[1].soc,
+              color: indicators[1].color,
+              isCharging: indicators[1].isCharging,
             ),
             SizedBox(height: 4.h),
             Text(
-              'HV',
+              indicators[1].label,
               style: TextStyle(
-                color: Colors.white70,
+                color: AppColors.textSecondary,
                 fontSize: 10.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -109,7 +95,7 @@ class _BatteryLevelIndicator extends StatelessWidget {
               height: height,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: isCharging ? const Color(0xFF00FF66) : Colors.white,
+                  color: isCharging ? AppColors.success : AppColors.textPrimary,
                   width: borderW,
                 ),
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -138,13 +124,13 @@ class _BatteryLevelIndicator extends StatelessWidget {
                           if (isCharging)
                             Icon(
                               Icons.bolt_rounded,
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               size: height * 0.55,
                             ),
                           Text(
                             '$soc%',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: height * (isCharging ? 0.45 : 0.6),
                               fontWeight: FontWeight.w900,
                               fontFamily: 'monospace',
@@ -162,7 +148,7 @@ class _BatteryLevelIndicator extends StatelessWidget {
               width: terminalW,
               height: terminalH,
               decoration: BoxDecoration(
-                color: isCharging ? const Color(0xFF00FF66) : Colors.white,
+                color: isCharging ? AppColors.success : AppColors.textPrimary,
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(1.5 * unit),
                   bottomRight: Radius.circular(1.5 * unit),

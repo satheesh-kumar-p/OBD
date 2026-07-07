@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/shared/vcu_mc_temp_volt/data/mappers/mc_temp_volt_mapper.dart';
+import 'package:scout_obd/shared/sec_comp_hw_health/data/sec_compute_health_mapper.dart';
 
 import '../domain/entities/debug_message.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
@@ -66,6 +66,7 @@ class DebugController extends Notifier<DebugState> {
       DriveInfoMapper(),
       CompSubsystemStateMapper(),
       VcuStatusMapper(),
+      SecComputeHealthMapper(),
     ];
 
     for (final strategy in mappersList) {

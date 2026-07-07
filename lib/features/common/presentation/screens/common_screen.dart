@@ -11,8 +11,8 @@ import '../widgets/hand_ctrl_status.dart';
 import '../widgets/date_time_label.dart';
 import '../widgets/battery_status_icon.dart';
 
-class CommonPageScreen extends ConsumerWidget {
-  const CommonPageScreen({super.key});
+class CommonScreen extends ConsumerWidget {
+  const CommonScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

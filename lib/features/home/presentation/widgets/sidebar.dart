@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({
@@ -19,7 +20,7 @@ class Sidebar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.black,
         border: Border(
-          right: BorderSide(color: Colors.white10, width: 1),
+          right: BorderSide(color: AppColors.border, width: 1),
         ),
       ),
       child: LayoutBuilder(
@@ -66,14 +67,11 @@ class _SidebarItem extends StatelessWidget {
   final bool enabled;
   final VoidCallback? onTap;
 
-  static const _cyan = Color(0xFF2FD0FF);
-  static const _steel = Color(0xFF93A9B5);
-
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? _cyan.withOpacity(0.2) : Colors.transparent;
-    final border = selected ? _cyan : Colors.transparent;
-    final textColor = selected ? Colors.cyanAccent : _steel.withOpacity(0.7);
+    final bg = selected ? AppColors.accent.withOpacity(0.2) : Colors.transparent;
+    final border = selected ? AppColors.accent : Colors.transparent;
+    final textColor = selected ? AppColors.accentVariant : AppColors.steel.withOpacity(0.7);
 
     return MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
