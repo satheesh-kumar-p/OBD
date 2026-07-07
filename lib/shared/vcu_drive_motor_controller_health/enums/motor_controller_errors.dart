@@ -1,10 +1,12 @@
 enum MotorControllerErrors {
   canCommunication(1),
   overTemp(2),
-  underVoltage(4),
-  overPressure(8),
-  overCurrent(16),
-  drive(32);
+  busVoltage(4),
+  uartCommunication(8),
+  underVoltage(16),
+  overVoltage(32),
+  overCurrent(64),
+  drive(128);
 
   const MotorControllerErrors(this.bit);
   final int bit;
