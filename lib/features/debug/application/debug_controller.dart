@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scout_obd/shared/sec_comp_hw_health/data/sec_compute_health_mapper.dart';
+import 'package:scout_obd/shared/vcu_subsystem_power_state/data/vcu_subsystem_power_state_mapper.dart';
 
 import '../domain/entities/debug_message.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
@@ -9,7 +9,9 @@ import '../../../core/constants/app_constants.dart';
 
 // Import all mappers
 import '../../../shared/vcu_status/data/vcu_status_mapper.dart';
-import '../../../shared/vcu_drive_health/data/mappers/drive_info_mapper.dart';
+import '../../../shared/sec_comp_hw_health/data/sec_compute_health_mapper.dart';
+import '../../../shared/vcu_drive_motor_controller_health/data/mappers/drive_mc_info_mapper.dart';
+import '../../../shared/vcu_drive_motor_health/data/mappers/drive_motor_info_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
 import '../../../shared/vcu_subsystem_state/data/mapper/vcu_subsystem_state_mapper.dart';
 import '../../../shared/comp_subsystem_state/data/mappers/comp_subsystem_state_mapper.dart';
@@ -63,10 +65,12 @@ class DebugController extends Notifier<DebugState> {
     final List<CanExtractionStrategy> mappersList = [
       BatteryInfoMapper(),
       VcuSubsystemStateMapper(),
-      DriveInfoMapper(),
       CompSubsystemStateMapper(),
       VcuStatusMapper(),
       SecComputeHealthMapper(),
+      DriveMcInfoMapper(),
+      DriveMotorInfoMapper(),
+      VcuSubsystemPowerStateMapper(),
     ];
 
     for (final strategy in mappersList) {

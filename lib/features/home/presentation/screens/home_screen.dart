@@ -7,7 +7,7 @@ import '../../home_providers.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
 import '../../../common/presentation/screens/common_screen.dart';
-import '../../../drive/presentation/screens/drive_status_screen.dart';
+import '../../../drive/presentation/screens/drive_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
