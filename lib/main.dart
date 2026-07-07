@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/application/core_controller.dart';
-import 'features/dashboard/presentation/screens/dashboard.dart';
-import 'features/dashboard/presentation/widgets/app_background.dart';
+import 'core/theme/app_colors.dart';
+import 'features/home/presentation/screens/home_screen.dart';
+import 'features/home/presentation/widgets/app_background.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,15 +28,16 @@ class MyApp extends StatelessWidget {
       designSize: const Size(1280, 800),
       minTextAdapt: true,
       splitScreenMode: true,
+      ensureScreenSize: true,
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Scout Display',
           theme: ThemeData(
             useMaterial3: true,
-            scaffoldBackgroundColor: Colors.black,
+            scaffoldBackgroundColor: AppColors.background,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.lightBlueAccent,
+              seedColor: AppColors.accent,
               brightness: Brightness.dark,
             ),
           ),
@@ -56,6 +58,6 @@ class _AppBootstrapper extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(coreControllerProvider);
 
-    return const Dashboard();
+    return const HomeScreen();
   }
 }

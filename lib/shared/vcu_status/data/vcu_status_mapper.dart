@@ -13,7 +13,7 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
   List<CanField<dynamic>> get fields => [
     const CanField<int>(
       name: 'operationalState',
-      startBit: 36,
+      startBit: 38,
       endBit: 39,
     ),
     const CanField<int>(
@@ -27,25 +27,46 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       endBit: 33,
     ),
     const CanField<int>(
+      name: 'armMode',
+      startBit: 30,
+      endBit: 31,
+    ),
+    const CanField<int>(
+      name: 'driveMode',
+      startBit: 26,
+      endBit: 29,
+    ),
+    const CanField<int>(
+      name: 'driveModeLimit',
+      startBit: 24,
+      endBit: 25,
+    ),
+    const CanField<int>(
       name: 'towMode',
       startBit: 22,
       endBit: 23,
     ),
     const CanField<int>(
-      name: 'towStatus',
+      name: 'emergency',
       startBit: 20,
       endBit: 21,
     ),
     const CanField<int>(
-      name: 'emergencyStatus',
+      name: 'remoteEmergency',
       startBit: 18,
       endBit: 19,
     ),
     const CanField<int>(
-      name: 'remoteEmergencyStatus',
+      name: 'autonomyMode',
       startBit: 16,
       endBit: 17,
     ),
+    const CanField<int>(
+      name: 'holdState',
+      startBit: 14,
+      endBit: 15,
+    ),
+
   ];
 
   @override
@@ -54,10 +75,14 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       operationalState: VcuOperationalState.fromInt(parsedValues['operationalState']),
       chargerConnected: parsedValues['chargerConnected'] == 1,
       chargingInProgress: parsedValues['chargingInProgress'] == 1,
-      towModeEnabled: parsedValues['towMode'] == 1,
-      towStatus: GenericState.fromInt(parsedValues['towStatus']),
-      emergencyStatus: GenericState.fromInt(parsedValues['emergencyStatus']),
-      remoteEmergencyStatus: GenericState.fromInt(parsedValues['remoteEmergencyStatus']),
+      towMode: TowModeEnum.fromInt(parsedValues['towMode']),
+      armMode: ArmModeEnum.fromInt(parsedValues['armMode']),
+      driveMode: DriveModeEnum.fromInt(parsedValues['driveMode']),
+      driveModeLimit: DriveModeLimitEnum.fromInt(parsedValues['driveModeLimit']),
+      emergency: EmergencyEnum.fromInt(parsedValues['emergency']),
+      remoteEmergency: RemoteEmergencyEnum.fromInt(parsedValues['remoteEmergency']),
+      autonomyMode: AutonomyModeEnum.fromInt(parsedValues['autonomyMode']),
+      holdState: HoldStateEnum.fromInt(parsedValues['holdState']),
     );
   }
 }

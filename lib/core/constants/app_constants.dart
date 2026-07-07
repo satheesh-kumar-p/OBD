@@ -20,20 +20,15 @@ abstract final class AppConstants {
   // CAN Message ID Whitelist
   // Any ID not in this list will be ignored by the MessageDispatcher
   static const Set<int> whitelistedMessageIds = {
+    0x199, // Compute Subsystem Information
     0x200, // Battery Info
-    0x201, // E-Stop Status
-    0x202, // Global Time Info
-    0x203, // System Health Info
+    0x203, // VCU Subsystem Information
     0x204, // Drive Fault Info
-    0x206, // Time Sync (Configured below)
-    0x20B, // Mode Info
-    0x20C, // Radio/Compute State
     0x211, // MC Temp & Voltage
+    0x219, // VCU Status (Common Page Information)
+    0x225, // Secondary Compute Status
   };
 
   // Centralized Message Dispatch Rules
-  static const List<MessageConfig> dispatchConfigs = [
-    // Time Sync (0x206)
-    MessageConfig.sample(0x206, 2.0),
-  ];
+  static const List<MessageConfig> dispatchConfigs = [];
 }
