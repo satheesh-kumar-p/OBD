@@ -1,60 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../common_providers.dart';
+import '../state/common_screen_state.dart';
 
-class BatteryStatusIcon extends ConsumerWidget {
-  const BatteryStatusIcon({super.key});
+class BatteryStatus extends StatelessWidget {
+  final BatteryIndicatorState state;
+
+  const BatteryStatus({
+    super.key,
+    required this.state,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final indicators = ref.watch(commonScreenStateProvider.select((s) => s.batteryIndicators));
-
-    return Row(
+  Widget build(BuildContext context) {
+    return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _BatteryLevelIndicator(
-              soc: indicators[0].soc,
-              color: indicators[0].color,
-              isCharging: indicators[0].isCharging,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              indicators[0].label,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        _BatteryLevelIndicator(
+          soc: state.soc,
+          color: state.color,
+          isCharging: state.isCharging,
         ),
-        SizedBox(width: 16.w),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _BatteryLevelIndicator(
-              soc: indicators[1].soc,
-              color: indicators[1].color,
-              isCharging: indicators[1].isCharging,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              indicators[1].label,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        SizedBox(height: 4.h),
+        Text(
+          state.label,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

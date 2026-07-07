@@ -195,30 +195,30 @@ class CommonScreenState {
   }
 
   // --- Battery Status ---
-  List<BatteryIndicatorState> get batteryIndicators {
-    final lvSoc = batteryInfo?.lvBatterySoc ?? 0;
-    final hvSoc = batteryInfo?.hvBatterySoc ?? 0;
+  BatteryIndicatorState get lvBattery {
+    final soc = batteryInfo?.lvBatterySoc ?? 0;
+    return BatteryIndicatorState(
+      soc: soc,
+      color: _getBatteryColor(soc),
+      isCharging: false,
+      label: 'LV',
+    );
+  }
+
+  BatteryIndicatorState get hvBattery {
+    final soc = batteryInfo?.hvBatterySoc ?? 0;
     final isCharging = vcuStatus?.chargingInProgress ?? false;
+    return BatteryIndicatorState(
+      soc: soc,
+      color: _getBatteryColor(soc),
+      isCharging: isCharging,
+      label: 'HV',
+    );
+  }
 
-    Color getBatteryColor(int soc) {
-      if (soc < 20) return AppColors.danger;
-      if (soc < 50) return AppColors.warning;
-      return AppColors.success;
-    }
-
-    return [
-      BatteryIndicatorState(
-        soc: lvSoc,
-        color: getBatteryColor(lvSoc),
-        isCharging: false,
-        label: 'LV',
-      ),
-      BatteryIndicatorState(
-        soc: hvSoc,
-        color: getBatteryColor(hvSoc),
-        isCharging: isCharging,
-        label: 'HV',
-      ),
-    ];
+  Color _getBatteryColor(int soc) {
+    if (soc < 20) return AppColors.danger;
+    if (soc < 50) return AppColors.warning;
+    return AppColors.success;
   }
 }

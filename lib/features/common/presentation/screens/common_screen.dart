@@ -10,12 +10,16 @@ import '../widgets/safety_status.dart';
 import '../widgets/hand_ctrl_status.dart';
 import '../widgets/date_time_label.dart';
 import '../widgets/battery_status_icon.dart';
+import '../../common_providers.dart';
 
 class CommonScreen extends ConsumerWidget {
   const CommonScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lvBattery = ref.watch(commonScreenStateProvider.select((s) => s.lvBattery));
+    final hvBattery = ref.watch(commonScreenStateProvider.select((s) => s.hvBattery));
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
@@ -67,7 +71,9 @@ class CommonScreen extends ConsumerWidget {
                 SizedBox(width: 16.w),
                 const GcsStatus(),
                 SizedBox(width: 16.w),
-                const BatteryStatusIcon(),
+                BatteryStatus(state: lvBattery),
+                SizedBox(width: 16.w),
+                BatteryStatus(state: hvBattery),
               ],
             ),
           ),
