@@ -41,7 +41,7 @@ class SafetyStatus extends ConsumerWidget {
           label: 'TOW',
           color: towStatusColor,
           isInactive: isTowInactive,
-          icon: Icons.airport_shuttle_rounded,
+          icon: Icons.car_crash_outlined,
         ),
       ],
     );
