@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scout_obd/shared/vcu_mc_temp_volt/data/mappers/mc_temp_volt_mapper.dart';
 
 import '../domain/entities/debug_message.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
@@ -61,7 +62,7 @@ class DebugController extends Notifier<DebugState> {
   void _registerMappers() {
     final List<CanExtractionStrategy> mappersList = [
       BatteryInfoMapper(),
-      SystemInfoMapper(),
+      VcuSubsystemStateMapper(),
       DriveInfoMapper(),
       CompSubsystemStateMapper(),
       VcuStatusMapper(),

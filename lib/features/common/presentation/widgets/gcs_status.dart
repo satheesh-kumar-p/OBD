@@ -14,7 +14,7 @@ class GcsStatus extends ConsumerWidget {
     final status = subsystemState?.lBandRadio;
     
     final statusColor = switch (status) {
-      SubsystemFaultState.noFault => const Color(0xFF00FF66),
+      SubsystemFaultState.healthy => const Color(0xFF00FF66),
       SubsystemFaultState.faulty => const Color(0xFFFF3B3B),
       SubsystemFaultState.unknown || null => Colors.white,
     };
