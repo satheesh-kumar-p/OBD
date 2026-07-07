@@ -2,7 +2,7 @@ import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/drive_motor_information_entity.dart';
 import '../../domain/entities/motor_information.dart';
-import '../../domain/entities/status.dart';
+import '../../domain/entities/motor_status.dart';
 import '../../enums/motor_errors.dart';
 
 /// Parser for CAN Drive Information Message (Motor Faults)
@@ -69,14 +69,14 @@ class DriveMotorInfoMapper extends CanExtractionStrategy<DriveMotorInformationEn
   /// Build MotorInformation using MotorErrors bitmask enum
   MotorInformation _buildMotorInfo(int rawValue) {
     return MotorInformation(
-      overSpeed: MotorErrors.overSpeed.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      overload: MotorErrors.overload.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      phaseLoss: MotorErrors.phaseLoss.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      brake: MotorErrors.brake.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      encoderFault: MotorErrors.encoderFault.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      overTemp: MotorErrors.overTemp.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      hallFault: MotorErrors.hallFault.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      stalled: MotorErrors.stalled.isFaulty(rawValue) ? Status.fault : Status.healthy,
+      overSpeed: MotorErrors.overSpeed.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      overload: MotorErrors.overload.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      phaseLoss: MotorErrors.phaseLoss.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      brake: MotorErrors.brake.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      encoderFault: MotorErrors.encoderFault.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      overTemp: MotorErrors.overTemp.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      hallFault: MotorErrors.hallFault.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
+      stalled: MotorErrors.stalled.isFaulty(rawValue) ? MotorStatus.fault : MotorStatus.healthy,
     );
   }
 }

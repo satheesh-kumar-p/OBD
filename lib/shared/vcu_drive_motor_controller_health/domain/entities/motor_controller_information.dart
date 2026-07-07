@@ -1,14 +1,14 @@
-import 'status.dart';
+import 'mc_status.dart';
 
 class MotorControllerInformation {
-  final Status drive;
-  final Status overCurrent;
-  final Status overVoltage;
-  final Status underVoltage;
-  final Status uartCommunication;
-  final Status dcBusVoltage;
-  final Status overTemperature;
-  final Status canCommunication;
+  final McStatus drive;
+  final McStatus overCurrent;
+  final McStatus overVoltage;
+  final McStatus underVoltage;
+  final McStatus uartCommunication;
+  final McStatus dcBusVoltage;
+  final McStatus overTemperature;
+  final McStatus canCommunication;
 
   const MotorControllerInformation({
     required this.overCurrent,

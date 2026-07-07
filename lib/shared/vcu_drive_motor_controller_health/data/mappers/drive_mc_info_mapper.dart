@@ -2,7 +2,7 @@ import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/drive_mc_information_entity.dart';
 import '../../domain/entities/motor_controller_information.dart';
-import '../../domain/entities/status.dart';
+import '../../domain/entities/mc_status.dart';
 import '../../enums/motor_controller_errors.dart';
 
 /// Parser for CAN Drive Information Message (Motor Faults)
@@ -57,14 +57,14 @@ class DriveMcInfoMapper extends CanExtractionStrategy<DriveMcInformationEntity> 
     required int rawValue,
   }) {
     return MotorControllerInformation(
-      drive: MotorControllerErrors.drive.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      overCurrent: MotorControllerErrors.overCurrent.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      overVoltage: MotorControllerErrors.overVoltage.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      underVoltage: MotorControllerErrors.underVoltage.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      uartCommunication: MotorControllerErrors.uartCommunication.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      dcBusVoltage: MotorControllerErrors.busVoltage.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      overTemperature: MotorControllerErrors.overTemp.isFaulty(rawValue) ? Status.fault : Status.healthy,
-      canCommunication: MotorControllerErrors.canCommunication.isFaulty(rawValue) ? Status.fault : Status.healthy,
+      drive: MotorControllerErrors.drive.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      overCurrent: MotorControllerErrors.overCurrent.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      overVoltage: MotorControllerErrors.overVoltage.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      underVoltage: MotorControllerErrors.underVoltage.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      uartCommunication: MotorControllerErrors.uartCommunication.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      dcBusVoltage: MotorControllerErrors.busVoltage.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      overTemperature: MotorControllerErrors.overTemp.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
+      canCommunication: MotorControllerErrors.canCommunication.isFaulty(rawValue) ? McStatus.fault : McStatus.healthy,
     );
   }
 }

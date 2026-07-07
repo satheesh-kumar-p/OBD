@@ -1,14 +1,14 @@
-import 'status.dart';
+import 'motor_status.dart';
 
 class MotorInformation {
-  final Status overSpeed;
-  final Status overload;
-  final Status phaseLoss;
-  final Status brake;
-  final Status encoderFault;
-  final Status overTemp;
-  final Status hallFault;
-  final Status stalled;
+  final MotorStatus overSpeed;
+  final MotorStatus overload;
+  final MotorStatus phaseLoss;
+  final MotorStatus brake;
+  final MotorStatus encoderFault;
+  final MotorStatus overTemp;
+  final MotorStatus hallFault;
+  final MotorStatus stalled;
 
   const MotorInformation({
     required this.overSpeed,
