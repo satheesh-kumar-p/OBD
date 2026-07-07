@@ -20,12 +20,13 @@ abstract final class AppConstants {
   // CAN Message ID Whitelist
   // Any ID not in this list will be ignored by the MessageDispatcher
   static const Set<int> whitelistedMessageIds = {
+    0x199, // Compute Subsystem Information
     0x200, // Battery Info
-    0x203, // System Health Info
+    0x203, // VCU Subsystem Information
     0x204, // Drive Fault Info
-    0x20C, // Radio/Compute State
     0x211, // MC Temp & Voltage
     0x219, // VCU Status (Common Page Information)
+    0x225, // Secondary Compute Status
   };
 
   // Centralized Message Dispatch Rules

@@ -3,9 +3,7 @@ import '../../../../core/comm/can_bus/can_field.dart';
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../domain/entities/system_info_entity.dart';
 
-/// Parser for CAN Message 0x203 - Subsystem State
-/// Declarative configuration: all bit positions in one place
-class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
+class VcuSubsystemStateMapper extends CanExtractionStrategy<SystemInfoEntity> {
   static final int id = 0x203;
 
   @override
@@ -13,18 +11,16 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
 
   @override
   List<CanField<dynamic>> get fields => [
-
     const CanField<int>(
-      name: 'rearMotorController',
+      name: 'aftMotorController',
       startBit: 38,
       endBit: 39,
     ),
     const CanField<int>(
-      name: 'frontMotorController',
+      name: 'forwardMotorController',
       startBit: 36,
       endBit: 37,
     ),
-
     const CanField<int>(
       name: 'hvBattery',
       startBit: 34,
@@ -46,88 +42,63 @@ class SystemInfoMapper extends CanExtractionStrategy<SystemInfoEntity> {
       endBit: 29,
     ),
     const CanField<int>(
-      name: 'dcDc12vTo5v',
+      name: 'hvPdu',
       startBit: 26,
       endBit: 27,
     ),
     const CanField<int>(
-      name: 'hvPdu',
+      name: 'forwardPortMotor',
       startBit: 24,
       endBit: 25,
     ),
-
-    // Motor States (ICD bits 44-51 → actual bits 33-40)
     const CanField<int>(
-      name: 'frontLeftMotor',
+      name: 'aftPortMotor',
       startBit: 22,
       endBit: 23,
     ),
     const CanField<int>(
-      name: 'rearLeftMotor',
+      name: 'forwardStarboardMotor',
       startBit: 20,
       endBit: 21,
     ),
     const CanField<int>(
-      name: 'frontRightMotor',
+      name: 'aftStarboardMotor',
       startBit: 18,
       endBit: 19,
     ),
     const CanField<int>(
-      name: 'rearRightMotor',
+      name: 'mainCompute',
       startBit: 16,
       endBit: 17,
     ),
     const CanField<int>(
-      name: 'mainCompute',
+      name: 'lvBatteryCharger',
       startBit: 14,
       endBit: 15,
     ),
     const CanField<int>(
-      name: 'secondaryCompute',
+      name: 'vcu',
       startBit: 12,
       endBit: 13,
-    ),
-    const CanField<int>(
-      name: 'vcu',
-      startBit: 10,
-      endBit: 11,
     ),
   ];
 
   @override
   SystemInfoEntity build(Map<String, dynamic> values) {
     return SystemInfoEntity(
-      // Motor controllers: ICD rear→left, front→right mapping
-      frontMotorController: _toStatus(values['frontMotorController']),
-      rearMotorController: _toStatus(values['rearMotorController']),
-
-      // Other components
-      hvBattery: _toStatus(values['hvBattery']),
-      lvBattery: _toStatus(values['lvBattery']),
-      lvPdu: _toStatus(values['lvPdu']),
-      dcDc48v12v: _toStatus(values['dcDc48vTo12v']),
-      dcDc12v5v: _toStatus(values['dcDc12vTo5v']),
-      hvPdu: _toStatus(values['hvPdu']),
-      mainCompute: _toStatus(values['mainCompute']),
-      secondaryCompute: _toStatus(values['secondaryCompute']),
-      vcu: _toStatus(values['vcu']),
-
-      // Individual motors
-      frontLeftMotor: _toStatus(values['frontLeftMotor']),
-      rearLeftMotor: _toStatus(values['rearLeftMotor']),
-      frontRightMotor: _toStatus(values['frontRightMotor']),
-      rearRightMotor: _toStatus(values['rearRightMotor']),
+      forwardMotorController: SubsystemFaultState.fromInt(values['forwardMotorController']),
+      aftMotorController: SubsystemFaultState.fromInt(values['aftMotorController']),
+      hvBattery: SubsystemFaultState.fromInt(values['hvBattery']),
+      lvBattery: SubsystemFaultState.fromInt(values['lvBattery']),
+      lvPdu: SubsystemFaultState.fromInt(values['lvPdu']),
+      dcDc48v12v: SubsystemFaultState.fromInt(values['dcDc48vTo12v']),
+      hvPdu: SubsystemFaultState.fromInt(values['hvPdu']),
+      mainCompute: SubsystemFaultState.fromInt(values['mainCompute']),
+      vcu: SubsystemFaultState.fromInt(values['vcu']),
+      forwardPortMotor: SubsystemFaultState.fromInt(values['forwardPortMotor']),
+      aftPortMotor: SubsystemFaultState.fromInt(values['aftPortMotor']),
+      forwardStarboardMotor: SubsystemFaultState.fromInt(values['forwardStarboardMotor']),
+      aftStarboardMotor: SubsystemFaultState.fromInt(values['aftStarboardMotor']),
     );
-  }
-
-  SubsystemFaultState _toStatus(int value) {
-    switch (value) {
-      case 1:
-        return SubsystemFaultState.noFault;
-      case 2:
-        return SubsystemFaultState.faulty;
-      default:
-        return SubsystemFaultState.unknown;
-    }
   }
 }

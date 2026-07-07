@@ -7,7 +7,7 @@ import '../domain/entities/system_info_entity.dart';
 
 final systemInfoLoggerProvider = Provider<Logger>((ref) => Logger('SYSTEM_INFO'));
 
-final systemInfoMapperProvider = Provider<SystemInfoMapper>((ref) => SystemInfoMapper());
+final systemInfoMapperProvider = Provider<VcuSubsystemStateMapper>((ref) => VcuSubsystemStateMapper());
 
 final systemInfoRepoProvider =
 Provider<SystemInfoRepository>((ref) {

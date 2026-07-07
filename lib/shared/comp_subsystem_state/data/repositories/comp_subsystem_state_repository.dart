@@ -5,14 +5,14 @@ import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/comp_subsystem_state_entity.dart';
 
-class CompSubsystemStateRepository implements ICanDataRepository<CompSubsystemState?> {
+class CompSubsystemStateRepository implements ICanDataRepository<CompSubsystemStateEntity?> {
   final CommManager _canManager;
-  final CanExtractionStrategy<CompSubsystemState> _mapper;
+  final CanExtractionStrategy<CompSubsystemStateEntity> _mapper;
   final Logger _logger;
 
   CompSubsystemStateRepository({
     required CommManager canManager,
-    required CanExtractionStrategy<CompSubsystemState> mapper,
+    required CanExtractionStrategy<CompSubsystemStateEntity> mapper,
     required Logger logger,
   })
       : _canManager = canManager,
@@ -20,7 +20,7 @@ class CompSubsystemStateRepository implements ICanDataRepository<CompSubsystemSt
         _logger = logger;
 
   @override
-  Stream<CompSubsystemState?> watchCanData() {
+  Stream<CompSubsystemStateEntity?> watchCanData() {
     return _canManager.watchMessage(_mapper.messageId).map((frame) {
       if (frame == null) return null;
 

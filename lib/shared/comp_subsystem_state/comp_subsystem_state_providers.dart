@@ -16,7 +16,7 @@ final compSubsystemRepoProvider = Provider<CompSubsystemStateRepository>((ref) {
   return CompSubsystemStateRepository(canManager: canManager, mapper: mapper, logger: logger);
 });
 
-final compSubsystemInfoProvider = StreamProvider<CompSubsystemState?>((ref) {
+final compSubsystemInfoProvider = StreamProvider<CompSubsystemStateEntity?>((ref) {
   final repository = ref.watch(compSubsystemRepoProvider);
   return repository.watchCanData();
 });
