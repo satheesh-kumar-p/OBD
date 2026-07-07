@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/vcu_drive_health/di/drive_info_providers.dart';
-import '../../../shared/vcu_mc_temp_volt/di/mc_temp_volt_providers.dart';
+import '../../../shared/vcu_drive_motor_controller_health/di/drive_mc_info_providers.dart';
+import '../../../shared/vcu_drive_motor_health/di/drive_motor_info_providers.dart';
+import '../../../shared/vcu_subsystem_power_state/vcu_subsystem_power_state_providers.dart';
+import '../../../shared/vcu_subsystem_state/di/vcu_subsystem_info_providers.dart';
 import 'state/drive_state.dart';
 
 final driveStateProvider = NotifierProvider<DriveStateNotifier, DriveState>(() {
@@ -11,23 +13,39 @@ class DriveStateNotifier extends Notifier<DriveState> {
   @override
   DriveState build() {
     // Listen for updates from the providers.
-    // These providers now automatically emit null if data goes stale
-    // because the MessageDispatcher handles the timing logic.
     
-    ref.listen(driveInfoProvider, (prev, next) {
+    ref.listen(driveMotorInfoProvider, (prev, next) {
       if (next.hasValue) {
         state = state.copyWith(
-          driveInfo: next.value,
-          clearDriveInfo: next.value == null,
+          motorInfo: next.value,
+          clearMotorInfo: next.value == null,
         );
       }
     });
 
-    ref.listen(mcTempVoltProvider, (prev, next) {
+    ref.listen(driveMcInfoProvider, (prev, next) {
       if (next.hasValue) {
         state = state.copyWith(
-          mcTempVolt: next.value,
-          clearMcTempVolt: next.value == null,
+          mcInfo: next.value,
+          clearMcInfo: next.value == null,
+        );
+      }
+    });
+
+    ref.listen(vcuSubsystemInfoProvider, (prev, next) {
+      if (next.hasValue) {
+        state = state.copyWith(
+          subsystemInfo: next.value,
+          clearSubsystemInfo: next.value == null,
+        );
+      }
+    });
+
+    ref.listen(vcuSubsystemPowerStateProvider, (prev, next) {
+      if (next.hasValue) {
+        state = state.copyWith(
+          powerInfo: next.value,
+          clearPowerInfo: next.value == null,
         );
       }
     });

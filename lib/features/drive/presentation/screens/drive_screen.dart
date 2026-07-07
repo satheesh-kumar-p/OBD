@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../drive_providers.dart';
 import '../../state/drive_state.dart';
 
@@ -15,8 +16,8 @@ class DriveScreen extends ConsumerWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
+        horizontal: 10.w,
+        vertical: 10.h,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,28 +31,19 @@ class DriveScreen extends ConsumerWidget {
 
   Widget _buildMotorStatusTable(List<MotorStatusRowData> rows) {
     final headerStyle = TextStyle(
-      color: Colors.cyanAccent,
+      color: AppColors.accentVariant,
       fontSize: 20.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
     final rowHeaderStyle = TextStyle(
-      color: Colors.white,
+      color: AppColors.textPrimary,
       fontSize: 18.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
 
-    final columns = [
-      'OVER SPEED',
-      'OVER LOAD',
-      'PHASE LOSS',
-      'BRAKE',
-      'ENCODER FAULT',
-      'OVER TEMP',
-      'HALL FAULT',
-      'STALL'
-    ];
+    final columns = MotorStatusRowData.columns;
 
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -64,7 +56,7 @@ class DriveScreen extends ConsumerWidget {
           children: [
             const SizedBox.shrink(),
             ...columns.map((col) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 8.h),
                   child: Text(col, style: headerStyle, textAlign: TextAlign.center),
                 )),
           ],
@@ -73,7 +65,7 @@ class DriveScreen extends ConsumerWidget {
         ...rows.map((row) => TableRow(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                  padding: EdgeInsets.only(right: 6.w, top: 6.h, bottom: 6.h),
                   child: Text(row.name, style: rowHeaderStyle),
                 ),
                 ...row.colors.map((color) => _buildStatusDot(color)),
@@ -85,33 +77,19 @@ class DriveScreen extends ConsumerWidget {
 
   Widget _buildMotorControllerStatusTable(List<ControllerStatusRowData> rows) {
     final headerStyle = TextStyle(
-      color: Colors.cyanAccent,
+      color: AppColors.accentVariant,
       fontSize: 20.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
     final rowHeaderStyle = TextStyle(
-      color: Colors.white,
+      color: AppColors.textPrimary,
       fontSize: 18.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
-    final valueStyle = TextStyle(
-      color: Colors.white,
-      fontSize: 20.sp,
-      fontFamily: 'monospace',
-    );
 
-    final columns = [
-      'DRIVE',
-      'OVER CURRENT',
-      'OVER VOLTAGE',
-      'UNDER VOLTAGE',
-      'OVER TEMP',
-      'CAN COMM',
-      'VOLT',
-      'TEMP'
-    ];
+    final columns = ControllerStatusRowData.columns;
 
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -124,7 +102,7 @@ class DriveScreen extends ConsumerWidget {
           children: [
             const SizedBox.shrink(),
             ...columns.map((col) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 8.h),
                   child: Text(col, style: headerStyle, textAlign: TextAlign.center),
                 )),
           ],
@@ -133,22 +111,10 @@ class DriveScreen extends ConsumerWidget {
         ...rows.map((row) => TableRow(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                  padding: EdgeInsets.only(right: 6.w, top: 6.h, bottom: 6.h),
                   child: Text(row.name, style: rowHeaderStyle),
                 ),
                 ...row.colors.map((color) => _buildStatusDot(color)),
-                Center(
-                  child: Text(
-                    row.voltage,
-                    style: valueStyle,
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    row.temp,
-                    style: valueStyle,
-                  ),
-                ),
               ],
             )),
       ],
