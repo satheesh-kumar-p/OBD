@@ -12,44 +12,11 @@ final driveStateProvider = NotifierProvider<DriveStateNotifier, DriveState>(() {
 class DriveStateNotifier extends Notifier<DriveState> {
   @override
   DriveState build() {
-    // Listen for updates from the providers.
-    
-    ref.listen(driveMotorInfoProvider, (prev, next) {
-      if (next.hasValue) {
-        state = state.copyWith(
-          motorInfo: next.value,
-          clearMotorInfo: next.value == null,
-        );
-      }
-    });
-
-    ref.listen(driveMcInfoProvider, (prev, next) {
-      if (next.hasValue) {
-        state = state.copyWith(
-          mcInfo: next.value,
-          clearMcInfo: next.value == null,
-        );
-      }
-    });
-
-    ref.listen(vcuSubsystemInfoProvider, (prev, next) {
-      if (next.hasValue) {
-        state = state.copyWith(
-          subsystemInfo: next.value,
-          clearSubsystemInfo: next.value == null,
-        );
-      }
-    });
-
-    ref.listen(vcuSubsystemPowerStateProvider, (prev, next) {
-      if (next.hasValue) {
-        state = state.copyWith(
-          powerInfo: next.value,
-          clearPowerInfo: next.value == null,
-        );
-      }
-    });
-
-    return const DriveState();
+    return DriveState(
+      motorInfo: ref.watch(driveMotorInfoProvider).value,
+      mcInfo: ref.watch(driveMcInfoProvider).value,
+      subsystemInfo: ref.watch(vcuSubsystemInfoProvider).value,
+      powerInfo: ref.watch(vcuSubsystemPowerStateProvider).value,
+    );
   }
 }

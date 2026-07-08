@@ -80,20 +80,15 @@ class DriveState {
 
   DriveState copyWith({
     DriveMotorInformationEntity? motorInfo,
-    bool clearMotorInfo = false,
     DriveMcInformationEntity? mcInfo,
-    bool clearMcInfo = false,
     VcuSubsystemInfoEntity? subsystemInfo,
-    bool clearSubsystemInfo = false,
     VcuSubsystemPowerStateEntity? powerInfo,
-    bool clearPowerInfo = false,
   }) {
     return DriveState(
-      motorInfo: clearMotorInfo ? null : (motorInfo ?? this.motorInfo),
-      mcInfo: clearMcInfo ? null : (mcInfo ?? this.mcInfo),
-      subsystemInfo:
-          clearSubsystemInfo ? null : (subsystemInfo ?? this.subsystemInfo),
-      powerInfo: clearPowerInfo ? null : (powerInfo ?? this.powerInfo),
+      motorInfo: motorInfo ?? this.motorInfo,
+      mcInfo: mcInfo ?? this.mcInfo,
+      subsystemInfo: subsystemInfo ?? this.subsystemInfo,
+      powerInfo: powerInfo ?? this.powerInfo,
     );
   }
 }
