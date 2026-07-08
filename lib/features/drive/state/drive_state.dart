@@ -31,42 +31,48 @@ class DriveState {
       powerInfo == null;
 
   List<MotorStatusRowData> get motorRows {
+    final forwardMcOn = powerInfo?.forwardMc == PowerState.on;
+    final aftMcOn = powerInfo?.aftMc == PowerState.on;
+
     return [
       MotorStatusRowData(
         name: 'FORWARD\nPORT MOTOR',
-        info: motorInfo?.forwardPortMotor,
-        overall: subsystemInfo?.forwardPortMotor,
+        info: forwardMcOn ? motorInfo?.forwardPortMotor : null,
+        overall: forwardMcOn ? subsystemInfo?.forwardPortMotor : null,
       ),
       MotorStatusRowData(
         name: 'FORWARD\nSTARBOARD\nMOTOR',
-        info: motorInfo?.forwardStarboardMotor,
-        overall: subsystemInfo?.forwardStarboardMotor,
+        info: forwardMcOn ? motorInfo?.forwardStarboardMotor : null,
+        overall: forwardMcOn ? subsystemInfo?.forwardStarboardMotor : null,
       ),
       MotorStatusRowData(
         name: 'AFT PORT\nMOTOR',
-        info: motorInfo?.aftPortMotor,
-        overall: subsystemInfo?.aftPortMotor,
+        info: aftMcOn ? motorInfo?.aftPortMotor : null,
+        overall: aftMcOn ? subsystemInfo?.aftPortMotor : null,
       ),
       MotorStatusRowData(
         name: 'AFT\nSTARBOARD\nMOTOR',
-        info: motorInfo?.aftStarboardMotor,
-        overall: subsystemInfo?.aftStarboardMotor,
+        info: aftMcOn ? motorInfo?.aftStarboardMotor : null,
+        overall: aftMcOn ? subsystemInfo?.aftStarboardMotor : null,
       ),
     ];
   }
 
   List<ControllerStatusRowData> get controllerRows {
+    final forwardMcOn = powerInfo?.forwardMc == PowerState.on;
+    final aftMcOn = powerInfo?.aftMc == PowerState.on;
+
     return [
       ControllerStatusRowData.fromInfo(
         name: 'FORWARD\nMOTOR CTRL',
-        info: mcInfo?.forwardMotorController,
-        overall: subsystemInfo?.forwardMotorController,
+        info: forwardMcOn ? mcInfo?.forwardMotorController : null,
+        overall: forwardMcOn ? subsystemInfo?.forwardMotorController : null,
         power: powerInfo?.forwardMc,
       ),
       ControllerStatusRowData.fromInfo(
         name: 'AFT MOTOR\nCTRL',
-        info: mcInfo?.aftMotorController,
-        overall: subsystemInfo?.aftMotorController,
+        info: aftMcOn ? mcInfo?.aftMotorController : null,
+        overall: aftMcOn ? subsystemInfo?.aftMotorController : null,
         power: powerInfo?.aftMc,
       ),
     ];
@@ -74,20 +80,15 @@ class DriveState {
 
   DriveState copyWith({
     DriveMotorInformationEntity? motorInfo,
-    bool clearMotorInfo = false,
     DriveMcInformationEntity? mcInfo,
-    bool clearMcInfo = false,
     VcuSubsystemInfoEntity? subsystemInfo,
-    bool clearSubsystemInfo = false,
     VcuSubsystemPowerStateEntity? powerInfo,
-    bool clearPowerInfo = false,
   }) {
     return DriveState(
-      motorInfo: clearMotorInfo ? null : (motorInfo ?? this.motorInfo),
-      mcInfo: clearMcInfo ? null : (mcInfo ?? this.mcInfo),
-      subsystemInfo:
-          clearSubsystemInfo ? null : (subsystemInfo ?? this.subsystemInfo),
-      powerInfo: clearPowerInfo ? null : (powerInfo ?? this.powerInfo),
+      motorInfo: motorInfo ?? this.motorInfo,
+      mcInfo: mcInfo ?? this.mcInfo,
+      subsystemInfo: subsystemInfo ?? this.subsystemInfo,
+      powerInfo: powerInfo ?? this.powerInfo,
     );
   }
 }
@@ -97,7 +98,7 @@ class MotorStatusRowData {
   final List<Color> colors;
 
   static const List<String> columns = [
-    'STATUS',
+    'FAULT\nSTATUS',
     'OVER\nSPEED',
     'OVER\nLOAD',
     'PHASE\nLOSS',
@@ -131,7 +132,7 @@ class ControllerStatusRowData {
 
   static const List<String> columns = [
     'POWER',
-    'STATUS',
+    'FAULT\nSTATUS',
     'DRIVE',
     'OVER\nCURR',
     'OVER\nVOLT',

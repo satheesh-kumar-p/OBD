@@ -51,16 +51,16 @@ class _BatteryLevelIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final height = constraints.maxHeight.isFinite ? constraints.maxHeight : 32.r;
+        final height = constraints.maxHeight.isFinite ? constraints.maxHeight : 28.r;
         final unit = height / 20.0;
-        final double width = 34.0 * unit;
+        final double width = 42.0 * unit; // Increased width slightly for text room
         final clampedLevel = (soc / 100.0).clamp(0.0, 1.0);
 
-        final borderW = 1.5 * unit;
-        final borderRadius = 2.0 * unit;
+        final borderW = 1.0 * unit;
+        final borderRadius = 3.0 * unit;
         final terminalW = 2.5 * unit;
-        final terminalH = 7.0 * unit;
-        final inset = 1.0 * unit;
+        final terminalH = 8.0 * unit;
+        final inset = 1.8 * unit;
 
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -69,8 +69,9 @@ class _BatteryLevelIndicator extends StatelessWidget {
               width: width,
               height: height,
               decoration: BoxDecoration(
+                color: AppColors.batteryEmpty,
                 border: Border.all(
-                  color: isCharging ? AppColors.success : AppColors.textPrimary,
+                  color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.3),
                   width: borderW,
                 ),
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -78,6 +79,7 @@ class _BatteryLevelIndicator extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.centerLeft,
                 children: [
+                  // Battery Fill
                   Positioned(
                     left: inset,
                     top: inset,
@@ -90,43 +92,60 @@ class _BatteryLevelIndicator extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // SOC Text & Icon
                   Positioned.fill(
-                    child: Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (isCharging)
-                            Icon(
-                              Icons.bolt_rounded,
-                              color: AppColors.textPrimary,
-                              size: height * 0.55,
-                            ),
-                          Text(
-                            '$soc%',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: height * (isCharging ? 0.45 : 0.6),
-                              fontWeight: FontWeight.w900,
-                              fontFamily: 'monospace',
-                              height: 1.0,
-                            ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: inset + unit),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isCharging)
+                                Icon(
+                                  Icons.bolt_rounded,
+                                  color: AppColors.batteryText,
+                                  size: height * 0.4,
+                                  shadows: const [
+                                    Shadow(blurRadius: 4, color: Colors.black),
+                                  ],
+                                ),
+                              Text(
+                                '$soc%',
+                                style: TextStyle(
+                                  color: AppColors.batteryText,
+                                  fontSize: height * 0.5, // Reduced size
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily: 'monospace',
+                                  height: 1.0,
+                                  // Added shadows to ensure visibility on bright colors AND black background
+                                  shadows: const [
+                                    Shadow(offset: Offset(0.5, 0.5), blurRadius: 2, color: Colors.black),
+                                    Shadow(offset: Offset(-0.5, -0.5), blurRadius: 2, color: Colors.black),
+                                    Shadow(offset: Offset(0.5, -0.5), blurRadius: 2, color: Colors.black),
+                                    Shadow(offset: Offset(-0.5, 0.5), blurRadius: 2, color: Colors.black),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
+            // Battery Terminal (Tip)
             Container(
               width: terminalW,
               height: terminalH,
               decoration: BoxDecoration(
-                color: isCharging ? AppColors.success : AppColors.textPrimary,
+                color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.3),
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(1.5 * unit),
-                  bottomRight: Radius.circular(1.5 * unit),
+                  topRight: Radius.circular(2 * unit),
+                  bottomRight: Radius.circular(2 * unit),
                 ),
               ),
             ),
