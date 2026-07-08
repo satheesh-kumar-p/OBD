@@ -24,4 +24,8 @@ class AppColors {
   static const Color warning = Colors.orangeAccent;
   static const Color danger = Color(0xFFFF3B3B);
   static const Color success = Color(0xFF00FF66);
+
+  // Battery specific colors
+  static const Color batteryEmpty = Colors.white12;
+  static const Color batteryText = Colors.white;
 }
