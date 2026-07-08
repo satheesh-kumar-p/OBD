@@ -182,6 +182,7 @@ class SystemScreenState {
         items: const [
           Subsystem.dcDc48v12v,
           Subsystem.lvPdu,
+          Subsystem.hvPdu,
           Subsystem.mainCompute,
           Subsystem.uhfRadio,
           Subsystem.lBandRadio,
