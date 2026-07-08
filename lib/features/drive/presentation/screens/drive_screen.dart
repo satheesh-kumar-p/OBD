@@ -32,13 +32,13 @@ class DriveScreen extends ConsumerWidget {
   Widget _buildMotorStatusTable(List<MotorStatusRowData> rows) {
     final headerStyle = TextStyle(
       color: AppColors.accentVariant,
-      fontSize: 20.sp,
+      fontSize: 16.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
     final rowHeaderStyle = TextStyle(
       color: AppColors.textPrimary,
-      fontSize: 18.sp,
+      fontSize: 16.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
@@ -78,13 +78,13 @@ class DriveScreen extends ConsumerWidget {
   Widget _buildMotorControllerStatusTable(List<ControllerStatusRowData> rows) {
     final headerStyle = TextStyle(
       color: AppColors.accentVariant,
-      fontSize: 20.sp,
+      fontSize: 16.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );
     final rowHeaderStyle = TextStyle(
       color: AppColors.textPrimary,
-      fontSize: 18.sp,
+      fontSize: 16.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'monospace',
     );

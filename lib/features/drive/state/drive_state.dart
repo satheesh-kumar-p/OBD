@@ -97,7 +97,7 @@ class MotorStatusRowData {
   final List<Color> colors;
 
   static const List<String> columns = [
-    'STATUS',
+    'FAULT\nSTATUS',
     'OVER\nSPEED',
     'OVER\nLOAD',
     'PHASE\nLOSS',
@@ -131,7 +131,7 @@ class ControllerStatusRowData {
 
   static const List<String> columns = [
     'POWER',
-    'STATUS',
+    'FAULT\nSTATUS',
     'DRIVE',
     'OVER\nCURR',
     'OVER\nVOLT',
