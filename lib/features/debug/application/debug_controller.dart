@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scout_obd/shared/vcu_comp_info/data/vcu_comp_info_mapper.dart';
+import 'package:scout_obd/shared/vcu_interface_health/data/vcu_interface_health_mapper.dart';
 
 import '../domain/entities/debug_message.dart';
 import '../../../../core/comm/can_bus/can_frame.dart';
@@ -77,6 +79,9 @@ class DebugController extends Notifier<DebugState> {
       VcuPduStatusMapper(),
       VcuPowerSubsystemHealthMapper(),
       VcuContactorStateMapper(),
+      VcuCompInfoMapper(),
+      VcuInterfaceHealthMapper(),
+      SecComputeHealthMapper(),
     ];
 
     for (final strategy in mappersList) {
