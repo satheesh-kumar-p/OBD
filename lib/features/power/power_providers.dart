@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/di/injection_container.dart';
 import '../../shared/vcu_contactor_state/di/contactor_state_providers.dart';
 import '../../shared/vcu_lv_pdu_load1/lv_pdu_load_ch1_4_providers.dart';
 import '../../shared/vcu_lv_pdu_load2/lv_pdu_load_ch5_8_providers.dart';
@@ -41,9 +40,6 @@ class PowerStateNotifier extends Notifier<PowerState> {
     ref.listen(lvPduLoadCh5_8Provider, (prev, next) {
       if (next.hasValue) _lastPduCh5_8Update = DateTime.now();
     });
-
-    // Watch staleness ticker
-    ref.watch(stalenessTickerProvider);
 
     final now = DateTime.now();
     const stalenessThreshold = Duration(seconds: 5);
