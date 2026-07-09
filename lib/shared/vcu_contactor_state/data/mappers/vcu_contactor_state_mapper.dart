@@ -1,7 +1,7 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/vcu_contactor_state_entity.dart';
-import '../../enums/contactor_state_enum.dart';
+import '../../enums/contactor_fault_enum.dart';
 
 /// Mapper for VCU Contactor State Message (0x207)
 class VcuContactorStateMapper extends CanExtractionStrategy<VcuContactorStateEntity> {
@@ -13,65 +13,46 @@ class VcuContactorStateMapper extends CanExtractionStrategy<VcuContactorStateEnt
   @override
   List<CanField<dynamic>> get fields => [
     const CanField<int>(
-      name: 'dcDcActuation',
+      name: 'preChargeContFault',
       startBit: 46,
       endBit: 46,
     ),
     const CanField<int>(
-      name: 'dcDcFeedback',
+      name: 'mcContFault',
       startBit: 45,
       endBit: 45,
     ),
     const CanField<int>(
-      name: 'lvPduActuation',
+      name: 'ipDcDcContFault',
       startBit: 44,
       endBit: 44,
     ),
     const CanField<int>(
-      name: 'lvPduFeedback',
+      name: 'hvChargeContFault',
       startBit: 43,
       endBit: 43,
     ),
     const CanField<int>(
-      name: 'lvBatteryActuation',
+      name: 'lvChargeContFault',
       startBit: 42,
       endBit: 42,
     ),
     const CanField<int>(
-      name: 'lvBatteryFeedback',
+      name: 'opDcDcContFault',
       startBit: 41,
       endBit: 41,
-    ),
-    const CanField<int>(
-      name: 'prechargeActuation',
-      startBit: 40,
-      endBit: 40,
-    ),
-    const CanField<int>(
-      name: 'prechargeFeedback',
-      startBit: 39,
-      endBit: 39,
-    ),
-    const CanField<int>(
-      name: 'motorControllerActuation',
-      startBit: 38,
-      endBit: 38,
-    ),
-    const CanField<int>(
-      name: 'motorControllerFeedback',
-      startBit: 37,
-      endBit: 37,
     ),
   ];
 
   @override
   VcuContactorStateEntity build(Map<String, dynamic> values) {
     return VcuContactorStateEntity(
-      dcDcFeedbackState: ContactorState.fromValue(values['dcDcFeedback']),
-      lvPduFeedbackState: ContactorState.fromValue(values['lvPduFeedback']),
-      lvBatteryFeedbackState: ContactorState.fromValue(values['lvBatteryFeedback']),
-      prechargeFeedbackState: ContactorState.fromValue(values['prechargeFeedback']),
-      motorControllerFeedbackState: ContactorState.fromValue(values['motorControllerFeedback']),
+      preChargeContFault: ContactorState.fromInt(values['preChargeContFault']),
+      mcContFault: ContactorState.fromInt(values['mcContFault']),
+      ipDcDcContFault: ContactorState.fromInt(values['ipDcDcContFault']),
+      hvChargeContFault: ContactorState.fromInt(values['hvChargeContFault']),
+      lvChargeContFault: ContactorState.fromInt(values['lvChargeContFault']),
+      opDcDcContFault: ContactorState.fromInt(values['opDcDcContFault']),
     );
   }
 }
