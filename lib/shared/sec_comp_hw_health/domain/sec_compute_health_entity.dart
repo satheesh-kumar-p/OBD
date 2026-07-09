@@ -1,15 +1,16 @@
+import 'sec_compute_status_enum.dart';
 import '../../../../core/enums/subsystem_fault_state_enum.dart';
 
 class SecComputeHealthEntity {
-  final SubsystemFaultState controlCanStatus;
-  final SubsystemFaultState auxCanStatus;
-  final SubsystemFaultState actCanStatus;
-  final SubsystemFaultState forwardMcSerialStatus;
-  final SubsystemFaultState aftMcSerialStatus;
-  final SubsystemFaultState ethernetStatus;
-  final SubsystemFaultState cpuLoadFault;
-  final SubsystemFaultState memoryFault;
-  final SubsystemFaultState storageFault;
+  final SecInterfaceStatus controlCanStatus;
+  final SecInterfaceStatus auxCanStatus;
+  final SecInterfaceStatus actCanStatus;
+  final SecInterfaceStatus forwardMcSerialStatus;
+  final SecInterfaceStatus aftMcSerialStatus;
+  final SecInterfaceStatus ethernetStatus;
+  final SecComputeStatus cpuLoadFault;
+  final SecComputeStatus memoryFault;
+  final SecComputeStatus storageFault;
   final SubsystemFaultState computeState;
 
   const SecComputeHealthEntity({
