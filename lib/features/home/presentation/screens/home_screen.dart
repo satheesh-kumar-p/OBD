@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_obd/features/communication/communication_screen.dart';
-import 'package:scout_obd/features/compute/presentation/screens/compute_screen.dart';
-import 'package:scout_obd/features/home/presentation/widgets/sidebar.dart';
-import 'package:scout_obd/features/sensor/presentation/screens/sensor_screen.dart';
 
+import '../widgets/sidebar.dart';
 import '../../home_providers.dart';
+import '../../../communication/communication_screen.dart';
+import '../../../power/presentation/screens/power_screen.dart';
+import '../../../drive/presentation/screens/drive_screen.dart';
 import '../../../debug/presentation/screens/debug_screen.dart';
+import '../../../sensor/presentation/screens/sensor_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
 import '../../../common/presentation/screens/common_screen.dart';
-import '../../../drive/presentation/screens/drive_screen.dart';
+import '../../../compute/presentation/screens/compute_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -47,9 +48,10 @@ class HomeScreen extends ConsumerWidget {
                       items: const [
                         'SYSTEM',
                         'DRIVE',
+                        'POWER',
                         'COMPUTE',
                         'SENSOR',
-                        'COMMUNICATION',
+                        'COMMS',
                         'DEBUG',
                       ],
                       selectedIndex: selectedIndex,
@@ -66,6 +68,7 @@ class HomeScreen extends ConsumerWidget {
                       children: const [
                         SystemScreen(),
                         DriveScreen(),
+                        PowerScreen(),
                         ComputeScreen(),
                         SensorScreen(),
                         CommunicationScreen(),

@@ -1,16 +1,16 @@
-enum PowerState {
+enum PowerStateEnum {
   unknown(0, 'UNKNOWN'),
   on(1, 'ON'),
   off(2, 'OFF');
 
-  const PowerState(this.value, this.label);
+  const PowerStateEnum(this.value, this.label);
   final int value;
   final String label;
 
-  static PowerState fromInt(int value) {
-    return PowerState.values.firstWhere(
+  static PowerStateEnum fromInt(int value) {
+    return PowerStateEnum.values.firstWhere(
       (e) => e.value == value,
-      orElse: () => PowerState.unknown,
+      orElse: () => PowerStateEnum.unknown,
     );
   }
 }

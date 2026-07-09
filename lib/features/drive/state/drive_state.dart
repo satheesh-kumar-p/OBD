@@ -31,8 +31,8 @@ class DriveState {
       powerInfo == null;
 
   List<MotorStatusRowData> get motorRows {
-    final forwardMcOn = powerInfo?.forwardMc == PowerState.on;
-    final aftMcOn = powerInfo?.aftMc == PowerState.on;
+    final forwardMcOn = powerInfo?.forwardMc == PowerStateEnum.on;
+    final aftMcOn = powerInfo?.aftMc == PowerStateEnum.on;
 
     return [
       MotorStatusRowData(
@@ -59,8 +59,8 @@ class DriveState {
   }
 
   List<ControllerStatusRowData> get controllerRows {
-    final forwardMcOn = powerInfo?.forwardMc == PowerState.on;
-    final aftMcOn = powerInfo?.aftMc == PowerState.on;
+    final forwardMcOn = powerInfo?.forwardMc == PowerStateEnum.on;
+    final aftMcOn = powerInfo?.aftMc == PowerStateEnum.on;
 
     return [
       ControllerStatusRowData.fromInfo(
@@ -152,7 +152,7 @@ class ControllerStatusRowData {
     required String name,
     MotorControllerInformation? info,
     SubsystemFaultState? overall,
-    PowerState? power,
+    PowerStateEnum? power,
   }) {
     return ControllerStatusRowData(
       name: name,
@@ -194,14 +194,14 @@ Color _getSubsystemStatusColor(SubsystemFaultState? status) {
   }
 }
 
-Color _getPowerStatusColor(PowerState? status) {
+Color _getPowerStatusColor(PowerStateEnum? status) {
   if (status == null) return AppColors.unknown;
   switch (status) {
-    case PowerState.on:
+    case PowerStateEnum.on:
       return AppColors.healthy;
-    case PowerState.off:
+    case PowerStateEnum.off:
       return AppColors.faulty;
-    case PowerState.unknown:
+    case PowerStateEnum.unknown:
       return AppColors.unknown;
   }
 }

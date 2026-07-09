@@ -24,6 +24,9 @@ abstract final class AppConstants {
     0x200, // Battery Info
     0x203, // VCU Subsystem Information
     0x204, // Drive Motor Fault Information
+    0x205, // VCU Power Subsystem Health
+    0x207, // VCU Contactor Fault Information
+    0x210, // VCU PDU Status
     0x219, // VCU Status (Common Page Information)
     0x222, // VCU Subsystem Power State
     0x225, // Secondary Compute Status
