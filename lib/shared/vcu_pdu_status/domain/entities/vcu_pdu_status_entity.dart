@@ -1,12 +1,14 @@
+import '../../enums/pdu_channel_state_enum.dart';
+
 class VcuPduStatusEntity {
-  final bool channel1State;
-  final bool channel2State;
-  final bool channel3State;
-  final bool channel4State;
-  final bool channel5State;
-  final bool channel6State;
-  final bool channel7State;
-  final bool channel8State;
+  final PduChannelState channel1State;
+  final PduChannelState channel2State;
+  final PduChannelState channel3State;
+  final PduChannelState channel4State;
+  final PduChannelState channel5State;
+  final PduChannelState channel6State;
+  final PduChannelState channel7State;
+  final PduChannelState channel8State;
 
   const VcuPduStatusEntity({
     required this.channel1State,

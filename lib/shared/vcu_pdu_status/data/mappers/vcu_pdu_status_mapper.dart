@@ -1,6 +1,7 @@
 import '../../../../core/comm/can_bus/can_extraction_strategy.dart';
 import '../../../../core/comm/can_bus/can_field.dart';
 import '../../domain/entities/vcu_pdu_status_entity.dart';
+import '../../enums/pdu_channel_state_enum.dart';
 
 /// Mapper for VCU PDU Status Message (0x210)
 class VcuPduStatusMapper extends CanExtractionStrategy<VcuPduStatusEntity> {
@@ -56,14 +57,14 @@ class VcuPduStatusMapper extends CanExtractionStrategy<VcuPduStatusEntity> {
   @override
   VcuPduStatusEntity build(Map<String, dynamic> values) {
     return VcuPduStatusEntity(
-      channel1State: values['channel1'] == 1,
-      channel2State: values['channel2'] == 1,
-      channel3State: values['channel3'] == 1,
-      channel4State: values['channel4'] == 1,
-      channel5State: values['channel5'] == 1,
-      channel6State: values['channel6'] == 1,
-      channel7State: values['channel7'] == 1,
-      channel8State: values['channel8'] == 1,
+      channel1State: PduChannelState.fromInt(values['channel1']),
+      channel2State: PduChannelState.fromInt(values['channel2']),
+      channel3State: PduChannelState.fromInt(values['channel3']),
+      channel4State: PduChannelState.fromInt(values['channel4']),
+      channel5State: PduChannelState.fromInt(values['channel5']),
+      channel6State: PduChannelState.fromInt(values['channel6']),
+      channel7State: PduChannelState.fromInt(values['channel7']),
+      channel8State: PduChannelState.fromInt(values['channel8']),
     );
   }
 }
