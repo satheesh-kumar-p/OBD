@@ -11,8 +11,6 @@ import '../../../shared/vcu_status/data/vcu_status_mapper.dart';
 import '../../../shared/vcu_power_status/data/mappers/battery_info_mapper.dart';
 import '../../../shared/vcu_pdu_status/data/mappers/vcu_pdu_status_mapper.dart';
 import '../../../shared/sec_comp_hw_health/data/sec_compute_health_mapper.dart';
-import '../../../shared/vcu_lv_pdu_load1/data/mappers/lv_pdu_load_ch1_4_mapper.dart';
-import '../../../shared/vcu_lv_pdu_load2/data/mappers/lv_pdu_load_ch5_8_mapper.dart';
 import '../../../shared/vcu_subsystem_state/data/mapper/vcu_subsystem_state_mapper.dart';
 import '../../../shared/vcu_drive_motor_health/data/mappers/drive_motor_info_mapper.dart';
 import '../../../shared/vcu_contactor_state/data/mappers/vcu_contactor_state_mapper.dart';
@@ -76,8 +74,6 @@ class DebugController extends Notifier<DebugState> {
       DriveMcInfoMapper(),
       DriveMotorInfoMapper(),
       VcuSubsystemPowerStateMapper(),
-      LvPduLoadCh1_4Mapper(),
-      LvPduVcuLoadCh5_8Mapper(),
       VcuPduStatusMapper(),
       VcuPowerSubsystemHealthMapper(),
       VcuContactorStateMapper(),
