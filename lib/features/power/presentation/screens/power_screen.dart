@@ -16,7 +16,7 @@ class PowerScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: EdgeInsets.all(12.w),
+        padding: EdgeInsets.all(8.w),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -89,23 +89,19 @@ class PowerScreen extends ConsumerWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          const Divider(color: Colors.white10, height: 8),
           ...items.map((item) {
             if (item.isHeader) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 6.h),
-                child: Text(
-                  item.label,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accentVariant,
-                  ),
+              return Text(
+                item.label,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accentVariant,
                 ),
               );
             }
             return Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.only(bottom: 4.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
