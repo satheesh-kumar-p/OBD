@@ -33,6 +33,8 @@ abstract final class AppConstants {
     0x222, // VCU Subsystem Power State
     0x225, // Secondary Compute Status
     0x227, // Drive Motor Controller Information
+    0x22B, // Sensor 1 Health Information (UHF Radio)
+    0x22D, // Sensor 2 Health Information (L-Band, GNSS, etc.)
   };
 
   // Centralized Message Dispatch Rules

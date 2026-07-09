@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../application/sensor_providers.dart';
 import '../../application/sensor_state.dart';
 
@@ -11,30 +12,49 @@ class SensorScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(sensorStateProvider);
 
-    return Container(
-      color: const Color(0xFF0E1116),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Calculate width for 3 columns including spacing
-          final availableWidth = constraints.maxWidth - (16.w * 2); // 16.w is the padding
-          final tileWidth = (availableWidth - (16.w * 2)) / 3; // 16.w is the horizontal spacing
-
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(16.w),
-            child: Wrap(
-              spacing: 16.w,
-              runSpacing: 16.h,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              children: state.tiles.map((tileState) {
-                return SizedBox(
-                  width: tileWidth,
-                  child: _buildTile(tileState),
-                );
-              }).toList(),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Padding(
+        padding: EdgeInsets.all(12.w),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left Column
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: _buildScrollableColumn(state.leftCol),
+              ),
             ),
-          );
-        },
+            // Middle Column
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: _buildScrollableColumn(state.middleCol),
+              ),
+            ),
+            // Right Column
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: _buildScrollableColumn(state.rightCol),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildScrollableColumn(List<SensorTileState> tiles) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: tiles.map((tile) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: _buildTile(tile),
+        );
+      }).toList(),
     );
   }
 
@@ -42,9 +62,9 @@ class SensorScreen extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1F26),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,41 +73,49 @@ class SensorScreen extends ConsumerWidget {
           Text(
             state.title,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.textPrimary,
             ),
           ),
-          const Divider(color: Colors.white10, height: 16),
           ...state.items.map((item) {
             return Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    item.label,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.white70,
+                  Expanded(
+                    child: Text(
+                      item.label,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
                   if (item.isText)
                     Text(
                       item.value ?? '',
                       style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
                         color: item.color,
                       ),
                     )
                   else
                     Container(
-                      width: 8.w,
-                      height: 8.w,
+                      width: 14.w,
+                      height: 14.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: item.color,
+                        boxShadow: [
+                          BoxShadow(
+                            color: item.color.withOpacity(0.3),
+                            blurRadius: 4.r,
+                            spreadRadius: 1.r,
+                          ),
+                        ],
                       ),
                     ),
                 ],
