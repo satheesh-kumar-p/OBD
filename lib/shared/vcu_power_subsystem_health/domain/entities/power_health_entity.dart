@@ -1,18 +1,17 @@
 import 'hv_battery_health_entity.dart';
-import 'lv_pdu_health_entity.dart';
+import 'lv_battery_health_entity.dart';
 
 class PowerHealthEntity {
   final HvBatteryHealthEntity hvBattery;
-  final LvPduHealthEntity lvPdu;
+  final LvBatteryHealthEntity lvBattery;
 
   const PowerHealthEntity({
     required this.hvBattery,
-    required this.lvPdu,
+    required this.lvBattery,
   });
 
   @override
   String toString() {
-    return 'PowerHealthEntity(hvBattery: $hvBattery, lvPdu: $lvPdu)';
+    return 'PowerHealthEntity(hvBattery: $hvBattery, lvBattery: $lvBattery)';
   }
-
 }

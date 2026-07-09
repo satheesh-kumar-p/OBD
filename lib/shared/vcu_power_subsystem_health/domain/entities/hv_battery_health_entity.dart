@@ -14,6 +14,8 @@ class HvBatteryHealthEntity {
   final PowerSubsystemStatus shortCircuitProtection;
   final PowerSubsystemStatus frontDetectionIcError;
   final PowerSubsystemStatus softwareLockMos;
+  final PowerSubsystemStatus cycleLifeFault;
+  final PowerSubsystemStatus capacityFault;
 
   const HvBatteryHealthEntity({
     required this.singleCellOvervoltage,
@@ -29,6 +31,8 @@ class HvBatteryHealthEntity {
     required this.shortCircuitProtection,
     required this.frontDetectionIcError,
     required this.softwareLockMos,
+    required this.cycleLifeFault,
+    required this.capacityFault,
   });
 
   @override
@@ -46,7 +50,9 @@ class HvBatteryHealthEntity {
         '  dischargeOvercurrent: $dischargeOvercurrent,\n'
         '  shortCircuitProtection: $shortCircuitProtection,\n'
         '  frontDetectionIcError: $frontDetectionIcError,\n'
-        '  softwareLockMos: $softwareLockMos\n'
+        '  softwareLockMos: $softwareLockMos,\n'
+        '  cycleLifeFault: $cycleLifeFault,\n'
+        '  capacityFault: $capacityFault\n'
         ')';
   }
 }
