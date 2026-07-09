@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scout_obd/shared/comp_sensor_subsystem_health_1/data/sensor_1_health_mapper.dart';
+import 'package:scout_obd/shared/comp_sensor_subsystem_health_2/data/sensor_2_health_mapper.dart';
 import 'package:scout_obd/shared/vcu_comp_info/data/vcu_comp_info_mapper.dart';
 import 'package:scout_obd/shared/vcu_interface_health/data/vcu_interface_health_mapper.dart';
 
@@ -82,6 +84,8 @@ class DebugController extends Notifier<DebugState> {
       VcuCompInfoMapper(),
       VcuInterfaceHealthMapper(),
       SecComputeHealthMapper(),
+      Sensor1HealthMapper(),
+      Sensor2HealthMapper(),
     ];
 
     for (final strategy in mappersList) {
