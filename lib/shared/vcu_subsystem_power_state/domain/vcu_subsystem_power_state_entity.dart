@@ -1,26 +1,26 @@
 import 'power_state_enum.dart';
 
 class VcuSubsystemPowerStateEntity {
-  final PowerState forwardMc;
-  final PowerState aftMc;
-  final PowerState dcDc;
-  final PowerState hvPdu;
-  final PowerState lvPdu;
-  final PowerState uhfRadio;
-  final PowerState lbandRadio;
-  final PowerState ethernetSwitch;
-  final PowerState gnss;
-  final PowerState imu;
-  final PowerState lidar2d;
-  final PowerState lidar3d;
-  final PowerState vcu;
-  final PowerState mainComp;
-  final PowerState secComp;
-  final PowerState rgbdCam;
-  final PowerState headLights;
-  final PowerState aftLights;
-  final PowerState fogLights;
-  final PowerState lvBatteryCharger;
+  final PowerStateEnum forwardMc;
+  final PowerStateEnum aftMc;
+  final PowerStateEnum dcDc;
+  final PowerStateEnum hvPdu;
+  final PowerStateEnum lvPdu;
+  final PowerStateEnum uhfRadio;
+  final PowerStateEnum lbandRadio;
+  final PowerStateEnum ethernetSwitch;
+  final PowerStateEnum gnss;
+  final PowerStateEnum imu;
+  final PowerStateEnum lidar2d;
+  final PowerStateEnum lidar3d;
+  final PowerStateEnum vcu;
+  final PowerStateEnum mainComp;
+  final PowerStateEnum secComp;
+  final PowerStateEnum rgbdCam;
+  final PowerStateEnum headLights;
+  final PowerStateEnum aftLights;
+  final PowerStateEnum fogLights;
+  final PowerStateEnum lvBatteryCharger;
 
   const VcuSubsystemPowerStateEntity({
     required this.forwardMc,
