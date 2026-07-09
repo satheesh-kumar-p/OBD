@@ -59,68 +59,71 @@ class ComputeScreenState {
 
   ComputeTileState get _mainComputeTile {
     final m = mainCompInfo;
+    final isOn = powerState?.mainComp == PowerStateEnum.on;
     return ComputeTileState(
       title: 'Main Compute',
       items: [
         _row('Power Status', powerState?.mainComp),
-        _row('Overall Health', subsystemInfo?.mainCompute),
-        _row('Jetson Heartbeat', m?.jetsonHeartbeat),
-        _row('Temperature Fault', m?.tempFault),
-        _row('Voltage Fault', m?.voltFault),
-        _row('CPU Load Fault', m?.cpuLoadFault),
+        _row('Overall Health', isOn ? subsystemInfo?.mainCompute : null),
+        _row('Jetson Heartbeat', isOn ? m?.jetsonHeartbeat : null),
+        _row('Temperature Fault', isOn ? m?.tempFault : null),
+        _row('Voltage Fault', isOn ? m?.voltFault : null),
+        _row('CPU Load Fault', isOn ? m?.cpuLoadFault : null),
       ],
     );
   }
 
   ComputeTileState get _secondaryComputeTile {
     final s = secCompInfo;
+    final isOn = powerState?.secComp == PowerStateEnum.on;
     return ComputeTileState(
       title: 'Secondary Compute',
       items: [
         _row('Power Status', powerState?.secComp),
-        _row('Overall Health', s?.computeState),
+        _row('Overall Health', isOn ? s?.computeState : null),
         const ComputeItem('Internal Health'),
-        _secComputeRow('CPU Load Fault', s?.cpuLoadFault),
-        _secComputeRow('Memory Fault', s?.memoryFault),
-        _secComputeRow('Storage Fault', s?.storageFault),
+        _secComputeRow('CPU Load Fault', isOn ? s?.cpuLoadFault : null),
+        _secComputeRow('Memory Fault', isOn ? s?.memoryFault : null),
+        _secComputeRow('Storage Fault', isOn ? s?.storageFault : null),
         const ComputeItem('Interfaces'),
-        _secInterfaceRow('Control CAN', s?.controlCanStatus),
-        _secInterfaceRow('Aux CAN', s?.auxCanStatus),
-        _secInterfaceRow('Actuator CAN', s?.actCanStatus),
-        _secInterfaceRow('Forward MC Serial', s?.forwardMcSerialStatus),
-        _secInterfaceRow('Aft MC Serial', s?.aftMcSerialStatus),
-        _secInterfaceRow('Ethernet Status', s?.ethernetStatus),
+        _secInterfaceRow('Control CAN', isOn ? s?.controlCanStatus : null),
+        _secInterfaceRow('Aux CAN', isOn ? s?.auxCanStatus : null),
+        _secInterfaceRow('Actuator CAN', isOn ? s?.actCanStatus : null),
+        _secInterfaceRow('Forward MC Serial', isOn ? s?.forwardMcSerialStatus : null),
+        _secInterfaceRow('Aft MC Serial', isOn ? s?.aftMcSerialStatus : null),
+        _secInterfaceRow('Ethernet Status', isOn ? s?.ethernetStatus : null),
       ],
     );
   }
 
   ComputeTileState get _vcuTile {
     final v = vcuInfo;
+    final isOn = powerState?.vcu == PowerStateEnum.on;
     return ComputeTileState(
       title: 'VCU',
       items: [
         _row('Power Status', powerState?.vcu),
-        _row('Overall Health', subsystemInfo?.vcu),
+        _row('Overall Health', isOn ? subsystemInfo?.vcu : null),
         const ComputeItem('CAN Bus Status'),
-        _row('CAN A Bus-off', v?.canABusOff),
-        _row('CAN B Bus-off', v?.canBBusOff),
-        _row('CAN C Bus-off', v?.canCBusOff),
+        _row('CAN A Bus-off', isOn ? v?.canABusOff : null),
+        _row('CAN B Bus-off', isOn ? v?.canBBusOff : null),
+        _row('CAN C Bus-off', isOn ? v?.canCBusOff : null),
         const ComputeItem('Interface Faults'),
-        _row('Discrete Interface Fault', v?.discreteInputsFault),
-        _row('Analog Interface Fault', v?.analogInputsFault),
-        _row('High Side Drivers Fault', v?.highSideDriversFault),
-        _row('Low Side Drivers Fault', v?.lowSideDriversFault),
+        _row('Discrete Interface Fault', isOn ? v?.discreteInputsFault : null),
+        _row('Analog Interface Fault', isOn ? v?.analogInputsFault : null),
+        _row('High Side Drivers Fault', isOn ? v?.highSideDriversFault : null),
+        _row('Low Side Drivers Fault', isOn ? v?.lowSideDriversFault : null),
         const ComputeItem('System Health'),
-        _row('Supply Voltage Fault', v?.supplyVoltageFault),
-        _row('MCU Watchdog Fault', v?.mcuWatchdogFault),
-        _row('CPU Overload', v?.cpuOverload),
-        _row('RAM Fault', v?.ramFault),
-        _row('Flash CRC Failure', v?.flashCrcFailure),
-        _row('Internal Temperature Fault', v?.internalTempFault),
+        _row('Supply Voltage Fault', isOn ? v?.supplyVoltageFault : null),
+        _row('MCU Watchdog Fault', isOn ? v?.mcuWatchdogFault : null),
+        _row('CPU Overload', isOn ? v?.cpuOverload : null),
+        _row('RAM Fault', isOn ? v?.ramFault : null),
+        _row('Flash CRC Failure', isOn ? v?.flashCrcFailure : null),
+        _row('Internal Temperature Fault', isOn ? v?.internalTempFault : null),
         const ComputeItem('Other'),
-        _row('FCC Active', v?.fccActive),
-        _row('Safety SBC Fault', v?.safetySbcFault),
-        _row('Boot Failure', v?.bootFailure),
+        _row('FCC Active', isOn ? v?.fccActive : null),
+        _row('Safety SBC Fault', isOn ? v?.safetySbcFault : null),
+        _row('Boot Failure', isOn ? v?.bootFailure : null),
       ],
     );
   }
