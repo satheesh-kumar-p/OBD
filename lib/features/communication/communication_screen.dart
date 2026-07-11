@@ -108,8 +108,6 @@ class CommunicationScreen extends ConsumerWidget {
     final labelStyle = TextStyle(
       color: AppColors.textSecondary,
       fontSize: 16.sp,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'monospace',
     );
 
     if (item.isHeader) {
@@ -121,7 +119,6 @@ class CommunicationScreen extends ConsumerWidget {
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
             color: AppColors.accentVariant,
-            fontFamily: 'monospace',
           ),
         ),
       );
@@ -142,11 +139,15 @@ class CommunicationScreen extends ConsumerWidget {
           if (item.isText)
             Text(
               item.value ?? '',
-              style: labelStyle.copyWith(color: item.color),
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: item.color,
+              ),
             )
           else
             Container(
-              margin: EdgeInsets.only(top: 4.h), // Align with 16sp bold text
+              margin: EdgeInsets.only(top: 2.h),
               width: 14.w,
               height: 14.w,
               decoration: BoxDecoration(

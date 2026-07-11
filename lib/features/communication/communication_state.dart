@@ -103,22 +103,17 @@ class CommunicationState {
   }
 
   CommunicationItem _powerRow(String label, PowerStateEnum? state) {
-    String valueText = 'UNKNOWN';
-    Color textColor = AppColors.unknown;
+    Color dotColor = AppColors.unknown;
 
     if (state == PowerStateEnum.on) {
-      valueText = 'ON';
-      textColor = AppColors.healthy;
+      dotColor = AppColors.healthy;
     } else if (state == PowerStateEnum.off) {
-      valueText = 'OFF';
-      textColor = AppColors.faulty;
+      dotColor = AppColors.faulty;
     }
 
     return CommunicationItem(
       label,
-      textColor,
-      valueText,
-      true,
+      dotColor,
     );
   }
 
