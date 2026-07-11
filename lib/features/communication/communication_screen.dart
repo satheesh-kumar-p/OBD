@@ -1,139 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/theme/app_colors.dart';
 import 'communication_provider.dart';
 import 'communication_state.dart';
 
-class CommunicationScreen extends ConsumerStatefulWidget {
+class CommunicationScreen extends ConsumerWidget {
   const CommunicationScreen({super.key});
 
   @override
-  ConsumerState<CommunicationScreen> createState() => _CommunicationScreenState();
-}
-
-class _CommunicationScreenState extends ConsumerState<CommunicationScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(radioServiceProvider);
-          // .initialize();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(communicationStateProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0E1116),
+      backgroundColor: AppColors.background,
       body: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(12.w),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: state.tiles.map((tileState) {
-            return Expanded(
+          children: [
+            Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                child: _buildRadioWidget(tileState),
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: SingleChildScrollView(
+                  child: _buildTile(state.uhfRadioTile),
+                ),
               ),
-            );
-          }).toList(),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: SingleChildScrollView(
+                  child: _buildTile(state.lbandRadioTile),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRadioWidget(CommunicationTileState tileState) {
+  Widget _buildTile(CommunicationTileState state) {
+    // Group items by category (headers)
+    final List<List<CommunicationItem>> groups = [];
+    List<CommunicationItem> currentGroup = [];
+
+    for (final item in state.items) {
+      if (item.isHeader && currentGroup.isNotEmpty) {
+        groups.add(currentGroup);
+        currentGroup = [];
+      }
+      currentGroup.add(item);
+    }
+    if (currentGroup.isNotEmpty) {
+      groups.add(currentGroup);
+    }
+
+    final contentPadding = 12.w;
+    final spacing = 24.w;
+
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(contentPadding),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1F26),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Center(
-            child: Text(
-              tileState.title,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          Text(
+            state.title,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
           ),
-          SizedBox(height: 8.h),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: tileState.sections.length,
-              itemBuilder: (context, index) {
-                final section = tileState.sections[index];
-                return _buildSection(section);
-              },
-            ),
+          SizedBox(height: 12.h),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columnWidth = (constraints.maxWidth - spacing) / 2;
+              return Wrap(
+                spacing: spacing,
+                runSpacing: 16.h,
+                children: groups.map((group) {
+                  return SizedBox(
+                    width: columnWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: group.map(_buildItem).toList(),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSection(CommunicationSectionState section) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: 8.h, bottom: 4.h),
-          child: Text(
-            section.title,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
+  Widget _buildItem(CommunicationItem item) {
+    final labelStyle = TextStyle(
+      color: AppColors.textSecondary,
+      fontSize: 16.sp,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'monospace',
+    );
+
+    if (item.isHeader) {
+      return Padding(
+        padding: EdgeInsets.only(top: 8.h, bottom: 4.h),
+        child: Text(
+          item.label,
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.accentVariant,
+            fontFamily: 'monospace',
           ),
         ),
-        ...section.items.map((item) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 4.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.label,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ),
-                if (item.isText)
-                  Text(
-                    item.value ?? '',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: item.color,
-                    ),
-                  )
-                else
-                  Container(
-                    width: 8.w,
-                    height: 8.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: item.color,
-                    ),
-                  ),
-              ],
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              item.label,
+              style: labelStyle,
             ),
-          );
-        }).toList(),
-      ],
+          ),
+          SizedBox(width: 8.w),
+          if (item.isText)
+            Text(
+              item.value ?? '',
+              style: labelStyle.copyWith(color: item.color),
+            )
+          else
+            Container(
+              margin: EdgeInsets.only(top: 4.h), // Align with 16sp bold text
+              width: 14.w,
+              height: 14.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: item.color,
+                boxShadow: [
+                  BoxShadow(
+                    color: item.color!.withOpacity(0.3),
+                    blurRadius: 4.r,
+                    spreadRadius: 1.r,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

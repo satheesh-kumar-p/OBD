@@ -1,28 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../shared/comp_sensor_subsystem_health_1/sensor_1_health_providers.dart';
+import '../../shared/comp_sensor_subsystem_health_2/sensor_2_health_providers.dart';
+import '../../shared/comp_subsystem_state/comp_subsystem_state_providers.dart';
+import '../../shared/vcu_subsystem_power_state/vcu_subsystem_power_state_providers.dart';
 import 'communication_state.dart';
 
-final radioStatusStreamProvider = StreamProvider<dynamic>((ref) async* {
-  yield null;
-});
-
-final radioServiceProvider = StreamProvider<dynamic>((ref) async* {
-  yield null;
-});
-
 final communicationStateProvider = Provider<CommunicationState>((ref) {
-  final radioStatusAsync = ref.watch(radioStatusStreamProvider);
+  final sensor1 = ref.watch(sensor1HealthProvider).value;
+  final sensor2 = ref.watch(sensor2HealthProvider).value;
+  final radioFault = ref.watch(compSubsystemInfoProvider).value;
+  final powerState = ref.watch(vcuSubsystemPowerStateProvider).value;
 
-  return radioStatusAsync.when(
-    data: (entity) {
-      // 1. Check if the incoming data is null
-      if (entity == null) {
-        return CommunicationState.initial();
-      }
-
-      // 2. If it is not null, safely pass it to your factory
-      return CommunicationState.fromEntity(entity);
-    },
-    loading: () => CommunicationState.initial(),
-    error: (_, __) => CommunicationState.initial(),
+  return CommunicationState(
+    sensor1: sensor1,
+    sensor2: sensor2,
+    radioFault: radioFault,
+    powerState: powerState,
   );
 });
