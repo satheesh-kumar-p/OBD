@@ -24,13 +24,11 @@ class SafetyIndicatorState {
   final String label;
   final Color color;
   final IconData icon;
-  final bool isInactive;
 
   const SafetyIndicatorState({
     required this.label,
     required this.color,
     required this.icon,
-    required this.isInactive,
   });
 }
 
@@ -122,36 +120,24 @@ class CommonScreenState {
         label: 'E-STOP',
         color: _getEmergencyColor(vcuStatus?.emergency),
         icon: Icons.stop_circle_rounded,
-        isInactive: vcuStatus?.emergency == EmergencyEnum.unknown || vcuStatus == null,
       ),
       SafetyIndicatorState(
         label: 'REMOTE\nE-STOP',
-        color: _getRemoteEmergencyColor(vcuStatus?.remoteEmergency),
+        color: _getEmergencyColor(vcuStatus?.remoteEmergency),
         icon: Icons.settings_remote_rounded,
-        isInactive: vcuStatus?.remoteEmergency == RemoteEmergencyEnum.unknown || vcuStatus == null,
       ),
       SafetyIndicatorState(
         label: 'TOW',
         color: _getTowColor(vcuStatus?.towMode),
         icon: Icons.car_crash_outlined,
-        isInactive: vcuStatus?.towMode == TowModeEnum.unknown || vcuStatus == null,
       ),
     ];
   }
 
   Color _getEmergencyColor(EmergencyEnum? state) {
     return switch (state) {
-      EmergencyEnum.disabled => AppColors.warning,
       EmergencyEnum.disengaged => AppColors.success,
       EmergencyEnum.engaged => AppColors.danger,
-      _ => AppColors.textDisabled,
-    };
-  }
-
-  Color _getRemoteEmergencyColor(RemoteEmergencyEnum? state) {
-    return switch (state) {
-      RemoteEmergencyEnum.disengaged => AppColors.success,
-      RemoteEmergencyEnum.engaged => AppColors.danger,
       _ => AppColors.textDisabled,
     };
   }

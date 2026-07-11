@@ -9,7 +9,7 @@ class VcuStatusEntity {
   final DriveModeLimitEnum driveModeLimit;
   final TowModeEnum towMode;
   final EmergencyEnum emergency;
-  final RemoteEmergencyEnum remoteEmergency;
+  final EmergencyEnum remoteEmergency;
   final AutonomyModeEnum autonomyMode;
   final HoldStateEnum holdState;
 

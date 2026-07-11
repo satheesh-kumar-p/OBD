@@ -19,7 +19,6 @@ class SafetyStatus extends ConsumerWidget {
           child: _SafetyIndicator(
             label: indicator.label,
             color: indicator.color,
-            isInactive: indicator.isInactive,
             icon: indicator.icon,
           ),
         );
@@ -32,42 +31,30 @@ class _SafetyIndicator extends StatelessWidget {
   final String label;
   final Color color;
   final IconData icon;
-  final bool isInactive;
 
   const _SafetyIndicator({
     required this.label,
     required this.color,
     required this.icon,
-    required this.isInactive,
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = isInactive ? AppColors.border : color.withOpacity(0.8);
-    final bgColor = isInactive ? AppColors.surface : color.withOpacity(0.15);
-
     return Container(
       width: 58.w,
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: 4.h),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: borderColor, width: 1.w),
-        boxShadow: !isInactive ? [
-          BoxShadow(
-            color: color.withOpacity(0.2),
-            blurRadius: 8.r,
-            spreadRadius: 1.r,
-          )
-        ] : null,
+        border: Border.all(color: AppColors.border, width: 1.w),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             icon,
-            color: isInactive ? AppColors.textDisabled : color,
+            color: color,
             size: 20.r,
           ),
           SizedBox(height: 2.h),
@@ -75,7 +62,7 @@ class _SafetyIndicator extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isInactive ? AppColors.textDisabled : color,
+              color: color,
               fontSize: 9.sp,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.5,

@@ -59,6 +59,11 @@ class SensorScreen extends ConsumerWidget {
   }
 
   Widget _buildTile(SensorTileState state) {
+    final labelStyle = TextStyle(
+      color: AppColors.textSecondary,
+      fontSize: 16.sp,
+    );
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -78,32 +83,33 @@ class SensorScreen extends ConsumerWidget {
               color: AppColors.textPrimary,
             ),
           ),
+          SizedBox(height: 12.h),
           ...state.items.map((item) {
             return Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
                       item.label,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.textSecondary,
-                      ),
+                      style: labelStyle,
                     ),
                   ),
+                  SizedBox(width: 8.w),
                   if (item.isText)
                     Text(
                       item.value ?? '',
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: item.color,
                       ),
                     )
                   else
                     Container(
+                      margin: EdgeInsets.only(top: 2.h),
                       width: 14.w,
                       height: 14.w,
                       decoration: BoxDecoration(
