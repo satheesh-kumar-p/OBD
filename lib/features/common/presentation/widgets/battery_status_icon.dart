@@ -17,18 +17,21 @@ class BatteryStatus extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _BatteryLevelIndicator(
-          soc: state.soc,
-          color: state.color,
-          isCharging: state.isCharging,
+        SizedBox(
+          width: 60.w,
+          height: 38.h,
+          child: _BatteryLevelIndicator(
+            soc: state.soc,
+            color: state.color,
+            isCharging: state.isCharging,
+          ),
         ),
-        SizedBox(height: 4.h),
         Text(
           state.label,
           style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],
@@ -51,16 +54,18 @@ class _BatteryLevelIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final height = constraints.maxHeight.isFinite ? constraints.maxHeight : 28.r;
+        final height = constraints.maxHeight;
+        final totalWidth = constraints.maxWidth;
         final unit = height / 20.0;
-        final double width = 42.0 * unit; // Increased width slightly for text room
+
+        final terminalW = 3.0 * unit;
+        final width = totalWidth - terminalW;
         final clampedLevel = (soc / 100.0).clamp(0.0, 1.0);
 
-        final borderW = 1.0 * unit;
-        final borderRadius = 3.0 * unit;
-        final terminalW = 2.5 * unit;
-        final terminalH = 8.0 * unit;
-        final inset = 1.8 * unit;
+        final borderW = 1.2 * unit;
+        final borderRadius = 4.0 * unit;
+        final terminalH = 12.0 * unit;
+        final inset = 2.0 * unit;
 
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -71,7 +76,7 @@ class _BatteryLevelIndicator extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.batteryEmpty,
                 border: Border.all(
-                  color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.3),
+                  color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.4),
                   width: borderW,
                 ),
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -88,7 +93,7 @@ class _BatteryLevelIndicator extends StatelessWidget {
                       width: (width - 2 * inset - borderW) * clampedLevel,
                       decoration: BoxDecoration(
                         color: color,
-                        borderRadius: BorderRadius.circular(1.0 * unit),
+                        borderRadius: BorderRadius.circular(1.5 * unit),
                       ),
                     ),
                   ),
@@ -106,26 +111,16 @@ class _BatteryLevelIndicator extends StatelessWidget {
                                 Icon(
                                   Icons.bolt_rounded,
                                   color: AppColors.batteryText,
-                                  size: height * 0.4,
-                                  shadows: const [
-                                    Shadow(blurRadius: 4, color: Colors.black),
-                                  ],
+                                  size: height * 0.65,
                                 ),
                               Text(
                                 '$soc%',
                                 style: TextStyle(
                                   color: AppColors.batteryText,
-                                  fontSize: height * 0.5, // Reduced size
+                                  fontSize: height * 0.8,
                                   fontWeight: FontWeight.w900,
                                   fontFamily: 'monospace',
                                   height: 1.0,
-                                  // Added shadows to ensure visibility on bright colors AND black background
-                                  shadows: const [
-                                    Shadow(offset: Offset(0.5, 0.5), blurRadius: 2, color: Colors.black),
-                                    Shadow(offset: Offset(-0.5, -0.5), blurRadius: 2, color: Colors.black),
-                                    Shadow(offset: Offset(0.5, -0.5), blurRadius: 2, color: Colors.black),
-                                    Shadow(offset: Offset(-0.5, 0.5), blurRadius: 2, color: Colors.black),
-                                  ],
                                 ),
                               ),
                             ],
@@ -142,10 +137,10 @@ class _BatteryLevelIndicator extends StatelessWidget {
               width: terminalW,
               height: terminalH,
               decoration: BoxDecoration(
-                color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.3),
+                color: isCharging ? AppColors.success : AppColors.textPrimary.withOpacity(0.4),
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(2 * unit),
-                  bottomRight: Radius.circular(2 * unit),
+                  topRight: Radius.circular(2.5 * unit),
+                  bottomRight: Radius.circular(2.5 * unit),
                 ),
               ),
             ),
