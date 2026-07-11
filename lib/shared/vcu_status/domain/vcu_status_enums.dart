@@ -106,9 +106,9 @@ enum TowModeEnum {
 }
 
 enum EmergencyEnum {
-  disabled(0, 'DISABLED'),
   disengaged(1, 'DISENGAGED'),
   engaged(2, 'ENGAGED'),
+  disabled(3, 'DISABLED'),
   unknown(-1, 'UNKNOWN');
 
   const EmergencyEnum(this.value, this.label);
@@ -119,23 +119,6 @@ enum EmergencyEnum {
     return EmergencyEnum.values.firstWhere(
       (e) => e.value == value,
       orElse: () => EmergencyEnum.unknown,
-    );
-  }
-}
-
-enum RemoteEmergencyEnum {
-  disengaged(1, 'DISENGAGED'),
-  engaged(2, 'ENGAGED'),
-  unknown(-1, 'UNKNOWN');
-
-  const RemoteEmergencyEnum(this.value, this.label);
-  final int value;
-  final String label;
-
-  static RemoteEmergencyEnum fromInt(int value) {
-    return RemoteEmergencyEnum.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => RemoteEmergencyEnum.unknown,
     );
   }
 }

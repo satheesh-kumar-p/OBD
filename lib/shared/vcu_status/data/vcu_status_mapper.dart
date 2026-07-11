@@ -80,7 +80,7 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
       driveMode: DriveModeEnum.fromInt(parsedValues['driveMode']),
       driveModeLimit: DriveModeLimitEnum.fromInt(parsedValues['driveModeLimit']),
       emergency: EmergencyEnum.fromInt(parsedValues['emergency']),
-      remoteEmergency: RemoteEmergencyEnum.fromInt(parsedValues['remoteEmergency']),
+      remoteEmergency: EmergencyEnum.fromInt(parsedValues['remoteEmergency']),
       autonomyMode: AutonomyModeEnum.fromInt(parsedValues['autonomyMode']),
       holdState: HoldStateEnum.fromInt(parsedValues['holdState']),
     );
