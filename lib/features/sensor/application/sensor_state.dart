@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/enums/subsystem_fault_state_enum.dart';
 import '../../../shared/comp_sensor_subsystem_health_1/domain/sensor_1_enums.dart' as s1;
 import '../../../shared/comp_sensor_subsystem_health_1/domain/sensor_1_health_entity.dart';
 import '../../../shared/comp_sensor_subsystem_health_2/domain/sensor_2_enums.dart' as s2;
 import '../../../shared/comp_sensor_subsystem_health_2/domain/sensor_2_health_entity.dart';
 import '../../../shared/vcu_subsystem_power_state/domain/power_state_enum.dart';
 import '../../../shared/vcu_subsystem_power_state/domain/vcu_subsystem_power_state_entity.dart';
+import '../../../shared/comp_subsystem_state/domain/entities/comp_subsystem_state_entity.dart';
 
 class SensorItemState {
   final String label;
@@ -35,14 +37,14 @@ class SensorState {
   final Sensor1HealthEntity? sensor1;
   final Sensor2HealthEntity? sensor2;
   final VcuSubsystemPowerStateEntity? powerState;
+  final CompSubsystemStateEntity? subsystemInfo;
 
   const SensorState({
     this.sensor1,
     this.sensor2,
     this.powerState,
+    this.subsystemInfo,
   });
-
-  bool get isLoading => sensor1 == null && sensor2 == null && powerState == null;
 
   List<SensorTileState> get tiles => [
         _ethernetSwitchTile,
@@ -75,6 +77,7 @@ class SensorState {
       title: 'Ethernet Switch',
       items: [
         _powerRow('Power Status', powerState?.ethernetSwitch),
+        _row('Overall Health', isOn ? subsystemInfo?.ethernetSwitchFault : null),
         _row('GNSS Ping Fault', isOn ? s?.ethGnssPingFault : null),
         _row('L-Band Radio Ping Fault', isOn ? s?.ethLbandRadioPingFault : null),
         _row('2D Lidar Ping Fault', isOn ? s?.eth2dLidarPingFault : null),
@@ -91,6 +94,7 @@ class SensorState {
       title: 'GNSS',
       items: [
         _powerRow('Power Status', powerState?.gnss),
+        _row('Overall Health', isOn ? subsystemInfo?.gnssFault : null),
         _row('Pos Validity Fault', isOn ? s?.gnssPosValidityErrorFault : null),
         _row('Fix Quality Fault', isOn ? s?.gnssFixQualityFault : null),
         _row('Fix Dimension Fault', isOn ? s?.gnssFixDimFault : null),
@@ -108,6 +112,7 @@ class SensorState {
       title: 'IMU',
       items: [
         _powerRow('Power Status', powerState?.imu),
+        _row('Overall Health', isOn ? subsystemInfo?.imuFault : null),
         _row('Comm Fault', isOn ? s?.imuCommFault : null),
         _row('Data Integrity Fault', isOn ? s?.imuDataIntFault : null),
       ],
@@ -121,6 +126,7 @@ class SensorState {
       title: '2D Lidar',
       items: [
         _powerRow('Power Status', powerState?.lidar2d),
+        _row('Overall Health', isOn ? subsystemInfo?.lidar2dFault : null),
         _row('Comm Fault', isOn ? s?.lidar2dCommFault : null),
         _row('Data Integrity Fault', isOn ? s?.lidar2dDataIntFault : null),
       ],
@@ -134,6 +140,7 @@ class SensorState {
       title: '3D Lidar',
       items: [
         _powerRow('Power Status', powerState?.lidar3d),
+        _row('Overall Health', isOn ? subsystemInfo?.lidar3dFault : null),
         _row('Comm Fault', isOn ? s?.lidar3dCommFault : null),
         _row('Data Integrity Fault', isOn ? s?.lidar3dDataIntFault : null),
       ],
@@ -158,21 +165,17 @@ class SensorState {
   }
 
   SensorItemState _powerRow(String label, PowerStateEnum? state) {
-    String valueText = 'UNKNOWN';
-    Color textColor = AppColors.unknown;
+    Color dotColor = AppColors.unknown;
 
     if (state == PowerStateEnum.on) {
-      valueText = 'ON';
-      textColor = AppColors.healthy;
+      dotColor = AppColors.healthy;
     } else if (state == PowerStateEnum.off) {
-      valueText = 'OFF';
-      textColor = AppColors.faulty;
+      dotColor = AppColors.faulty;
     }
 
     return SensorItemState(
       label: label,
-      value: valueText,
-      color: textColor,
+      color: dotColor,
       isText: false,
     );
   }
@@ -181,6 +184,8 @@ class SensorState {
     if (state == null) return SensorItemState(label: label, color: AppColors.unknown);
 
     final color = switch (state) {
+      SubsystemFaultState.healthy ||
+      GnssFaultState.healthy ||
       s1.SensorFaultStatus.healthy ||
       s2.SensorFaultStatus.healthy ||
       s1.SensorLinkHealth.healthy ||
@@ -189,7 +194,9 @@ class SensorState {
       s2.SensorConnectionStatus.connected ||
       s2.CameraStatus.healthy =>
         AppColors.healthy,
-      s1.SensorLinkHealth.degraded || s2.SensorLinkHealth.degraded => AppColors.degraded,
+      GnssFaultState.degraded || s1.SensorLinkHealth.degraded || s2.SensorLinkHealth.degraded => AppColors.degraded,
+      SubsystemFaultState.faulty ||
+      GnssFaultState.faulty ||
       s1.SensorFaultStatus.fault ||
       s2.SensorFaultStatus.fault ||
       s1.SensorLinkHealth.faulty ||
