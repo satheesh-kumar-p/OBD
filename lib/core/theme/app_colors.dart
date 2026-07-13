@@ -28,4 +28,5 @@ class AppColors {
   // Battery specific colors
   static const Color batteryEmpty = Colors.white12;
   static const Color batteryText = Colors.white;
+  static const Color batteryGreenColor = Color(0xFF5EEE97);
 }
