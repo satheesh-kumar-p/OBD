@@ -29,7 +29,7 @@ class BatteryStatus extends StatelessWidget {
         Text(
           state.label,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: AppColors.textPrimary,
             fontSize: 10.sp,
             fontWeight: FontWeight.w900,
           ),

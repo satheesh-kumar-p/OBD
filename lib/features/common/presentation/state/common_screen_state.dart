@@ -205,6 +205,6 @@ class CommonScreenState {
   Color _getBatteryColor(int soc) {
     if (soc < 20) return AppColors.danger;
     if (soc < 50) return AppColors.warning;
-    return AppColors.success;
+    return AppColors.batteryGreenColor;
   }
 }

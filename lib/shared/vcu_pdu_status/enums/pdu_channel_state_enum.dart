@@ -1,6 +1,6 @@
 enum PduChannelState {
-  off(0, 'OFF'),
-  on(1, 'ON'),
+  healthy(0, 'HEALTHY'),
+  fault(1, 'FAULT'),
   unknown(-1, 'UNKNOWN');
 
   const PduChannelState(this.value, this.label);
