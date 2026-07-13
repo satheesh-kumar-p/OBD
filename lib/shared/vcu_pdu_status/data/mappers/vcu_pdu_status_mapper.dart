@@ -57,14 +57,14 @@ class VcuPduStatusMapper extends CanExtractionStrategy<VcuPduStatusEntity> {
   @override
   VcuPduStatusEntity build(Map<String, dynamic> values) {
     return VcuPduStatusEntity(
-      channel1State: PduChannelState.fromInt(values['channel1']),
-      channel2State: PduChannelState.fromInt(values['channel2']),
-      channel3State: PduChannelState.fromInt(values['channel3']),
-      channel4State: PduChannelState.fromInt(values['channel4']),
-      channel5State: PduChannelState.fromInt(values['channel5']),
-      channel6State: PduChannelState.fromInt(values['channel6']),
-      channel7State: PduChannelState.fromInt(values['channel7']),
-      channel8State: PduChannelState.fromInt(values['channel8']),
+      channel1State: PduFaultEnum.fromInt(values['channel1']),
+      channel2State: PduFaultEnum.fromInt(values['channel2']),
+      channel3State: PduFaultEnum.fromInt(values['channel3']),
+      channel4State: PduFaultEnum.fromInt(values['channel4']),
+      channel5State: PduFaultEnum.fromInt(values['channel5']),
+      channel6State: PduFaultEnum.fromInt(values['channel6']),
+      channel7State: PduFaultEnum.fromInt(values['channel7']),
+      channel8State: PduFaultEnum.fromInt(values['channel8']),
     );
   }
 }

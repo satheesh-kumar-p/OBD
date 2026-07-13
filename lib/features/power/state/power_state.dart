@@ -129,13 +129,13 @@ class PowerState {
       SubsystemFaultState.healthy ||
       ContactorState.healthy ||
       PowerSubsystemStatus.healthy ||
-      PduChannelState.on =>
+      PduFaultEnum.healthy =>
         AppColors.healthy,
       PowerStateEnum.off ||
       SubsystemFaultState.faulty ||
       ContactorState.faulty ||
       PowerSubsystemStatus.fault ||
-      PduChannelState.off =>
+      PduFaultEnum.fault =>
         AppColors.faulty,
       _ => AppColors.unknown,
     };
