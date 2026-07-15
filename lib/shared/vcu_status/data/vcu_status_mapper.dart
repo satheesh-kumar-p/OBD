@@ -58,13 +58,13 @@ class VcuStatusMapper extends CanExtractionStrategy<VcuStatusEntity> {
     ),
     const CanField<int>(
       name: 'autonomyMode',
-      startBit: 16,
+      startBit: 15,
       endBit: 17,
     ),
     const CanField<int>(
       name: 'holdState',
-      startBit: 14,
-      endBit: 15,
+      startBit: 13,
+      endBit: 14,
     ),
 
   ];
