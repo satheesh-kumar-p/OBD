@@ -42,16 +42,28 @@ class PowerState {
       ].every((e) => e == null);
 
   List<PowerItem> get hvPduItems {
-    final isOn = subsystemPowerState?.hvPdu == PowerStateEnum.on;
+    // TODO: Delete uncommented code when HV PDU power status is implemented and uncomment the commented code
+
+    // final isOn = subsystemPowerState?.hvPdu == PowerStateEnum.on;
+    // return [
+    //   _row('Power Status', subsystemPowerState?.hvPdu),
+    //   _row('Overall Health', isOn ? subsystemInfo?.hvPdu : null),
+    //   _row('Pre-charge contactor', isOn ? contactorState?.preChargeContFault : null),
+    //   _row('Motor Ctrl contactor', isOn ? contactorState?.mcContFault : null),
+    //   _row('I/P LV contactor', isOn ? contactorState?.ipDcDcContFault : null),
+    //   _row('HV Charging contactor', isOn ? contactorState?.hvChargeContFault : null),
+    //   _row('LV Charging contactor', isOn ? contactorState?.lvChargeContFault : null),
+    //   _row('O/P LV contactor', isOn ? contactorState?.opDcDcContFault : null),
+    // ];
     return [
       _row('Power Status', subsystemPowerState?.hvPdu),
-      _row('Overall Health', isOn ? subsystemInfo?.hvPdu : null),
-      _row('Pre-charge contactor', isOn ? contactorState?.preChargeContFault : null),
-      _row('Motor Ctrl contactor', isOn ? contactorState?.mcContFault : null),
-      _row('I/P LV contactor', isOn ? contactorState?.ipDcDcContFault : null),
-      _row('HV Charging contactor', isOn ? contactorState?.hvChargeContFault : null),
-      _row('LV Charging contactor', isOn ? contactorState?.lvChargeContFault : null),
-      _row('O/P LV contactor', isOn ? contactorState?.opDcDcContFault : null),
+      _row('Overall Health', subsystemInfo?.hvPdu),
+      _row('Pre-charge contactor', contactorState?.preChargeContFault),
+      _row('Motor Ctrl contactor', contactorState?.mcContFault),
+      _row('I/P LV contactor', contactorState?.ipDcDcContFault),
+      _row('HV Charging contactor', contactorState?.hvChargeContFault),
+      _row('LV Charging contactor', contactorState?.lvChargeContFault),
+      _row('O/P LV contactor', contactorState?.opDcDcContFault),
     ];
   }
 
