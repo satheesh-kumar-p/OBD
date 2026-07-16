@@ -52,4 +52,4 @@ jobs:
           docker buildx build --platform linux/arm64 -f Dockerfile.development -t scout_obd_builder:sprint1 . \
           && docker run --rm --platform linux/arm64 -v $(pwd)/bundle:/output scout_obd_builder:sprint1 \ 
           bash -c "cp -r /app/build/linux/arm64/release/bundle/* /output/" && docker buildx build \
-          --platform linux/arm64 -t $REGISTRY/$IMAGE:$TAG -f Dockerfile.production --push .
+          --platform linux/arm64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
