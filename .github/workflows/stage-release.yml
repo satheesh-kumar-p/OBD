@@ -56,7 +56,7 @@ jobs:
 
           docker buildx build --platform linux/amd64 -f Dockerfile.development-amd -t scout_obd_builder:$TAG --load . \
           && docker run --rm --platform linux/amd64 -v $(pwd)/bundle:/output scout_obd_builder:$TAG \
-          bash -c "cp -r /app/build/linux/amd64/release/bundle/* /output/" && docker buildx build \
+          bash -c "cp -r /app/build/linux/x64/release/bundle/* /output/" && docker buildx build \
           --platform linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
 
           echo "done building cleaning up builder image"
