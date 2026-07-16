@@ -3,7 +3,7 @@ name: Dev Release OBD
 on: 
   push:
     tags:
-      - 'f*-v*-alpha-*' 
+      - 'v*.*.*-rc-*' 
   workflow_dispatch:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Build arm64 obd docker image and push to avionics registry
+      - name: Build x86 obd docker image and push to avionics registry
         run: |
           echo "Checking registry $AVIONICS_IP to verify availability"
 
@@ -54,10 +54,10 @@ jobs:
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/arm64 -f Dockerfile.development -t scout_obd_builder:$TAG --load . \
-          && docker run --rm --platform linux/arm64 -v $(pwd)/bundle:/output scout_obd_builder:$TAG \
-          bash -c "cp -r /app/build/linux/arm64/release/bundle/* /output/" && docker buildx build \
-          --platform linux/arm64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
+          docker buildx build --platform linux/amd64 -f Dockerfile.development -t scout_obd_builder:$TAG --load . \
+          && docker run --rm --platform linux/amd64 -v $(pwd)/bundle:/output scout_obd_builder:$TAG \
+          bash -c "cp -r /app/build/linux/amd64/release/bundle/* /output/" && docker buildx build \
+          --platform linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
 
           echo "done building cleaning up builder image"
           
