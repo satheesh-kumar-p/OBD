@@ -1,0 +1,55 @@
+name: Dev Release OBD
+
+on: 
+  push:
+    tags:
+      - 'f*-v*-alpha-*' 
+  workflow_dispatch:
+
+jobs:
+
+  dev-release:
+    runs-on: self-hosted
+
+    env: 
+      IMAGE: scout-obd
+      AVIONICS_IP: 10.10.60.225:5000
+      TAG: ${{ github.ref_name }}
+
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Build obd docker image and push to avionics registry
+        run: |
+          echo "Checking registry $AVIONICS_IP to verify availability"
+
+          if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
+            echo "Registry $REGISTRY is offline"
+            echo "skipping push for this registry"
+            exit 0 
+          fi
+
+          echo "Registry is online"
+
+          echo "Checking if $IMAGE:$TAG exists"
+
+          if curl -fsS "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+
+            echo "Image $IMAGE:$TAG already exists"
+            echo "Skipping build and push"
+            exit 0
+          fi
+
+          echo "Image does not exist"
+          echo "Building and pushing image to $AVIONICS_IP"
+
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+
+          docker buildx build --platform linux/arm64 -f Dockerfile.development -t scout_obd_builder:sprint1 . \
+          && docker run --rm --platform linux/arm64 -v $(pwd)/bundle:/output scout_obd_builder:sprint1 \ 
+          bash -c "cp -r /app/build/linux/arm64/release/bundle/* /output/" && docker buildx build \
+          --platform linux/arm64 -t $REGISTRY/$IMAGE:$TAG -f Dockerfile.production --push .
