@@ -54,11 +54,4 @@ jobs:
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/arm64 -f Dockerfile.development -t scout_obd_builder:$TAG --load . \
-          && docker run --rm --platform linux/arm64 -v $(pwd)/bundle:/output scout_obd_builder:$TAG \
-          bash -c "cp -r /app/build/linux/arm64/release/bundle/* /output/" && docker buildx build \
-          --platform linux/arm64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
-
-          echo "done building cleaning up builder image"
-          
-          docker rmi -f scout_obd_builder:$TAG
+          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
