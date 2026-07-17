@@ -31,7 +31,7 @@ jobs:
           echo "Checking registry $AVIONICS_IP to verify availability"
 
           if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
-            echo "Registry $REGISTRY is offline"
+            echo "Registry $AVIONICS_IP is offline"
             echo "skipping push for this registry"
             exit 0 
           fi
@@ -53,5 +53,33 @@ jobs:
           echo "Building and pushing image to $AVIONICS_IP"
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
+
+          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
+      
+      - name: Build arm64 obd docker image and push to v/v registry
+        run: |
+          echo "Checking registry $AVIONICS_IP to verify availability"
+
+          if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
+            echo "Registry $AVIONICS_IP is offline"
+            echo "skipping push for this registry"
+            exit 0 
+          fi
+
+          echo "Registry is online"
+
+          echo "Checking if $IMAGE:$TAG exists"
+
+          if curl -fsS \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+
+            echo "Image $IMAGE:$TAG already exists"
+            echo "Skipping build and push"
+            exit 0
+          fi
+
+          echo "Image does not exist"
+          echo "Building and pushing image to $AVIONICS_IP"
 
           docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 

@@ -1,14 +1,14 @@
-name: Dev Release OBD
+name: Stage Release OBD
 
 on: 
   push:
     tags:
-      - 'v*.*.*-rc-*' 
+      - v*.*.*-rc-*' 
   workflow_dispatch:
 
 jobs:
 
-  dev-release:
+  stage-release:
     runs-on: self-hosted
 
     env: 
@@ -26,12 +26,12 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Build x86 obd docker image and push to avionics registry
+      - name: Build arm & amd obd docker image and push to avionics registry
         run: |
           echo "Checking registry $AVIONICS_IP to verify availability"
 
           if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
-            echo "Registry $REGISTRY is offline"
+            echo "Registry $AVIONICS_IP is offline"
             echo "skipping push for this registry"
             exit 0 
           fi
@@ -54,11 +54,32 @@ jobs:
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/amd64 -f Dockerfile.development-amd -t scout_obd_builder:$TAG --load . \
-          && docker run --rm --platform linux/amd64 -v $(pwd)/bundle:/output scout_obd_builder:$TAG \
-          bash -c "cp -r /app/build/linux/x64/release/bundle/* /output/" && docker buildx build \
-          --platform linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG -f Dockerfile.production --push .
+          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
 
-          echo "done building cleaning up builder image"
-          
-          docker rmi -f scout_obd_builder:$TAG
+      - name: Build arm & amd obd docker image and push to v/v registry
+        run: |
+          echo "Checking registry $AVIONICS_IP to verify availability"
+
+          if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
+            echo "Registry $AVIONICS_IP is offline"
+            echo "skipping push for this registry"
+            exit 0 
+          fi
+
+          echo "Registry is online"
+
+          echo "Checking if $IMAGE:$TAG exists"
+
+          if curl -fsS \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+
+            echo "Image $IMAGE:$TAG already exists"
+            echo "Skipping build and push"
+            exit 0
+          fi
+
+          echo "Image does not exist"
+          echo "Building and pushing image to $AVIONICS_IP"
+
+          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
