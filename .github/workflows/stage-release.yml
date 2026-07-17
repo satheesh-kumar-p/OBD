@@ -58,10 +58,10 @@ jobs:
 
       - name: Build arm & amd obd docker image and push to v/v registry
         run: |
-          echo "Checking registry $AVIONICS_IP to verify availability"
+          echo "Checking registry $LAPTOP_IP to verify availability"
 
-          if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
-            echo "Registry $AVIONICS_IP is offline"
+          if ! curl -fsS "http://$LAPTOP_IP/v2/" > /dev/null; then
+            echo "Registry $LAPTOP_IP is offline"
             echo "skipping push for this registry"
             exit 0 
           fi
@@ -72,7 +72,7 @@ jobs:
 
           if curl -fsS \
             -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-            "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+            "http://$LAPTOP_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
 
             echo "Image $IMAGE:$TAG already exists"
             echo "Skipping build and push"
@@ -80,6 +80,6 @@ jobs:
           fi
 
           echo "Image does not exist"
-          echo "Building and pushing image to $AVIONICS_IP"
+          echo "Building and pushing image to $LAPTOP_IP"
 
-          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
+          docker buildx build --platform linux/arm64,linux/amd64 -t $LAPTOP_IP/$IMAGE:$TAG --push . 
