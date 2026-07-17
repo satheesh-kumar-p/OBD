@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Scout OBD
+Comment=Scout OBD Kiosk Custom Session
+Exec=/home/jetson/bin/kiosk_session.sh
+Type=Application
+DesktopNames=ScoutOBD
