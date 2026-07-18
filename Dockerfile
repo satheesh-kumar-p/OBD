@@ -3,7 +3,7 @@
 # ==========================================
 # STAGE 1: Development & Build
 # ==========================================
-FROM --platform=$BUILDPLATFORM debian:bookworm AS development
+FROM --platform=$TARGETPLATFORM debian:bookworm AS development
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
