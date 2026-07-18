@@ -13,6 +13,8 @@ jobs:
 
     env: 
       IMAGE: scout-obd
+      ARM_ARCH: arm64
+      X86_ARCH: x86
       TAG: ${{ github.ref_name }}
 
       # variable created under obd repository settings-> secrets and variables-> actions ->variables
@@ -26,60 +28,104 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Build arm64 obd docker image and push to avionics registry
+       # REGISTRY CHECK STEPS
+      - name: Check Avionics Registry 
+        id: avionics_registry
         run: |
-          echo "Checking registry $AVIONICS_IP to verify availability"
+          if curl -fsS http://$AVIONICS_IP/v2/ >/dev/null;then
+            echo "online=true" >> "$GITHUB_OUTPUT"
 
-          if ! curl -fsS "http://$AVIONICS_IP/v2/" > /dev/null; then
-            echo "Registry $AVIONICS_IP is offline"
-            echo "skipping push for this registry"
-            exit 0 
+              if curl -fsS \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "http://$AVIONICS_IP/v2/$IMAGE-$X86_ARCH/manifests/$TAG" > /dev/null; then
+
+                echo "x86_exists=true" >> "$GITHUB_OUTPUT"
+              
+              else
+                echo "x86_exists=false" >> "$GITHUB_OUTPUT"
+              fi
+
+              if curl -fsS \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "http://$AVIONICS_IP/v2/$IMAGE-$ARM_ARCH/manifests/$TAG" > /dev/null; then
+
+                echo "arm64_exists=true" >> "$GITHUB_OUTPUT"
+              
+              else
+                echo "arm64_exists=false" >> "$GITHUB_OUTPUT"
+              fi
+          else
+            echo "online=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Registry is online"
+      # CHECK LAPTOP REGISTRY
+      - name: Check V/V Laptop Registry 
+        id: laptop_registry
+        run: |
+          if curl -fsS http://$LAPTOP_IP/v2/ >/dev/null;then
+            echo "online=true" >> "$GITHUB_OUTPUT"
 
-          echo "Checking if $IMAGE:$TAG exists"
-
-          if curl -fsS \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-            "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
-
-            echo "Image $IMAGE:$TAG already exists"
-            echo "Skipping build and push"
-            exit 0
+              if curl -fsS \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "http://$LAPTOP_IP/v2/$IMAGE-$ARM_ARCH/manifests/$TAG" > /dev/null; then
+                echo "exists=true" >> "$GITHUB_OUTPUT"
+              
+              else
+                echo "exists=false" >> "$GITHUB_OUTPUT"
+              fi
+          else
+            echo "online=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Image does not exist"
-          echo "Building and pushing image to $AVIONICS_IP"
+      
+      - name: Build x86 obd docker image and push to avionics registry
+        if : |
+          steps.avionics_registry.outputs.online == 'true' &&
+          steps.laptop_registry.outputs.x86_exists == 'false'
+        run: |
+
+          echo "Building and pushing an x86 image: $IMAGE-$X86_ARCH:$TAG to $AVIONICS_IP"
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/arm64,linux/amd64 -t $AVIONICS_IP/$IMAGE:$TAG --push . 
+          docker buildx build --platform linux/amd64 -t $AVIONICS_IP/$IMAGE-$X86_ARCH:$TAG --push . 
       
-      - name: Build arm64 obd docker image and push to v/v registry
+      - name: Build ARM64 obd docker image 
+        if : |
+          (
+            steps.avionics_registry.outputs.online == 'true' &&
+            steps.avionics_registry.outputs.arm64_exists == 'false'
+          ) ||
+          (
+            steps.laptop_registry.outputs.online == 'true' &&
+            steps.laptop_registry.outputs.exists == 'false'
+          )
         run: |
-          echo "Checking registry $LAPTOP_IP to verify availability"
 
-          if ! curl -fsS "http://$LAPTOP_IP/v2/" > /dev/null; then
-            echo "Registry $LAPTOP_IP is offline"
-            echo "skipping push for this registry"
-            exit 0 
-          fi
+          echo "Building an ARM64 image: $IMAGE-$ARM_ARCH:$TAG"
 
-          echo "Registry is online"
-
-          echo "Checking if $IMAGE:$TAG exists"
-
-          if curl -fsS \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-            "http://$LAPTOP_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
-
-            echo "Image $IMAGE:$TAG already exists"
-            echo "Skipping build and push"
-            exit 0
-          fi
-
+          docker buildx build --platform linux/arm64 -t $IMAGE-$ARM_ARCH:$TAG --load .
+      
+      - name: Push ARM image to avionics registry
+        if : |
+          steps.avionics_registry.outputs.online == 'true' &&
+          steps.avionics_registry.outputs.arm64_exists == 'false'
+        run: |
+          
           echo "Image does not exist"
-          echo "Building and pushing image to $LAPTOP_IP"
 
-          docker buildx build --platform linux/arm64,linux/amd64 -t $LAPTOP_IP/$IMAGE:$TAG --push . 
+          echo "Pushing image to $AVIONICS_IP"
+
+          docker tag $IMAGE-$ARM_ARCH:$TAG $AVIONICS_IP/$IMAGE-$ARM_ARCH:$TAG
+
+          docker push $AVIONICS_IP/$IMAGE-$ARM_ARCH:$TAG
+      
+      - name: Push to v/v laptop registry
+        if: |
+          steps.laptop_registry.outputs.online == 'true' &&
+          steps.laptop_registry.outputs.exists == 'false'
+        run: |
+
+          docker tag $IMAGE-$ARM_ARCH:$TAG $LAPTOP_IP/$IMAGE-$ARM_ARCH:$TAG
+
+          docker push $LAPTOP_IP/$IMAGE-$ARM_ARCH:$TAG
