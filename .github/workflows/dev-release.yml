@@ -81,7 +81,7 @@ jobs:
       - name: Build x86 obd docker image and push to avionics registry
         if : |
           steps.avionics_registry.outputs.online == 'true' &&
-          steps.laptop_registry.outputs.x86_exists == 'false'
+          steps.avionics_registry.outputs.x86_exists == 'false'
         run: |
 
           echo "Building and pushing an x86 image: $IMAGE-$X86_ARCH:$TAG to $AVIONICS_IP"
