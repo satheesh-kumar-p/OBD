@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# ------------------------------------------------
 # Install Flutter
+# ------------------------------------------------
 RUN git clone --depth 1 -b stable https://github.com/flutter/flutter.git /flutter
 
 ENV PATH="/flutter/bin:${PATH}"
@@ -35,19 +37,38 @@ RUN flutter --version
 
 WORKDIR /app
 
+# ------------------------------------------------
 # Cache dependencies
+# ------------------------------------------------
 COPY pubspec.* ./
 RUN flutter pub get
 
-# Copy source
+# ------------------------------------------------
+# Copy application
+# ------------------------------------------------
 COPY . .
 
+# ------------------------------------------------
 # Build Flutter application
+# ------------------------------------------------
 RUN flutter build linux --release
 
-# Normalize build output for all architectures
-RUN mkdir -p /bundle && \
-    cp -r build/linux/*/release/bundle/* /bundle/
+RUN find build/linux -maxdepth 3 -type d
+
+# ------------------------------------------------
+# Select the correct bundle explicitly
+# ------------------------------------------------
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+        amd64) BUILD_DIR="x64" ;; \
+        arm64) BUILD_DIR="arm64" ;; \
+        *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    echo "Target Architecture : ${TARGETARCH}"; \
+    echo "Using Build Folder  : ${BUILD_DIR}"; \
+    test -d build/linux/${BUILD_DIR}/release/bundle; \
+    mkdir -p /bundle; \
+    cp -a build/linux/${BUILD_DIR}/release/bundle/. /bundle/
 
 # ==========================================
 # STAGE 2: Production Runtime
@@ -75,10 +96,14 @@ RUN useradd -m appuser
 
 WORKDIR /app
 
-# Copy normalized application bundle
+# ------------------------------------------------
+# Copy application bundle
+# ------------------------------------------------
 COPY --from=development /bundle/ .
 
+# ------------------------------------------------
 # GUI configuration
+# ------------------------------------------------
 ENV GDK_BACKEND=wayland
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
