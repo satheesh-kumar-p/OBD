@@ -1,0 +1,92 @@
+name: Dev Release OBD
+
+on: 
+  push:
+    tags:
+      - 'f*-v*-alpha-*' 
+  workflow_dispatch:
+
+jobs:
+
+  dev-release:
+    runs-on: self-hosted
+
+    env: 
+      IMAGE: scout-obd
+      TAG: ${{ github.ref_name }}
+
+      # variable created under obd repository settings-> secrets and variables-> actions ->variables
+      AVIONICS_IP: ${{ vars.AVIONICS_REGISTRY }}
+      LAPTOP_IP: ${{ vars.LAPTOP_REGISTRY }}
+
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      
+       # REGISTRY CHECK STEPS
+      - name: Check Avionics Registry 
+        id: avionics_registry
+        run: |
+          if curl -fsS http://$AVIONICS_IP/v2/ >/dev/null;then
+            echo "online=true" >> "$GITHUB_OUTPUT"
+
+              if curl -fsS \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "http://$AVIONICS_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+
+                echo "exists=true" >> "$GITHUB_OUTPUT"
+              
+              else
+                echo "exists=false" >> "$GITHUB_OUTPUT"
+              fi
+          else
+            echo "online=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # CHECK LAPTOP REGISTRY
+      - name: Check V/V Laptop Registry 
+        id: laptop_registry
+        run: |
+          if curl -fsS http://$LAPTOP_IP/v2/ >/dev/null;then
+            echo "online=true" >> "$GITHUB_OUTPUT"
+
+              if curl -fsS \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "http://$LAPTOP_IP/v2/$IMAGE/manifests/$TAG" > /dev/null; then
+                echo "exists=true" >> "$GITHUB_OUTPUT"
+              
+              else
+                echo "exists=false" >> "$GITHUB_OUTPUT"
+              fi
+          else
+            echo "online=false" >> "$GITHUB_OUTPUT"
+          fi
+      
+      - name: Build x86 & ARM obd docker image and push to avionics registry
+        if : |
+          steps.avionics_registry.outputs.online == 'true' &&
+          steps.avionics_registry.outputs.exists == 'false'
+        run: |
+
+          echo "Building and pushing an cross build image: $IMAGE:$TAG to $AVIONICS_IP"
+
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+
+          docker buildx build --platform linux/amd64,linux/arm64  -t $AVIONICS_IP/$IMAGE:$TAG --push . 
+      
+      - name: Build x86 & ARM obd docker image and push to v/v registry
+        if : |
+          steps.laptop_registry.outputs.online == 'true' &&
+          steps.laptop_registry.outputs.exists == 'false'
+        run: |
+
+          echo "Building and pushing an cross build image: $IMAGE:$TAG to $LAPTOP_IP"
+
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+
+          docker buildx build --platform linux/amd64,linux/arm64  -t $LAPTOP_IP/$IMAGE:$TAG --push . 
+      
+      

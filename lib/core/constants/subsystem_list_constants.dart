@@ -1,0 +1,23 @@
+enum Subsystem {
+  forwardMotorController,
+  aftMotorController,
+  hvBattery,
+  lvBattery,
+  lvPdu,
+  hvPdu,
+  dcDc48v12v,
+  vcu,
+  forwardPortMotor,
+  aftPortMotor,
+  forwardStarboardMotor,
+  aftStarboardMotor,
+  uhfRadio,
+  lBandRadio,
+  mainCompute,
+  secondaryCompute,
+  ethernetSwitch,
+  gnss,
+  imu,
+  lidar2d,
+  lidar3d;
+}

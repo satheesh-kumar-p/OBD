@@ -1,0 +1,1 @@
+enum MotorStatus { healthy, fault }
