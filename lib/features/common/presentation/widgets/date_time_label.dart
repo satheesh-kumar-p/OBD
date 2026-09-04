@@ -49,10 +49,10 @@ class DateTimeLabel extends ConsumerWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontSize: 35.sp,
+            fontSize: 28.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: 4.w,
-            height: 0.5, // IMPORTANT
+            height: 1, // IMPORTANT
             fontFamily: 'monospace',
             decoration: TextDecoration.none,
           ),
