@@ -13,7 +13,7 @@ class BatteryStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bool charging = true;
+    // const bool charging = true;
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,8 +26,8 @@ class BatteryStatus extends StatelessWidget {
             color: state.color,
           ),
         ),
-        // if (state.isCharging) ...[
-          if(charging) ...[
+        if (state.isCharging) ...[
+          // if(charging) ...[
           SizedBox(width: 1.w),
 Transform.scale(
             scaleY: 3.3, 

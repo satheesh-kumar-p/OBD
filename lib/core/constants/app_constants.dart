@@ -13,7 +13,7 @@ abstract final class AppConstants {
   // UDP Configuration for checksum data.
   // The checksum packets are expected from the same remote UDP service that
   // provides CAN data, but on the checksum port 49152.
-  static const int checksumListenPort = 49153;
+  // static const int checksumListenPort = 5005;
 
   // TCP Configuration
   static const String tcpHost = '192.168.1.10';

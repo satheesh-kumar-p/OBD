@@ -34,7 +34,7 @@ class DateTimeLabel extends ConsumerWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontSize: 30.sp,
+            fontSize: 28.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 4.w,
             height: 0.8,

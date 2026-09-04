@@ -182,7 +182,7 @@ class CommonScreenState {
 
   // --- Battery Status ---
   BatteryIndicatorState get lvBattery {
-    final soc = batteryInfo?.lvBatterySoc ?? 100;
+    final soc = batteryInfo?.lvBatterySoc ?? 0;
     return BatteryIndicatorState(
       soc: soc,
       color: _getBatteryColor(soc),
@@ -192,7 +192,7 @@ class CommonScreenState {
   }
 
   BatteryIndicatorState get hvBattery {
-    final soc = batteryInfo?.hvBatterySoc ?? 100;
+    final soc = batteryInfo?.hvBatterySoc ?? 0;
     final isCharging = vcuStatus?.chargingInProgress ?? false;
     return BatteryIndicatorState(
       soc: soc,

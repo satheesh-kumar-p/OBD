@@ -31,7 +31,7 @@ class MissionModeLabel extends ConsumerWidget {
                 mainText,
                 style: TextStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 20.sp,
+                  fontSize: 30.sp,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.w,
                   height: 1.0,
@@ -41,7 +41,7 @@ class MissionModeLabel extends ConsumerWidget {
                 subText,
                 style: TextStyle(
                   color: subColor,
-                  fontSize: 17.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 1.w,
                   height: 1.0,

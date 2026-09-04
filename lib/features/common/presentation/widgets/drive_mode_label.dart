@@ -27,7 +27,7 @@ class DriveModeLabel extends ConsumerWidget {
               mainText,
               style: TextStyle(
                 color: AppColors.textPrimary,
-                fontSize: 20.sp,
+                fontSize: 30.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.4.w,
                 height: 1,
@@ -37,7 +37,7 @@ class DriveModeLabel extends ConsumerWidget {
               subText,
               style: TextStyle(
                 color: subColor,
-                fontSize: 16.sp,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3.w,
                 height: 1,

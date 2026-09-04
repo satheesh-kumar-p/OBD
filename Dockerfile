@@ -110,7 +110,7 @@ ENV GDK_BACKEND=wayland
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 # Default fallback environment variable for Checksum / RepoDigest
-ENV IMAGE_CHECKSUM=unknown
+ENV APP_CHECKSUM=unknown
 
 RUN chown -R appuser:appuser /app
 
