@@ -39,45 +39,72 @@ class CommonScreen extends ConsumerWidget {
       child: Row(
         children: [
           // --- MISSION CONTROLS ---
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const ArmStatus(),
-              SizedBox(width: 8.w),
-              const MissionModeLabel(),
-              SizedBox(width: 8.w),
-              const DriveModeLabel(),
-            ],
+          Expanded(
+            flex: 4,
+            child: _buildScaledGroup(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const ArmStatus(),
+                  SizedBox(width: 15.w),
+                  const MissionModeLabel(),
+                  SizedBox(width: 15.w),
+                  const DriveModeLabel(),
+                ],
+              ),
+            ),
           ),
 
           _buildDivider(),
 
           // --- SYSTEM CHRONO (Expanded to Center) ---
-          const Expanded(
-            child: DateTimeLabel(),
+          Expanded(
+            flex: 3,
+            child: _buildScaledGroup(
+              alignment: Alignment.center,
+              child: const DateTimeLabel(),
+            ),
           ),
 
           _buildDivider(),
 
           // --- TELEMETRY & STATUS ---
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SafetyStatus(),
-                SizedBox(width: 16.w),
-                const HandCtrlStatus(),
-                SizedBox(width: 16.w),
-                const GcsStatus(),
-                SizedBox(width: 16.w),
-                BatteryStatus(state: lvBattery),
-                SizedBox(width: 16.w),
-                BatteryStatus(state: hvBattery),
-              ],
+          Expanded(
+            flex: 5,
+            child: _buildScaledGroup(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SafetyStatus(),
+                  SizedBox(width: 20.w),
+                  const HandCtrlStatus(),
+                  SizedBox(width: 15.w),
+                  const GcsStatus(),
+                  SizedBox(width: 15.w),
+                  BatteryStatus(state: lvBattery),
+                  SizedBox(width: 15.w),
+                  BatteryStatus(state: hvBattery),
+                ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildScaledGroup({
+    required Alignment alignment,
+    required Widget child,
+  }) {
+    return Align(
+      alignment: alignment,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: alignment,
+        child: child,
       ),
     );
   }
@@ -86,7 +113,7 @@ class CommonScreen extends ConsumerWidget {
     return Container(
       width: 1,
       height: 40.h,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: EdgeInsets.symmetric(horizontal: 10.w),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

@@ -21,12 +21,12 @@ class ArmStatusState {
 }
 
 class SafetyIndicatorState {
-  final String label;
+  // final String label;
   final Color color;
   final IconData icon;
 
   const SafetyIndicatorState({
-    required this.label,
+    // required this.label,
     required this.color,
     required this.icon,
   });
@@ -117,19 +117,19 @@ class CommonScreenState {
   List<SafetyIndicatorState> get safetyIndicators {
     return [
       SafetyIndicatorState(
-        label: 'E-STOP',
+        
         color: _getEmergencyColor(vcuStatus?.emergency),
-        icon: Icons.stop_circle_rounded,
+        icon: Icons.dangerous_rounded,
       ),
       SafetyIndicatorState(
-        label: 'REMOTE\nE-STOP',
+        
         color: _getEmergencyColor(vcuStatus?.remoteEmergency),
         icon: Icons.settings_remote_rounded,
       ),
       SafetyIndicatorState(
-        label: 'TOW',
+        
         color: _getTowColor(vcuStatus?.towMode),
-        icon: Icons.car_crash_outlined,
+        icon: Icons.rv_hookup_rounded,
       ),
     ];
   }
@@ -175,14 +175,14 @@ class CommonScreenState {
 
     return (
       autonomyMode.label,
-      'HOLD: ${holdState.label}',
+      holdState.label,
       subColor,
     );
   }
 
   // --- Battery Status ---
   BatteryIndicatorState get lvBattery {
-    final soc = batteryInfo?.lvBatterySoc ?? 0;
+    final soc = batteryInfo?.lvBatterySoc ?? 100;
     return BatteryIndicatorState(
       soc: soc,
       color: _getBatteryColor(soc),
@@ -192,7 +192,7 @@ class CommonScreenState {
   }
 
   BatteryIndicatorState get hvBattery {
-    final soc = batteryInfo?.hvBatterySoc ?? 0;
+    final soc = batteryInfo?.hvBatterySoc ?? 100;
     final isCharging = vcuStatus?.chargingInProgress ?? false;
     return BatteryIndicatorState(
       soc: soc,
@@ -200,11 +200,12 @@ class CommonScreenState {
       isCharging: isCharging,
       label: 'HV',
     );
-  }
+  }   
 
-  Color _getBatteryColor(int soc) {
-    if (soc < 20) return AppColors.danger;
-    if (soc < 50) return AppColors.warning;
-    return AppColors.batteryGreenColor;
+Color _getBatteryColor(int soc) {
+    if (soc <= 9) return AppColors.batteryCritical;      // 0% - 9%
+    if (soc <= 19) return AppColors.batteryWarning;      // 10% - 19%
+    if (soc <= 79) return AppColors.batteryStandardGreen; // 20% - 79%
+    return AppColors.batteryFullGreen;                   // 80% - 100%
   }
 }

@@ -8,10 +8,11 @@ class ArmStatus extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // final state = {lable: "ARMED", color: Colors.red, bgColor: Colors.red.withOpacity(0.1)};
     final state = ref.watch(commonScreenStateProvider.select((s) => s.armStatus));
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: state.bgColor,
         borderRadius: BorderRadius.circular(12.r),
@@ -20,17 +21,17 @@ class ArmStatus extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (state.icon != null) ...[
-            Icon(state.icon, color: state.color, size: 20.r),
-            SizedBox(width: 8.w),
-          ],
+          // if (state.icon != null) ...[
+          //   Icon(state.icon, color: state.color, size: 20.r),
+          //   SizedBox(width: 8.w),
+          // ],
           Text(
             state.label,
             style: TextStyle(
               color: state.color,
-              fontSize: 14.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w900,
-              letterSpacing: 0.5.w,
+              letterSpacing: 1.w,
             ),
           ),
         ],

@@ -10,6 +10,11 @@ abstract final class AppConstants {
   static const String sendAddress = '10.10.60.91';
   static const int sendPort = 5001;
 
+  // UDP Configuration for checksum data.
+  // The checksum packets are expected from the same remote UDP service that
+  // provides CAN data, but on the checksum port 49152.
+  static const int checksumListenPort = 49153;
+
   // TCP Configuration
   static const String tcpHost = '192.168.1.10';
   static const int tcpPort = 5002;

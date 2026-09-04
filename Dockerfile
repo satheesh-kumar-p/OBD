@@ -9,6 +9,10 @@ ARG BUILDPLATFORM
 ARG TARGETPLATFORM
 ARG TARGETARCH
 
+# Build arguments for app metadata
+ARG APP_NAME=scout_display
+ARG APP_VERSION=dev
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
@@ -30,10 +34,7 @@ RUN apt-get update && apt-get install -y \
 # Install Flutter
 # ------------------------------------------------
 RUN git clone --depth 1 -b stable https://github.com/flutter/flutter.git /flutter
-
 ENV PATH="/flutter/bin:${PATH}"
-
-RUN flutter --version
 
 WORKDIR /app
 
@@ -44,16 +45,15 @@ COPY pubspec.* ./
 RUN flutter pub get
 
 # ------------------------------------------------
-# Copy application
+# Copy application & Build with Dart Defines
 # ------------------------------------------------
 COPY . .
 
-# ------------------------------------------------
-# Build Flutter application
-# ------------------------------------------------
-RUN flutter build linux --release
+RUN flutter build linux --release \
+    --dart-define=APP_NAME=${APP_NAME} \
+    --dart-define=APP_VERSION=${APP_VERSION}
 
-RUN find build/linux -maxdepth 3 -type d
+RUN find build/linux -maxdepth 3 -type d    
 
 # ------------------------------------------------
 # Select the correct bundle explicitly
@@ -64,16 +64,23 @@ RUN set -eux; \
         arm64) BUILD_DIR="arm64" ;; \
         *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
     esac; \
-    echo "Target Architecture : ${TARGETARCH}"; \
-    echo "Using Build Folder  : ${BUILD_DIR}"; \
-    test -d build/linux/${BUILD_DIR}/release/bundle; \
     mkdir -p /bundle; \
     cp -a build/linux/${BUILD_DIR}/release/bundle/. /bundle/
+
 
 # ==========================================
 # STAGE 2: Production Runtime
 # ==========================================
 FROM debian:bookworm-slim AS production
+
+ARG APP_NAME=scout_display
+ARG APP_VERSION=dev
+
+ENV APP_NAME=${APP_NAME}
+ENV APP_VERSION=${APP_VERSION}
+
+LABEL org.opencontainers.image.title="${APP_NAME}" \
+      org.opencontainers.image.version="${APP_VERSION}"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -93,19 +100,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m appuser
-
 WORKDIR /app
 
-# ------------------------------------------------
 # Copy application bundle
-# ------------------------------------------------
 COPY --from=development /bundle/ .
 
-# ------------------------------------------------
 # GUI configuration
-# ------------------------------------------------
 ENV GDK_BACKEND=wayland
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
+# Default fallback environment variable for Checksum / RepoDigest
+ENV IMAGE_CHECKSUM=unknown
 
 RUN chown -R appuser:appuser /app
 

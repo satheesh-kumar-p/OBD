@@ -29,4 +29,11 @@ class AppColors {
   static const Color batteryEmpty = Colors.white12;
   static const Color batteryText = Colors.white;
   static const Color batteryGreenColor = Color(0xFF1E7D25);
+
+
+  //Battery percentage colors hex code
+  static const Color batteryFullGreen = Color(0xFF2ECC71);     // 80% - 100%
+  static const Color batteryStandardGreen = Color(0xFF4CD964); // 20% - 79%
+  static const Color batteryWarning = Color(0xFFFFCC00);       // 10% - 19%
+  static const Color batteryCritical = Color(0xFFFF3B30);
 }

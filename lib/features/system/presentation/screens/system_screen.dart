@@ -12,32 +12,40 @@ class SystemScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(systemScreenStateProvider);
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStageSection(state, 0),
-          SizedBox(height: 16.h),
-          _buildStageSection(state, 1),
-          SizedBox(height: 16.h),
-          _buildStageSection(state, 2),
-          SizedBox(height: 8.h),
+          Expanded(
+            flex: 1,
+            child: _buildStageSection(state, 0),
+          ),
+          SizedBox(height: 4.h),
+          Expanded(
+            flex: state.stages.length > 1 && state.stages[1].items.length > 6 ? 2 : 1, 
+            child: _buildStageSection(state, 1),
+          ),
+          SizedBox(height: 4.h),
+          Expanded(
+            flex: 1,
+            child: _buildStageSection(state, 2),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStageSection(SystemScreenState state, int index) {
-    final stage = state.stages[index];
+  Widget _buildStageSection(SystemScreenState state, int stageIndex) {
+    if (stageIndex >= state.stages.length) return const SizedBox.shrink();
+    final stage = state.stages[stageIndex];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 2.w, bottom: 4.h, top: 4.h),
+          padding: EdgeInsets.only(left: 2.w, bottom: 2.h),
           child: Text(
-            stage.title,
+            stage.title.toUpperCase(),
             style: TextStyle(
               color: stage.titleColor,
               fontSize: 18.sp,
@@ -46,28 +54,38 @@ class SystemScreen extends ConsumerWidget {
             ),
           ),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: stage.items.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 6,
-            childAspectRatio: 1.3,
-            mainAxisSpacing: 6.h,
-            crossAxisSpacing: 4.w,
-          ),
-          itemBuilder: (context, index) {
-            final subsystem = stage.items[index];
-            final (color, statusText) = state.getVisuals(subsystem);
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final rowCount = (stage.items.length / 6).ceil();
+              final itemWidth = (constraints.maxWidth - (5 * 4.w)) / 6;
+              final itemHeight = (constraints.maxHeight - ((rowCount - 1) * 4.h)) / rowCount;
+              final dynamicAspectRatio = itemWidth / itemHeight;
 
-            return _SubsystemTile(
-              name: state.getLabel(subsystem),
-              icon: state.getIcon(subsystem),
-              color: color,
-              statusText: statusText,
-              isStatusActive: state.isStatusActive(subsystem),
-            );
-          },
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: stage.items.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 6,
+                  childAspectRatio: dynamicAspectRatio,
+                  mainAxisSpacing: 4.h,
+                  crossAxisSpacing: 4.w,
+                ),
+                itemBuilder: (context, index) {
+                  final subsystem = stage.items[index];
+                  final (color, statusText) = state.getVisuals(subsystem);
+
+                  return _SubsystemTile(
+                    name: state.getLabel(subsystem),
+                    icon: state.getIcon(subsystem),
+                    color: color,
+                    statusText: statusText,
+                    isStatusActive: state.isStatusActive(subsystem),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ],
     );
@@ -100,45 +118,47 @@ class _SubsystemTile extends StatelessWidget {
           width: 0.5.w,
         ),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(2.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 38.r,
-              color: isStatusActive ? color : AppColors.textDisabled,
-            ),
-            SizedBox(height: 5.h),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                name,
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Subsystem Name
+              Text(
+                name.toUpperCase(),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.textPrimary.withOpacity(0.95),
-                  fontSize: 18.sp,
+                  color: AppColors.textPrimary,
+                  fontSize: 23.sp,
                   fontWeight: FontWeight.w900,
+                  letterSpacing: 0.3,
                   height: 1.0,
                 ),
               ),
-            ),
-            SizedBox(height: 5.h),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
+              SizedBox(height: 4.h),
+              // Subsystem Status
+              Text(
                 statusText.toUpperCase(),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: color,
-                  fontSize: 14.sp,
+                  color: isStatusActive ? color : AppColors.textSecondary,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
                   height: 1.0,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

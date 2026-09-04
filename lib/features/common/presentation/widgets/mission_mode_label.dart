@@ -18,32 +18,37 @@ class MissionModeLabel extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: AppColors.border, width: 1.w),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              mainText,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.4.w,
-                height: 1.1,
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 1.h),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                mainText,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.w,
+                  height: 1.0,
+                ),
               ),
-            ),
-            Text(
-              subText,
-              style: TextStyle(
-                color: subColor,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.3.w,
-                height: 1.1,
+              Text(
+                subText,
+                style: TextStyle(
+                  color: subColor,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.w,
+                  height: 1.0,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

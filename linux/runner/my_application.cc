@@ -52,7 +52,7 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "scout_display");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+gtk_window_set_default_size(window, 1280, 720);
   gtk_window_set_decorated(window, FALSE);
   gtk_window_fullscreen(window);
 

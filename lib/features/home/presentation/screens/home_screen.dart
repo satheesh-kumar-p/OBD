@@ -12,6 +12,7 @@ import '../../../sensor/presentation/screens/sensor_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
 import '../../../common/presentation/screens/common_screen.dart';
 import '../../../compute/presentation/screens/compute_screen.dart';
+import '../../../checksum/presentation/screens/checksum_status_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -53,6 +54,7 @@ class HomeScreen extends ConsumerWidget {
                         'SENSOR',
                         'COMMS',
                         'DEBUG',
+                        'VERSION'
                       ],
                       selectedIndex: selectedIndex,
                       onSelect: (index) {
@@ -73,6 +75,7 @@ class HomeScreen extends ConsumerWidget {
                         SensorScreen(),
                         CommunicationScreen(),
                         DebugScreen(),
+                        ChecksumStatusScreen(),
                       ],
                     ),
                   ),

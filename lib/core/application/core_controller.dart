@@ -8,14 +8,17 @@ import '../../features/debug/di/debug_providers.dart';
 class CoreController extends Notifier<void> {
   @override
   void build() {
-    // These watches ensure the providers are initialized and stay alive 
+    // These watches ensure the providers are initialized and stay alive
     // for the lifetime of the application.
     ref.watch(commConnectionProvider);
     ref.watch(systemScreenStateProvider);
     ref.watch(debugNotifierProvider);
-    
+    ref.watch(checksumPacketsProvider);   //watches over the raw strea comming from the comm_manager.dart for the checksum
+
     return;
   }
 }
 
-final coreControllerProvider = NotifierProvider<CoreController, void>(CoreController.new);
+final coreControllerProvider = NotifierProvider<CoreController, void>(
+  CoreController.new,
+);

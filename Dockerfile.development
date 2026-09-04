@@ -1,26 +1,145 @@
-FROM debian:bookworm AS development
+# # syntax=docker/dockerfile:1.7
 
-ENV DEBIAN_FRONTEND=noninteractive
+# # ==========================================
+# # STAGE 1: Development & Build
+# # ==========================================
+# FROM --platform=$TARGETPLATFORM debian:bookworm AS development
 
-RUN apt-get update && apt-get install -y \
-    curl git unzip xz-utils zip \
-    clang cmake ninja-build pkg-config \
-    libgtk-3-dev liblzma-dev \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# ARG BUILDPLATFORM
+# ARG TARGETPLATFORM
+# ARG TARGETARCH
+# ARG APP_NAME=scout_display
+# ARG APP_VERSION=dev
 
-RUN git clone --depth 1 -b stable https://github.com/flutter/flutter.git /flutter
-ENV PATH="/flutter/bin:${PATH}"
+# ENV DEBIAN_FRONTEND=noninteractive
 
-RUN flutter --version
+# RUN apt-get update && apt-get install -y \
+#     curl \
+#     git \
+#     unzip \
+#     xz-utils \
+#     zip \
+#     clang \
+#     cmake \
+#     ninja-build \
+#     pkg-config \
+#     libgtk-3-dev \
+#     liblzma-dev \
+#     ca-certificates \
+#     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# # ------------------------------------------------
+# # Install Flutter
+# # ------------------------------------------------
+# RUN git clone --depth 1 -b stable https://github.com/flutter/flutter.git /flutter
 
-COPY pubspec.* ./
-RUN flutter pub get
+# ENV PATH="/flutter/bin:${PATH}"
 
-COPY . .
+# RUN flutter --version
 
-RUN flutter build linux --release
+# WORKDIR /app
 
-VOLUME /build/linux/arm64/release/bundle
+# # ------------------------------------------------
+# # Cache dependencies
+# # ------------------------------------------------
+# COPY pubspec.* ./
+# RUN flutter pub get
+
+# # ------------------------------------------------
+# # Copy application
+# # ------------------------------------------------
+# COPY . .
+
+# # ------------------------------------------------
+# # Build Flutter application
+# # ------------------------------------------------
+# RUN flutter build linux --release \
+#     --dart-define=APP_NAME=${APP_NAME} \
+#     --dart-define=APP_VERSION=${APP_VERSION}
+
+# RUN find build/linux -maxdepth 3 -type d
+
+# # ------------------------------------------------
+# # Select the correct bundle explicitly
+# # ------------------------------------------------
+# RUN set -eux; \
+#     case "${TARGETARCH}" in \
+#         amd64) BUILD_DIR="x64" ;; \
+#         arm64) BUILD_DIR="arm64" ;; \
+#         *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
+#     esac; \
+#     echo "Target Architecture : ${TARGETARCH}"; \
+#     echo "Using Build Folder  : ${BUILD_DIR}"; \
+#     test -d build/linux/${BUILD_DIR}/release/bundle; \
+#     mkdir -p /bundle; \
+#     cp -a build/linux/${BUILD_DIR}/release/bundle/. /bundle/
+
+# # ------------------------------------------------
+# # Write build identity (name / version / checksum) for the app to
+# # self-report on the checksum screen, same shape as the UDP packets it
+# # receives from other apps (app_name / version / checksum).
+# #
+# # APP_VERSION is expected to be supplied at build time, e.g.:
+# #   docker build --build-arg APP_VERSION=$(git describe --tags --always --dirty) ...
+# #
+# # The checksum is a sha256 over every file in the built bundle (sorted
+# # for determinism), NOT the final Docker image digest — the image's own
+# # digest can't be known until the image build finishes, so it can never
+# # be embedded inside itself. This bundle checksum plays the same role
+# # for this app as the other apps' reported checksums do for them.
+# # ------------------------------------------------
+# RUN set -eux; \
+#     CHECKSUM=$(find /bundle -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}'); \
+#     printf '{"app_name":"%s","version":"%s","checksum":"%s"}\n' \
+#         "${APP_NAME}" "${APP_VERSION}" "${CHECKSUM}" > /bundle/build_info.json; \
+#     cat /bundle/build_info.json
+
+# # ==========================================
+# # STAGE 2: Production Runtime
+# # ==========================================
+# FROM debian:bookworm-slim AS production
+
+# ARG APP_NAME=scout_display
+# ARG APP_VERSION=dev
+
+# LABEL org.opencontainers.image.title="${APP_NAME}" \
+#       org.opencontainers.image.version="${APP_VERSION}"
+
+# ENV DEBIAN_FRONTEND=noninteractive
+
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     libgtk-3-0 \
+#     libglib2.0-0 \
+#     libstdc++6 \
+#     libx11-6 \
+#     libasound2 \
+#     libwayland-client0 \
+#     libwayland-cursor0 \
+#     libwayland-egl1 \
+#     libegl1 \
+#     libgles2 \
+#     libgl1 \
+#     libgl1-mesa-dri \
+#     && rm -rf /var/lib/apt/lists/*
+
+# RUN useradd -m appuser
+
+# WORKDIR /app
+
+# # ------------------------------------------------
+# # Copy application bundle (build_info.json comes along automatically,
+# # since it now lives inside /bundle from stage 1)
+# # ------------------------------------------------
+# COPY --from=development /bundle/ .
+
+# # ------------------------------------------------
+# # GUI configuration
+# # ------------------------------------------------
+# ENV GDK_BACKEND=wayland
+# ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
+# RUN chown -R appuser:appuser /app
+
+# USER appuser
+
+# CMD ["./scout_display", "fullscreen"]

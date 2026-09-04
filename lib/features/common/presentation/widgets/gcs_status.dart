@@ -10,7 +10,7 @@ class GcsStatus extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statusColor = ref.watch(commonScreenStateProvider.select((s) => s.gcsStatusColor));
-    final iconSize = 44.r;
+    final iconSize = 52.r;
 
     return SizedBox(
       width: iconSize,

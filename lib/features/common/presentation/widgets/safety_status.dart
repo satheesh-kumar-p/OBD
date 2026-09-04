@@ -13,11 +13,12 @@ class SafetyStatus extends ConsumerWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center, // Aligns all indicators nicely
       children: indicators.map((indicator) {
         return Padding(
-          padding: EdgeInsets.only(right: 8.w),
+          padding: EdgeInsets.only(right: 15.w),
           child: _SafetyIndicator(
-            label: indicator.label,
+            // label: indicator.label,
             color: indicator.color,
             icon: indicator.icon,
           ),
@@ -28,48 +29,59 @@ class SafetyStatus extends ConsumerWidget {
 }
 
 class _SafetyIndicator extends StatelessWidget {
-  final String label;
+  // final String label;
   final Color color;
   final IconData icon;
 
   const _SafetyIndicator({
-    required this.label,
+    // required this.label,
     required this.color,
     required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
+    return Icon(
+      icon,
+      color: color,
+      size: 60.r,
+    );
+
+    /* 
     return Container(
-      width: 58.w,
+      width: 100.w,
+      height: 40.h, // Explicit height guarantees equal height across all items
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: AppColors.border, width: 1.w),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: color.withOpacity(0.6), width: 1.5.w),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
         children: [
           Icon(
             icon,
             color: color,
-            size: 20.r,
+            size: 24.r,
           ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: color,
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.5,
-            ),
-          ),
+          SizedBox(height: 3.h),
+          // Text(
+          //   // label,
+          //   textAlign: TextAlign.center,
+          //   style: TextStyle(
+          //     color: color,
+          //     fontSize: 18.sp,
+          //     fontWeight: FontWeight.w900,
+          //     height: 1,
+          //     letterSpacing: 0.5,
+          //   ),
+          // ),
         ],
       ),
     );
+    */
   }
 }
