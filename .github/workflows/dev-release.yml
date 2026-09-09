@@ -75,7 +75,11 @@ jobs:
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/amd64,linux/arm64  -t $AVIONICS_IP/$IMAGE:$TAG --push . 
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --build-arg APP_VERSION=$TAG \
+            -t $AVIONICS_IP/$IMAGE:$TAG \
+            --push .
       
       - name: Build x86 & ARM obd docker image and push to v/v registry
         if : |
@@ -87,6 +91,10 @@ jobs:
 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
 
-          docker buildx build --platform linux/amd64,linux/arm64  -t $LAPTOP_IP/$IMAGE:$TAG --push . 
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --build-arg APP_VERSION=$TAG \
+            -t $LAPTOP_IP/$IMAGE:$TAG \
+            --push .
       
       

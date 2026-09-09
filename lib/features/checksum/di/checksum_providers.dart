@@ -6,13 +6,11 @@
 library;
 
 export '../presentation/state/checksum_status_notifier.dart'
-    show
-        ChecksumStatusNotifier,
-        checksumStatusNotifierProvider,
-        ChecksumStatusLogNotifier,
-        checksumStatusLogNotifierProvider;
+    show ChecksumStatusNotifier, checksumStatusNotifierProvider;
 
+// ChecksumStatusLogNotifier,
+// checksumStatusLogNotifierProvider;
 
-        //it is the bridge file for the UI and the data layer
+//it is the bridge file for the UI and the data layer
 
-        //When your ChecksumStatusScreen needs to watch the state, it imports checksum_providers.dart to access checksumStatusNotifierProvider cleanly without needing to know where the notifier is physically saved in your project directories
+//When your ChecksumStatusScreen needs to watch the state, it imports checksum_providers.dart to access checksumStatusNotifierProvider cleanly without needing to know where the notifier is physically saved in your project directories

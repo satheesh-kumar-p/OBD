@@ -27,7 +27,7 @@ abstract final class ChecksumStatusMapper {
       text = utf8.decode(data);
     } on FormatException {
       return null;
-    }
+    } 
 
     // Sanitize unescaped raw newlines/carriage returns embedded inside
     // JSON strings, which would otherwise be invalid JSON.

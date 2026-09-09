@@ -6,9 +6,18 @@ import 'can_frame.dart';
 class CanFrameParser {
   final List<int> _rxBuffer = [];
   final StreamController<CanFrame> _framesController =
-  StreamController<CanFrame>.broadcast();
+      StreamController<CanFrame>.broadcast();
+  final StreamController<Uint8List> _unparsedController =
+      StreamController<Uint8List>.broadcast();
 
   Stream<CanFrame> get frames => _framesController.stream;
+  Stream<Uint8List> get unparsedData => _unparsedController.stream;
+
+  void _emitUnparsed(List<int> data) {
+    if (data.isNotEmpty && !_unparsedController.isClosed) {
+      _unparsedController.add(Uint8List.fromList(data));
+    }
+  }
 
   void feed(Uint8List rawData) {
     _rxBuffer.addAll(rawData);
@@ -23,9 +32,11 @@ class CanFrameParser {
   CanFrame? _tryParseFrame() {
     // 1. Find Header (0xAA)
     // If the first byte isn't 0xAA, skip until we find one or buffer is empty.
+    final unparsed = <int>[];
     while (_rxBuffer.isNotEmpty && _rxBuffer[0] != 0xAA) {
-      _rxBuffer.removeAt(0);
+      unparsed.add(_rxBuffer.removeAt(0));
     }
+    _emitUnparsed(unparsed);
 
     if (_rxBuffer.isEmpty) return null;
 
@@ -33,11 +44,12 @@ class CanFrameParser {
     if (_rxBuffer.length < 2) return null;
 
     final int control = _rxBuffer[1];
-    
+
     // bit7~6: Fixed to 1 for Variable Length protocol
     if ((control & 0xC0) != 0xC0) {
       // Not a valid control byte for this protocol, discard header
-      _rxBuffer.removeAt(0);
+      final header = _rxBuffer.removeAt(0);
+      _emitUnparsed([header]);
       return null;
     }
 
@@ -45,7 +57,8 @@ class CanFrameParser {
     final int dlc = control & 0x0F;
     if (dlc > 8) {
       // Invalid length code, discard header and keep searching
-      _rxBuffer.removeAt(0);
+      final header = _rxBuffer.removeAt(0);
+      _emitUnparsed([header]);
       return null;
     }
 
@@ -53,7 +66,7 @@ class CanFrameParser {
     final bool isExtended = (control & 0x20) != 0;
     // bit4: 0 - data frame, 1 - remote frame
     final bool isRemote = (control & 0x10) != 0;
-    
+
     final int idBytes = isExtended ? 4 : 2;
     final int totalFrameLen = 2 + idBytes + dlc + 1;
 
@@ -63,7 +76,8 @@ class CanFrameParser {
     // 4. Verify Footer (0x55)
     if (_rxBuffer[totalFrameLen - 1] != 0x55) {
       // Invalid frame, discard the header and keep searching
-      _rxBuffer.removeAt(0);
+      final header = _rxBuffer.removeAt(0);
+      _emitUnparsed([header]);
       return null;
     }
 
@@ -127,5 +141,6 @@ class CanFrameParser {
   void dispose() {
     _rxBuffer.clear();
     _framesController.close();
+    _unparsedController.close();
   }
 }

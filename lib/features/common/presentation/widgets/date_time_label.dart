@@ -37,7 +37,7 @@ class DateTimeLabel extends ConsumerWidget {
             fontSize: 28.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 4.w,
-            height: 0.8,
+            height: 0.9,
             fontFamily: 'monospace',
             decoration: TextDecoration.none,
           ),

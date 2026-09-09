@@ -13,12 +13,9 @@ import 'checksum/checksum_packet.dart';
 /// Orchestrates the communication lifecycle, including reconnection and dispatching.
 /// Bridges the [Transport] from comm_module with the application's CAN logic.
 ///
-/// A SINGLE UDP socket, bound to [AppConstants.listenPort] (5005), now
-/// carries both CAN frames and checksum/version JSON heartbeats. Every
-/// incoming datagram is routed by its first byte before being handed to
-/// either [CanFrameParser] or the checksum stream — see
-/// [_routeIncomingData] for why this split is safe and deterministic,
-/// not a fragile guess.
+/// A SINGLE UDP socket, bound to [AppConstants.listenPort] (5005), carries
+/// both CAN frames and checksum/version JSON heartbeats. CAN parsing remains
+/// the primary receive path; rejected bytes are forwarded for JSON handling.
 class CommManager {
   Transport? _transport;
   final Logger _logger;
@@ -28,6 +25,7 @@ class CommManager {
 
   StreamSubscription<Uint8List>? _transportDataSub;
   StreamSubscription<CanFrame>? _parserFrameSub;
+  StreamSubscription<Uint8List>? _parserUnparsedSub;
   final StreamController<bool> _connectionCtrl =
       StreamController<bool>.broadcast();
 
@@ -40,17 +38,8 @@ class CommManager {
   Timer? _reconnectTimer;
   bool _isDisposed = false;
 
-  /// CAN frames on this transport always start with this Waveshare
-  /// framing header byte (see CanFrameParser._tryParseFrame). In UTF-8,
-  /// 0xAA (0b10101010) is a continuation byte — illegal as the first
-  /// byte of any valid UTF-8 text — so a well-formed JSON payload
-  /// (which always starts with '{', '[', or whitespace) can never begin
-  /// with 0xAA. That makes checking the first byte a deterministic,
-  /// collision-free way to tell the two payload types apart on one
-  /// shared socket, not a heuristic guess.
-  static const int _canFrameHeaderByte = 0xAA;
-
-  CommManager({   //initialization of the manager and created, storing the dependencies like logger and transport type with default fallbacks
+  CommManager({
+    //initialization of the manager and created, storing the dependencies like logger and transport type with default fallbacks
     required TransportType transportType,
     required Logger logger,
     MessageDispatcher? dispatcher,
@@ -86,13 +75,12 @@ class CommManager {
   }
 
   void _setupListeners() {
-    _transportDataSub?.cancel();  // Cancel the existing subscription
+    _transportDataSub?.cancel(); // Cancel the existing subscription
+    _parserFrameSub?.cancel();
+    _parserUnparsedSub?.cancel();
 
-    // Single socket -> route each datagram to CAN parser or checksum
-    // stream based on its first byte, instead of piping straight to
-    // _parser.feed like before.
     _transportDataSub = _transport?.onData.listen(
-      _routeIncomingData,
+      _parser.feed,
       onError: (e, st) {
         _logger.error('CommManager: Transport data error', error: e, stack: st);
         _handleDisconnect();
@@ -103,37 +91,25 @@ class CommManager {
       },
     );
 
-    _parserFrameSub?.cancel();
     // Pipe Parser -> Dispatcher
     _parserFrameSub = _parser.frames.listen(
       _dispatcher.dispatch,
       onError: (e, st) =>
           _logger.error('CommManager: Parser frame error', error: e, stack: st),
     );
-  }
 
-  /// Demultiplexes one incoming UDP datagram. Each UDP datagram is a
-  /// complete, independent message (unlike TCP), so this per-packet
-  /// check is safe — there's no risk of a CAN frame and a JSON payload
-  /// ever being split across the same buffer boundary.
-  void _routeIncomingData(Uint8List data) {
-    if (data.isEmpty) return;
-
-    if (data[0] == _canFrameHeaderByte) {
-      _parser.feed(data);
-      return;
-    }
-
-    // Not CAN-framed -> treat as a checksum/version JSON heartbeat.
-    if (!_checksumDataCtrl.isClosed) {
-      _checksumDataCtrl.add(
-        ChecksumPacket(timestamp: DateTime.now(), data: data),
-      );
-    }
+    _parserUnparsedSub = _parser.unparsedData.listen((data) {
+      if (!_checksumDataCtrl.isClosed) {
+        _checksumDataCtrl.add(
+          ChecksumPacket(timestamp: DateTime.now(), data: data),
+        );
+      }
+    });
   }
 
   /// Stream of connection status (one socket now covers both streams).
-  Stream<bool> get connectionStream => _connectionCtrl.stream;    //expose the stream to the whole app  can be access anywhere in the app by ref.listen()
+  Stream<bool> get connectionStream => _connectionCtrl
+      .stream; //expose the stream to the whole app  can be access anywhere in the app by ref.listen()
 
   /// Whether the shared transport is currently connected.
   bool get isConnected => _transport?.isConnected ?? false;
@@ -248,6 +224,7 @@ class CommManager {
     _reconnectTimer = null;
     _transportDataSub?.cancel();
     _parserFrameSub?.cancel();
+    _parserUnparsedSub?.cancel();
     _connectionCtrl.close();
     _checksumDataCtrl.close();
     _parser.dispose();

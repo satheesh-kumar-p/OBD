@@ -10,7 +10,7 @@ ARG TARGETPLATFORM
 ARG TARGETARCH
 
 # Build arguments for app metadata
-ARG APP_NAME=scout_display
+ARG APP_NAME=scout_obd
 ARG APP_VERSION=dev
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -53,7 +53,7 @@ RUN flutter build linux --release \
     --dart-define=APP_NAME=${APP_NAME} \
     --dart-define=APP_VERSION=${APP_VERSION}
 
-RUN find build/linux -maxdepth 3 -type d    
+RUN find build/linux -maxdepth 3 -type d
 
 # ------------------------------------------------
 # Select the correct bundle explicitly
@@ -73,7 +73,7 @@ RUN set -eux; \
 # ==========================================
 FROM debian:bookworm-slim AS production
 
-ARG APP_NAME=scout_display
+ARG APP_NAME=scout_obd
 ARG APP_VERSION=dev
 
 ENV APP_NAME=${APP_NAME}
@@ -97,6 +97,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgles2 \
     libgl1 \
     libgl1-mesa-dri \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m appuser
@@ -108,9 +109,6 @@ COPY --from=development /bundle/ .
 # GUI configuration
 ENV GDK_BACKEND=wayland
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
-
-# Default fallback environment variable for Checksum / RepoDigest
-ENV APP_CHECKSUM=unknown
 
 RUN chown -R appuser:appuser /app
 
