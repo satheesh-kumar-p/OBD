@@ -23,7 +23,7 @@ abstract final class ChecksumSelfInfoLoader {
   // --dart-define=APP_NAME=...
   static const String _compileTimeAppName = String.fromEnvironment(
     'APP_NAME',
-    defaultValue: 'SCOUT-OBD',
+    defaultValue: 'OBD',
   );
 
   // Compile-time APP_VERSION passed via:

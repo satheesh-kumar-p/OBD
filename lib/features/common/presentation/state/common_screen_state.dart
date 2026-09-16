@@ -203,9 +203,8 @@ class CommonScreenState {
   }   
 
 Color _getBatteryColor(int soc) {
-    if (soc <= 9) return AppColors.batteryCritical;      // 0% - 9%
-    if (soc <= 19) return AppColors.batteryWarning;      // 10% - 19%
-    if (soc <= 79) return AppColors.batteryStandardGreen; // 20% - 79%
+    if (soc <= 19) return AppColors.batteryCritical;      // 0% - 9%
+    if (soc <= 59) return AppColors.batteryWarning;      // 10% - 19%
     return AppColors.batteryFullGreen;                   // 80% - 100%
   }
 }

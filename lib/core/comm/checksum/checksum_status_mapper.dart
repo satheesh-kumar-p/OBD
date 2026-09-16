@@ -105,6 +105,12 @@ abstract final class ChecksumStatusMapper {
     return entities;
   }
 
+  /// Capitalizes the first letter of [input] and makes the rest lowercase.
+  static String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
   /// Maps one app's JSON object into an entity. Only `version` and
   /// `checksum` are read — the real payload never carries anything
   /// else.
@@ -115,11 +121,12 @@ abstract final class ChecksumStatusMapper {
   }) {
     if (appName.isEmpty) return null;
 
+    final formattedAppName = _capitalize(appName);
     final version = appJson['version'];
     final checksum = appJson['checksum'];
 
     return ChecksumStatusEntity(
-      appName: appName,
+      appName: formattedAppName,
       version: version is String ? version : 'unknown',
       checksum: checksum is String ? checksum : 'unknown',
       receivedAt: receivedAt,
