@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../di/checksum_providers.dart';
-import '../../../../core/comm/checksum/checksum_status_entity.dart';
+import '../../application/checksum_status_controller.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/entities/checksum_status_entity.dart';
 
 class ChecksumStatusScreen extends ConsumerWidget {
-  const ChecksumStatusScreen({super.key});
-
-  // This screen displays the status of various applications' checksums.
+  const ChecksumStatusScreen();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statuses = ref.watch(checksumStatusNotifierProvider);//listens to the state provider
-    final entries = statuses.values.toList()    //extracts only the checksum status entity from the state(which stores the data in the map format)
-      ..sort((a, b) => a.appName.compareTo(b.appName));  //for sorting the result by there app name
+    // Listens directly to the pre-sorted list of statuses provided by the controller
+    final entries = ref.watch(checksumStatusControllerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -72,8 +69,9 @@ class _AppStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor =
-        entity.hasUnknownChecksum ? AppColors.warning : AppColors.healthy;
+    final statusColor = entity.hasUnknownChecksum
+        ? AppColors.warning
+        : AppColors.healthy;
 
     return Container(
       padding: EdgeInsets.all(10.r),
