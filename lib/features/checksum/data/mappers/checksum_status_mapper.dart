@@ -3,8 +3,14 @@ import 'dart:typed_data';
 
 import '../../domain/entities/checksum_status_entity.dart';
 
+/// Decoding logic lives here: raw UDP bytes -> ChecksumStatusEntity
+/// objects. Handles three payload shapes:
+/// 1. Flat single-app object.
+/// 2. Combined multi-app envelope (object keyed by app name).
+/// 3. Array of app-status objects.
+/// A payload may combine shape 1 with 2 or 3 in the same envelope —
+/// all applicable shapes are checked, never just the first match.
 class ChecksumStatusMapper {
-
   Object? _decodeJson(Uint8List data) {
     final String text;
     try {
@@ -13,8 +19,6 @@ class ChecksumStatusMapper {
       return null;
     }
 
-    // Sanitize unescaped raw newlines/carriage returns embedded inside
-    // JSON strings, which would otherwise be invalid JSON.
     final sanitized = text
         .replaceAll('\r\n', r'\n')
         .replaceAll('\r', r'\n')
@@ -27,22 +31,15 @@ class ChecksumStatusMapper {
     }
   }
 
-  List<ChecksumStatusEntity> fromBytes(
-    Uint8List data,
-  ) {
+  List<ChecksumStatusEntity> fromBytes(Uint8List data) {
     final decoded = _decodeJson(data);
 
-    if (decoded is List) {
-      return fromArray(decoded);
-    }
-    if (decoded is Map<String, dynamic>) {
-      return fromEnvelope(decoded);
-    }
+    if (decoded is List) return fromArray(decoded);
+    if (decoded is Map<String, dynamic>) return fromEnvelope(decoded);
     return const [];
   }
 
-  List<ChecksumStatusEntity> fromArray(
-    List<dynamic> array) {
+  List<ChecksumStatusEntity> fromArray(List<dynamic> array) {
     final entities = <ChecksumStatusEntity>[];
 
     for (final element in array) {
@@ -52,33 +49,22 @@ class ChecksumStatusMapper {
       final appName = appJson['app_name'];
       if (appName is! String) continue;
 
-      final entity = _mapSingleApp(
-        appName: appName,
-        appJson: appJson,
-      );
+      final entity = _mapSingleApp(appName: appName, appJson: appJson);
       if (entity != null) entities.add(entity);
     }
 
     return entities;
   }
 
-
-  List<ChecksumStatusEntity> fromEnvelope(
-    Map<String, dynamic> envelope) {
+  List<ChecksumStatusEntity> fromEnvelope(Map<String, dynamic> envelope) {
     final entities = <ChecksumStatusEntity>[];
 
-    // Shape 1: the envelope's own top-level fields describe one app.
     final directAppName = envelope['app_name'];
     if (directAppName is String && directAppName.isNotEmpty) {
-      final entity = _mapSingleApp(
-        appName: directAppName,
-        appJson: envelope,
-      );
+      final entity = _mapSingleApp(appName: directAppName, appJson: envelope);
       if (entity != null) entities.add(entity);
     }
 
-    // Shape 2 (+ nested shape 3): any other top-level key whose value
-    // is a Map or a List describes one or more additional apps.
     for (final entry in envelope.entries) {
       final value = entry.value;
 
@@ -87,12 +73,9 @@ class ChecksumStatusMapper {
         final nestedAppName = appJson['app_name'];
         final appName = (nestedAppName is String && nestedAppName.isNotEmpty)
             ? nestedAppName
-            : entry.key; // fall back to the envelope key as the app name
+            : entry.key;
 
-        final entity = _mapSingleApp(
-          appName: appName,
-          appJson: appJson,
-        );
+        final entity = _mapSingleApp(appName: appName, appJson: appJson);
         if (entity != null) entities.add(entity);
       } else if (value is List) {
         entities.addAll(fromArray(value));
@@ -102,7 +85,6 @@ class ChecksumStatusMapper {
     return entities;
   }
 
-  /// Capitalizes the first letter of [input] and makes the rest lowercase.
   String _capitalize(String input) {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
@@ -114,12 +96,11 @@ class ChecksumStatusMapper {
   }) {
     if (appName.isEmpty) return null;
 
-    final formattedAppName = _capitalize(appName);
     final version = appJson['version'];
     final checksum = appJson['checksum'];
 
     return ChecksumStatusEntity(
-      appName: formattedAppName,
+      appName: _capitalize(appName),
       version: version is String ? version : 'unknown',
       checksum: checksum is String ? checksum : 'unknown',
     );

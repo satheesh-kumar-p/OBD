@@ -1,14 +1,17 @@
 import '../../../../core/comm/comm_manager.dart';
 import '../../../../core/logger/logger.dart';
 import '../../domain/entities/checksum_status_entity.dart';
+import '../../domain/repositories/i_checksum_status_repository.dart';
 import '../mappers/checksum_status_mapper.dart';
 
-class ChecksumStatusRepository {
+/// Data layer: pulls raw bytes from the core comm layer, decodes them
+/// via the mapper, never lets a decode failure crash the stream.
+class ChecksumStatusRepositoryImpl implements IChecksumStatusRepository {
   final CommManager _canManager;
   final ChecksumStatusMapper _mapper;
   final Logger _logger;
 
-  ChecksumStatusRepository({
+  ChecksumStatusRepositoryImpl({
     required CommManager canManager,
     required ChecksumStatusMapper mapper,
     required Logger logger,
@@ -16,7 +19,8 @@ class ChecksumStatusRepository {
         _mapper = mapper,
         _logger = logger;
 
-  Stream<List<ChecksumStatusEntity>> watchDecodedStatuses() {
+  @override
+  Stream<List<ChecksumStatusEntity>> watchStatuses() {
     return _canManager.checksumDataStream.map((data) {
       try {
         return _mapper.fromBytes(data);
