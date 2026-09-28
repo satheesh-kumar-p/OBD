@@ -11,7 +11,7 @@ class ChecksumStatusScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(checksumStatusUiStateProvider).asData?.value ?? const [];
+    final entries = ref.watch(checksumStatusUiStateProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -38,14 +38,18 @@ class ChecksumStatusScreen extends ConsumerWidget {
                     ? Center(
                         child: Text(
                           'Waiting for checksum packets…',
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 13.sp),
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13.sp,
+                          ),
                         ),
                       )
                     : ListView.separated(
                         itemCount: entries.length,
                         physics: const BouncingScrollPhysics(),
                         separatorBuilder: (_, __) => SizedBox(height: 6.h),
-                        itemBuilder: (context, index) => _AppStatusCard(entity: entries[index]),
+                        itemBuilder: (context, index) =>
+                            _AppStatusCard(entity: entries[index]),
                       ),
               ),
             ],
@@ -63,7 +67,9 @@ class _AppStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = entity.hasUnknownChecksum ? AppColors.warning : AppColors.healthy;
+    final statusColor = entity.hasUnknownChecksum
+        ? AppColors.warning
+        : AppColors.healthy;
 
     return Container(
       padding: EdgeInsets.all(10.r),
@@ -80,7 +86,10 @@ class _AppStatusCard extends StatelessWidget {
               Container(
                 width: 8.r,
                 height: 8.r,
-                decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  shape: BoxShape.circle,
+                ),
               ),
               SizedBox(width: 8.w),
               Expanded(

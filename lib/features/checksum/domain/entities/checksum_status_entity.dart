@@ -10,8 +10,7 @@ class ChecksumStatusEntity {
     required this.checksum,
   });
 
-  /// True when the source reported "unknown" for checksum — used for
-  /// UI warning/dimming.
+
   bool get hasUnknownChecksum => checksum.toLowerCase() == 'unknown';
 
   /// Identity key for "latest status per app" maps.

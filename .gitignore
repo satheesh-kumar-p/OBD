@@ -51,3 +51,5 @@ macos
 web
 windows
 bundle
+# Widget Preview related
+.widget_preview/

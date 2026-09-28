@@ -21,7 +21,6 @@ class ChecksumStatusController {
     _init();
   } 
 
-  /// Current snapshot, sorted.
   List<ChecksumStatusEntity> get state => _state;
 
   /// Emits a new snapshot every time it changes.

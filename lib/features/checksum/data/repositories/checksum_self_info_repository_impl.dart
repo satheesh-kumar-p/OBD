@@ -3,9 +3,6 @@ import 'dart:io';
 import '../../domain/entities/checksum_status_entity.dart';
 import '../../domain/repositories/i_checksum_self_info_repository.dart';
 
-/// Data layer: fetches this app's own build identity — compile-time
-/// dart-defines plus a Docker image digest lookup — and caches the
-/// result so the Docker CLI is only ever queried once.
 class ChecksumSelfInfoRepositoryImpl implements IChecksumSelfInfoRepository {
   static const String _compileTimeAppName = String.fromEnvironment(
     'APP_NAME',
