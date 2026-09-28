@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../di/checksum_providers.dart';
-import '../../../../core/comm/checksum/checksum_status_entity.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:scout_obd/core/theme/app_colors.dart';
+import 'package:scout_obd/features/checksum/domain/entities/checksum_status_entity.dart';
+import 'package:scout_obd/features/checksum/presentation/checksum_providers.dart';
 
 class ChecksumStatusScreen extends ConsumerWidget {
   const ChecksumStatusScreen({super.key});
 
-  // This screen displays the status of various applications' checksums.
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statuses = ref.watch(checksumStatusNotifierProvider);//listens to the state provider
-    final entries = statuses.values.toList()    //extracts only the checksum status entity from the state(which stores the data in the map format)
-      ..sort((a, b) => a.appName.compareTo(b.appName));  //for sorting the result by there app name
+    final entries = ref.watch(checksumStatusUiStateProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -25,7 +21,6 @@ class ChecksumStatusScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Screen Title Header
               Padding(
                 padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
                 child: Text(
@@ -72,8 +67,9 @@ class _AppStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor =
-        entity.hasUnknownChecksum ? AppColors.warning : AppColors.healthy;
+    final statusColor = entity.hasUnknownChecksum
+        ? AppColors.warning
+        : AppColors.healthy;
 
     return Container(
       padding: EdgeInsets.all(10.r),
@@ -85,7 +81,6 @@ class _AppStatusCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Status Dot + App Name + Version Badge
           Row(
             children: [
               Container(
@@ -109,7 +104,6 @@ class _AppStatusCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 6.w),
-              // Version Badge
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
@@ -117,7 +111,7 @@ class _AppStatusCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(
-                  '${entity.version}',
+                  entity.version,
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 30.sp,
@@ -128,7 +122,6 @@ class _AppStatusCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 6.h),
-          // Bottom Container: Checksum Label + Wrapped Hash Below
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),

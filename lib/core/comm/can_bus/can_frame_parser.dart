@@ -7,15 +7,15 @@ class CanFrameParser {
   final List<int> _rxBuffer = [];
   final StreamController<CanFrame> _framesController =
       StreamController<CanFrame>.broadcast();
-  final StreamController<Uint8List> _unparsedController =
+  final StreamController<Uint8List> _checksumController =
       StreamController<Uint8List>.broadcast();
 
   Stream<CanFrame> get frames => _framesController.stream;
-  Stream<Uint8List> get unparsedData => _unparsedController.stream;
+  Stream<Uint8List> get checksumData => _checksumController.stream;
 
-  void _emitUnparsed(List<int> data) {
-    if (data.isNotEmpty && !_unparsedController.isClosed) {
-      _unparsedController.add(Uint8List.fromList(data));
+  void _emitchecksum(List<int> data) {
+    if (data.isNotEmpty && !_checksumController.isClosed) {
+      _checksumController.add(Uint8List.fromList(data));
     }
   }
 
@@ -32,11 +32,11 @@ class CanFrameParser {
   CanFrame? _tryParseFrame() {
     // 1. Find Header (0xAA)
     // If the first byte isn't 0xAA, skip until we find one or buffer is empty.
-    final unparsed = <int>[];
+    final checksum = <int>[];
     while (_rxBuffer.isNotEmpty && _rxBuffer[0] != 0xAA) {
-      unparsed.add(_rxBuffer.removeAt(0));
+      checksum.add(_rxBuffer.removeAt(0));
     }
-    _emitUnparsed(unparsed);
+    _emitchecksum(checksum);
 
     if (_rxBuffer.isEmpty) return null;
 
@@ -49,7 +49,7 @@ class CanFrameParser {
     if ((control & 0xC0) != 0xC0) {
       // Not a valid control byte for this protocol, discard header
       final header = _rxBuffer.removeAt(0);
-      _emitUnparsed([header]);
+      _emitchecksum([header]);
       return null;
     }
 
@@ -58,7 +58,7 @@ class CanFrameParser {
     if (dlc > 8) {
       // Invalid length code, discard header and keep searching
       final header = _rxBuffer.removeAt(0);
-      _emitUnparsed([header]);
+      _emitchecksum([header]);
       return null;
     }
 
@@ -77,7 +77,7 @@ class CanFrameParser {
     if (_rxBuffer[totalFrameLen - 1] != 0x55) {
       // Invalid frame, discard the header and keep searching
       final header = _rxBuffer.removeAt(0);
-      _emitUnparsed([header]);
+      _emitchecksum([header]);
       return null;
     }
 
@@ -141,6 +141,6 @@ class CanFrameParser {
   void dispose() {
     _rxBuffer.clear();
     _framesController.close();
-    _unparsedController.close();
+    _checksumController.close();
   }
 }

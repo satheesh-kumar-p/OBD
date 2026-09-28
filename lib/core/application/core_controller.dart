@@ -13,7 +13,6 @@ class CoreController extends Notifier<void> {
     ref.watch(commConnectionProvider);
     ref.watch(systemScreenStateProvider);
     ref.watch(debugNotifierProvider);
-    ref.watch(checksumPacketsProvider);   //watches over the raw strea comming from the comm_manager.dart for the checksum
 
     return;
   }
