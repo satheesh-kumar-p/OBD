@@ -47,41 +47,6 @@ class _SafetyIndicator extends StatelessWidget {
       size: 60.r,
     );
 
-    /* 
-    return Container(
-      width: 100.w,
-      height: 40.h, // Explicit height guarantees equal height across all items
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: color.withOpacity(0.6), width: 1.5.w),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: 24.r,
-          ),
-          SizedBox(height: 3.h),
-          // Text(
-          //   // label,
-          //   textAlign: TextAlign.center,
-          //   style: TextStyle(
-          //     color: color,
-          //     fontSize: 18.sp,
-          //     fontWeight: FontWeight.w900,
-          //     height: 1,
-          //     letterSpacing: 0.5,
-          //   ),
-          // ),
-        ],
-      ),
-    );
-    */
+   
   }
 }

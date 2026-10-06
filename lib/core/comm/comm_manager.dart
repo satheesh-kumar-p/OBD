@@ -8,14 +8,9 @@ import '../enums/transport_type.dart';
 import '../constants/app_constants.dart';
 import 'can_bus/can_frame.dart';
 import 'can_bus/can_frame_parser.dart';
-import 'checksum/checksum_packet.dart';
 
-/// Orchestrates the communication lifecycle, including reconnection and dispatching.
-/// Bridges the [Transport] from comm_module with the application's CAN logic.
-///
-/// A SINGLE UDP socket, bound to [AppConstants.listenPort] (5005), carries
-/// both CAN frames and checksum/version JSON heartbeats. CAN parsing remains
-/// the primary receive path; rejected bytes are forwarded for JSON handling.
+
+
 class CommManager {
   Transport? _transport;
   final Logger _logger;
@@ -25,15 +20,15 @@ class CommManager {
 
   StreamSubscription<Uint8List>? _transportDataSub;
   StreamSubscription<CanFrame>? _parserFrameSub;
-  StreamSubscription<Uint8List>? _parserUnparsedSub;
+  StreamSubscription<Uint8List>? _parserChecksumSub;
   final StreamController<bool> _connectionCtrl =
       StreamController<bool>.broadcast();
 
   /// Raw checksum/version packets, demultiplexed out of the shared
   /// socket. JSON decoding still happens downstream in
   /// ChecksumJsonParser, not here.
-  final StreamController<ChecksumPacket> _checksumDataCtrl =
-      StreamController<ChecksumPacket>.broadcast();
+  final StreamController<Uint8List> _checksumDataCtrl =
+      StreamController<Uint8List>.broadcast();
 
   Timer? _reconnectTimer;
   bool _isDisposed = false;
@@ -77,7 +72,7 @@ class CommManager {
   void _setupListeners() {
     _transportDataSub?.cancel(); // Cancel the existing subscription
     _parserFrameSub?.cancel();
-    _parserUnparsedSub?.cancel();
+    _parserChecksumSub?.cancel();
 
     _transportDataSub = _transport?.onData.listen(
       _parser.feed,
@@ -98,11 +93,10 @@ class CommManager {
           _logger.error('CommManager: Parser frame error', error: e, stack: st),
     );
 
-    _parserUnparsedSub = _parser.unparsedData.listen((data) {
+    _parserChecksumSub = _parser.checksumData.listen((data) {
       if (!_checksumDataCtrl.isClosed) {
         _checksumDataCtrl.add(
-          ChecksumPacket(timestamp: DateTime.now(), data: data),
-        );
+data);
       }
     });
   }
@@ -116,7 +110,7 @@ class CommManager {
 
   /// Raw checksum/version packets as they arrive, demultiplexed from
   /// the shared socket.
-  Stream<ChecksumPacket> get checksumDataStream => _checksumDataCtrl.stream;
+  Stream<Uint8List> get checksumDataStream => _checksumDataCtrl.stream;
 
   /// Returns a filtered stream of frames with a specific [messageId].
   /// Emits [null] if the data goes stale.
@@ -224,7 +218,7 @@ class CommManager {
     _reconnectTimer = null;
     _transportDataSub?.cancel();
     _parserFrameSub?.cancel();
-    _parserUnparsedSub?.cancel();
+    _parserChecksumSub?.cancel();
     _connectionCtrl.close();
     _checksumDataCtrl.close();
     _parser.dispose();

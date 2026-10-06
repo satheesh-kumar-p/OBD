@@ -12,7 +12,7 @@ import '../../../sensor/presentation/screens/sensor_screen.dart';
 import '../../../system/presentation/screens/system_screen.dart';
 import '../../../common/presentation/screens/common_screen.dart';
 import '../../../compute/presentation/screens/compute_screen.dart';
-import '../../../checksum/presentation/screens/checksum_status_screen.dart';
+import '../../../checksum/presentation//screen/checksum_status_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
